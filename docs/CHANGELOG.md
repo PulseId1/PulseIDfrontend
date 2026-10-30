@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.10.0] - 2026-10-31
+
+### Fixed
+- **Eliminated Giant Dead Space Between Hero & Team (`hero-countdown-section.tsx` & `team-section.tsx`):**
+  - Removed artificial `min-h-[100dvh]` on mobile/tablet from the Hero section, replacing it with natural responsive padding (`pt-5 pb-3 sm:pt-8 sm:pb-5 lg:min-h-[100dvh]`).
+  - Adjusted the team section's top padding from `py-10` (40px) to `pt-3` (12px on mobile) and tightened the scroll indicator margin to `mt-2.5`.
+  - Removed the ~200px empty dark blue void between "MEET THE TEAM" and "• EXECUTIVE LEADERSHIP / The Founders & Leadership", creating a seamless, tight ~28px visual bridge.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (390x844).
+
+---
+
 ## [0.9.0] - 2026-10-30
 
 ### Fixed

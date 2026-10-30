@@ -704,7 +704,7 @@ export function TeamSection() {
     <section
       id="team"
       aria-labelledby="team-heading"
-      className="relative py-10 sm:py-16 lg:py-22 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden"
+      className="relative pt-3 pb-10 sm:pt-6 sm:pb-16 lg:pt-10 lg:pb-22 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden"
     >
       {/* Background ambient lighting */}
       <div

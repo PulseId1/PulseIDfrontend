@@ -17,7 +17,7 @@ export function HeroCountdownSection() {
     <section
       id="countdown"
       aria-label="PulseID launch countdown"
-      className="relative min-h-[100dvh] flex flex-col justify-center items-center w-full px-4 py-6 sm:py-10 overflow-hidden bg-[#07111F]"
+      className="relative flex flex-col justify-center items-center w-full px-4 pt-5 pb-3 sm:pt-8 sm:pb-5 lg:min-h-[100dvh] overflow-hidden bg-[#07111F]"
     >
       {/* Background ambient lighting - futuristic cyan/blue radial glows */}
       <div
@@ -117,12 +117,12 @@ export function HeroCountdownSection() {
           <CountdownTimer />
         </motion.div>
 
-        {/* Minimal Scroll Indicator directly below countdown (No big blank gap) */}
+        {/* Minimal Scroll Indicator directly below countdown */}
         <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.35 }}
-          className="mt-4 sm:mt-6 shrink-0"
+          className="mt-2.5 sm:mt-4 shrink-0"
         >
           <a
             href="#team"
