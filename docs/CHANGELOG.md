@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2026-10-30
+
+### Changed
+- **Removed "Coming Soon" Foreground Tag (`hero-countdown-section.tsx`):**
+  - Removed the pill badge above the headline per user request.
+  - Kept only the expansive architectural background vector watermark (`COMING SOON`), rendered with clean typography and unclipped letterforms.
+- **Simultaneous All-4 Founders Display (`team-section.tsx`):**
+  - Removed the mobile carousel/swapping mechanism entirely.
+  - Arranged all 4 founders simultaneously at all times:
+    - **Mobile & Tablet:** 2x2 grid (Row 1: Maryam Ebrahim CEO & Mohamed Helmy CTO; Row 2: Youssef Elgendy CBO & Mahmoud Ibrahim CMO).
+    - **Desktop:** 4-column unified horizontal row side-by-side at the same level.
+  - Each card flips independently in place to reveal full bio and direct LinkedIn CTA.
+- **Redesigned Discipline Categories Hub (`team-section.tsx`):**
+  - Replaced the cramped, horizontally clipped single-line scroll capsule with a responsive interactive discipline matrix.
+  - Integrated dedicated department iconography (`Layers` for All, `Cpu` for Technology, `Activity` for Clinical & Research, `Pill` for Pharmaceutical, `TrendingUp` for Marketing).
+  - Enhanced visual hierarchy with frosted glassmorphic pills, department glow accents, and illuminated count badges.
+  - Guaranteed 100% visibility on all screen sizes with natural responsive wrap—no more chopped text (`Clini...`) or awkward overflow.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (390x844).
+
+---
+
 ## [0.6.0] - 2026-10-30
 
 ### Fixed
