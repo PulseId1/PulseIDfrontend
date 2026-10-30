@@ -58,3 +58,4 @@ Healthcare software demands rigorous quality assurance. For PulseID, the testing
    - Establish formal code coverage requirements (e.g., 85%+ branch coverage for medical modules in Phase 3–6 vs smoke testing for Phase 2 landing page).
 3. **Continuous Integration Pipeline:**
    - Which CI provider will run automated test gates (GitHub Actions, GitLab CI, Vercel Checks)?
+

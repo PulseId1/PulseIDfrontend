@@ -91,3 +91,4 @@ This log documents all architectural and technical decisions made for PulseID.
    - Identity Provider selection for Phase 7 (Custom OIDC, Auth0, Clerk, or Supabase Auth).
 2. **Deployment Infrastructure:**
    - Target production hosting environment (Vercel Enterprise vs Cloud Healthcare PaaS).
+

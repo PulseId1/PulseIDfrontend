@@ -7,35 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-10-30
+
+### Added
+- **Public Launch Landing Page (`/`):**
+  - **Navigation (`LandingHeader`):** Responsive top bar with `PulseLogo`, anchor navigation links (`#intro`, `#countdown`, `#team`), launch CTA, and mobile hamburger drawer.
+  - **Hero Section (`HeroSection`):** High-impact editorial headline ("Your health. Connected."), eyebrow badge, supporting copy, launch date pill, and smooth-scroll CTA button.
+  - **Live Countdown (`CountdownTimer` & `CountdownSection`):** Real-time client component targeting `2026-11-20T00:00:00+02:00` in `Africa/Cairo` (UTC+2) timezone. Implemented using React 19's `useSyncExternalStore` for zero hydration mismatch, graceful expired state handling, and `aria-live` screen reader accessibility.
+  - **Meet the Team (`TeamSection` & `TeamMemberCard`):** Dedicated team section consuming typed centralized data (`TEAM_MEMBERS`), neutral initials-based avatars, and conditional social link rendering.
+  - **Footer (`LandingFooter`):** Reusable `PulseLogo`, brand mission statement, quick navigation links, and 2026 copyright notice.
+- **Brand Identity (`PulseLogo`):** Minimalist custom SVG logo combining clinical ECG pulse geometry with the PulseID wordmark.
+- **Iconography (`lucide-react` & `icons.tsx`):** Installed approved `lucide-react` library for general UI icons; created custom zero-dependency SVG components for LinkedIn and GitHub icons.
+- **Dark Healthcare Color System:** Centralized Tailwind CSS v4 color tokens (`#07111F`, `#0B192B`, `#102238`, `#2589FF`, `#35D6E8`, `#F4F8FC`, `#9BAFC3`, `#1C344D`) in `globals.css` and `constants.ts`.
+- **SEO & Social Metadata:** Configured Open Graph, Twitter card, description, viewport, and keywords in `src/app/layout.tsx`.
+
+### Changed
+- Replaced the initial placeholder in `src/app/page.tsx` with the composed Server Component landing page.
+- Updated `docs/PRODUCT_SCOPE.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, `docs/DESIGN_SYSTEM.md`, and `docs/SCREEN_INVENTORY.md` to reflect the completed Phase 1 landing page.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 TypeScript errors.
+- `pnpm run lint`: Passed with 0 ESLint errors and 0 warnings.
+- `pnpm run build`: Production build compiled successfully with Turbopack (4/4 static routes generated).
+- Smoke test: Production server responded with `HTTP 200 OK` and verified all landing page sections.
+
+---
+
 ## [0.1.0] - 2026-10-30
 
 ### Added
-- **Project Foundation:** Initialized Next.js `16.4.3` application with App Router, Turbopack, and partial prefetching support.
+- **Project Foundation:** Initialized Next.js `16.4.3` application with App Router, Turbopack, and partial prefetching.
 - **Runtime & Language:** Configured React `19.3.0` and TypeScript `5.9.3` with `strict: true` compiler rules.
-- **Styling Architecture:** Integrated Tailwind CSS `4.3.3` with `@tailwindcss/turbopack` and CSS `@theme inline` configuration.
+- **Styling Architecture:** Integrated Tailwind CSS `4.3.3` with `@tailwindcss/turbopack`.
 - **Package Management:** Configured `pnpm` `11.6.0` with explicit build script approval (`pnpm approve-builds`).
-- **Feature-Oriented Architecture:** Established modular structure separating routes (`src/app/`), features (`src/features/`), UI primitives (`src/components/`), utilities (`src/lib/`), and types (`src/types/`).
-- **Shared Utilities & Constants:** Created `src/lib/constants.ts` with confirmed metadata (Launch target: 20 November 2026, user roles) and zero-dependency `src/lib/utils.ts` (`cn` helper).
-- **Core Domain Types:** Created `src/types/index.ts` defining base contracts for navigation and user roles.
-- **Documentation Suite:** Authored complete documentation library:
-  - `AGENTS.md` (Operational guide for developers and AI agents)
-  - `docs/PRODUCT_SCOPE.md` (Product goals, user personas, launch objectives)
-  - `docs/ARCHITECTURE.md` (System design, component rules, folder layout)
-  - `docs/ROADMAP.md` (8-phase delivery timeline and exit criteria)
-  - `docs/DESIGN_SYSTEM.md` (Color tokens, typography, a11y specifications)
-  - `docs/SCREEN_INVENTORY.md` (Screen breakdown from landing to medical portals)
-  - `docs/DECISIONS.md` (ADR-001 through ADR-006 records)
-  - `docs/TESTING.md` (Quality assurance strategy and testing pyramid)
-  - `docs/SECURITY.md` (Healthcare security, compliance principles, CSP)
-  - `docs/CONTRIBUTING.md` (Contribution workflow, PR checklist, conventional commits)
-  - `docs/TECHNICAL_DEBT.md` (Technical debt ledger and deferred items)
-  - `docs/CHANGELOG.md` (This changelog)
-
-### Changed
-- Refactored `src/app/layout.tsx` to include PulseID metadata title template and description.
-- Set `src/app/page.tsx` to a clean Phase 1 foundation status indicator, cleanly separating Phase 1 completion from Phase 2 landing page implementation.
-
-### Verified
-- Static type checking: `pnpm run typecheck` passed (0 errors).
-- ESLint: `pnpm run lint` passed (0 warnings, 0 errors).
-- Production build: `pnpm run build` compiled successfully via Turbopack (0 errors).
+- **Feature-Oriented Architecture:** Established modular structure (`src/features/`, `src/components/`, `src/lib/`, `src/types/`).
+- **Documentation Suite:** Authored initial documentation library (`AGENTS.md` and `docs/*`).

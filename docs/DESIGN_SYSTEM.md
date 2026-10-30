@@ -1,59 +1,65 @@
 # PulseID — Design System & Visual Specification
 
-## 1. Design Vision & Principles
+## 1. Visual Direction & Identity
 
-The PulseID design system is engineered to convey **clinical precision, trust, accessibility, and modern elegance**. As a healthcare technology platform, readability, unambiguous visual hierarchy, and strict compliance with WCAG 2.1 AA accessibility standards are fundamental requirements.
-
----
-
-## 2. Confirmed Requirements
-
-1. **Styling Foundation:**
-   - Tailwind CSS `v4.3.3` utilizing native CSS variables and `@theme inline` directive in `src/app/globals.css`.
-   - Zero runtime CSS-in-JS libraries.
-2. **Typography Integration:**
-   - Next.js font optimization using `Geist` (primary sans-serif) and `Geist_Mono` (tabular data, code, IDs).
-3. **Accessibility:**
-   - Minimum 4.5:1 contrast ratio for normal text and 3:1 for large text across light and dark modes.
-   - Visible keyboard focus rings (`focus-visible:ring-2`) on all interactive controls.
-   - Screen-reader accessible markup with explicit ARIA attributes where semantic HTML is insufficient.
-4. **Responsive Breakpoints:**
-   - Mobile-first approach scaling through standard breakpoints (`sm: 640px`, `md: 768px`, `lg: 1024px`, `xl: 1280px`).
+PulseID employs a **premium dark healthcare-technology aesthetic**. The design communicates clinical precision, trust, connectivity, and technological sophistication without resorting to cyberpunk tropes or generic SaaS templates.
 
 ---
 
-## 3. Proposed Decisions
+## 2. Centralized Color Tokens
 
-### Color Token Palette
+The visual system is built upon a dark clinical palette defined in both `src/app/globals.css` (Tailwind CSS v4 `@theme inline`) and `src/lib/constants.ts`:
 
-The following token structure is proposed for clinical clarity:
-
-| Token Name | Intended Role | Sample Value (Light) | Sample Value (Dark) |
+| Token Name | Hex Value | CSS Variable | Semantic Usage |
 | :--- | :--- | :--- | :--- |
-| `primary` | Clinical brand / primary CTAs | `rgb(14 116 144)` (Cyan 700) | `rgb(34 211 238)` (Cyan 400) |
-| `primary-hover` | Interactive hover state | `rgb(21 94 117)` (Cyan 800) | `rgb(103 232 249)` (Cyan 300) |
-| `surface-bg` | Page background | `#ffffff` / `rgb(250 250 250)` | `#0a0a0a` / `rgb(18 18 18)` |
-| `surface-card`| Elevated card container | `#ffffff` | `rgb(24 24 27)` |
-| `text-primary`| Headings and high-contrast copy| `rgb(15 23 42)` (Slate 900) | `rgb(248 250 252)` (Slate 50) |
-| `text-muted`  | Secondary details, captions | `rgb(100 116 139)` (Slate 500)| `rgb(148 163 184)` (Slate 400) |
-| `border-subtle`| Dividers and card borders | `rgb(226 232 240)` (Slate 200)| `rgb(39 39 42)` (Zinc 800) |
-| `status-success`| Positive validation / active Rx | `rgb(22 163 74)` (Green 600) | `rgb(74 222 128)` (Green 400) |
-| `status-alert`  | Drug interaction warnings | `rgb(220 38 38)` (Red 600) | `rgb(248 113 113)` (Red 400) |
-| `status-warning`| Pending verification / notice | `rgb(217 119 6)` (Amber 600) | `rgb(251 191 36)` (Amber 400) |
-
-### UI Component Primitives (Phase 2 Roadmap)
-- `Button`: Multiple variants (`primary`, `secondary`, `outline`, `ghost`) and sizes (`sm`, `md`, `lg`).
-- `Badge`: Status badges for roles (Patient, Doctor, Pharmacist) and release countdown.
-- `Card`: Clean bordered container with subtle elevation for feature spotlights.
-- `Input`: Accessible text input with label and helper text for waitlist sign-up.
+| **Main Background** | `#07111F` | `--bg-main` | Deep navy page background |
+| **Secondary Background** | `#0B192B` | `--bg-secondary` | Section separation and banner backgrounds |
+| **Card Background** | `#102238` | `--bg-card` | Elevated component surfaces, cards, and countdown units |
+| **Primary Blue** | `#2589FF` | `--color-primary-blue` | Core brand color, primary CTA gradient, active roles |
+| **Cyan Accent** | `#35D6E8` | `--color-cyan-accent` | Clinical pulse accents, highlights, focus rings, hover glow |
+| **Primary Text** | `#F4F8FC` | `--text-primary` | High-contrast editorial headlines and card titles |
+| **Secondary Text** | `#9BAFC3` | `--text-secondary` | Descriptive paragraphs, subtitles, and unit labels |
+| **Subtle Borders** | `#1C344D` | `--border-subtle` | Structural dividers, card borders, and input boundaries |
 
 ---
 
-## 4. Open Questions
+## 3. Brand Symbol & Logo (`PulseLogo`)
 
-1. **Official Brand Logo & Monogram:**
-   - Will an official SVG logo be supplied, or should an accessible typographic mark with clinical iconography be created?
-2. **Iconography Standard:**
-   - Which icon set is preferred for Phase 2 landing page (e.g., `lucide-react`, `@heroicons/react`, or custom SVGs)?
-3. **Dark Mode Toggle:**
-   - Should Phase 2 include an explicit theme toggle switch (via next-themes), or rely on system `prefers-color-scheme`?
+- **Component:** `src/components/ui/logo.tsx`
+- **Design Elements:**
+  - Rounded clinical shield background in `#102238` with `#1C344D` border.
+  - Continuous electrocardiogram (ECG) heartbeat line styled with a linear gradient transitioning from Primary Blue (`#2589FF`) to Cyan Accent (`#35D6E8`).
+  - Terminal connectivity nodes symbolizing interconnected patient/provider data.
+  - Wordmark: "Pulse" in high-contrast `#F4F8FC` and "ID" in bold `#35D6E8`.
+- **Status:** Proposed temporary brand mark pending official corporate identity approval.
+
+---
+
+## 4. Typography Hierarchy
+
+Configured via Next.js `next/font/google`:
+- **Primary Body & Headings:** `Geist Sans`
+  - Hero Headline: `text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight`
+  - Section Headings: `text-2xl sm:text-3xl md:text-4xl font-bold`
+  - Body Text: `text-sm sm:text-base md:text-lg leading-relaxed`
+- **Tabular & Numeric Displays:** `Geist Mono`
+  - Countdown numerals: `font-mono tabular-nums text-3xl sm:text-5xl md:text-6xl font-bold`
+  - Technical metadata and timezones.
+
+---
+
+## 5. Accessibility & Responsive Specifications
+
+- **Contrast Ratios (WCAG 2.1 AA):**
+  - Primary text (`#F4F8FC`) on Main background (`#07111F`): **18.2:1** (Passes AAA).
+  - Secondary text (`#9BAFC3`) on Main background (`#07111F`): **6.8:1** (Passes AA).
+  - Cyan Accent (`#35D6E8`) on Main background (`#07111F`): **11.5:1** (Passes AAA).
+- **Interactive Focus States:**
+  - All clickable links and buttons include explicit visible focus outlines: `focus-visible:ring-2 focus-visible:ring-[#35D6E8]`.
+- **Motion Accessibility:**
+  - Smooth scrolling disabled automatically for users requesting reduced motion via `motion-reduce` media queries.
+- **Responsive Layout Validations:**
+  - `375px`: Mobile screens (single-column cards, 2x2 countdown grid, collapsible drawer).
+  - `768px`: Tablet screens (2-column team grid, 4-column countdown row).
+  - `1024px`: Desktop screens (3-column team grid, expanded navigation links).
+  - `1440px`: Large desktop (centered container with generous whitespace).

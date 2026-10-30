@@ -2,93 +2,87 @@
 
 ## 1. Architectural Philosophy
 
-PulseID is engineered around a **modular, feature-oriented frontend architecture** optimized for scalability, maintainability, and zero unnecessary complexity. 
+PulseID is engineered around a **modular, feature-oriented frontend architecture** optimized for scalability, maintainability, and zero unnecessary runtime complexity.
 
-The architecture strictly adheres to:
-- **Server Components by default:** Render on the server for maximum performance, minimal client bundle size, and optimal SEO.
-- **Client Components on demand:** Reserved exclusively for interactive leaf components requiring browser events or DOM state (`'use client'`).
-- **Pragmatic SOLID principles:** High cohesion within feature boundaries, single responsibility per module, and explicit data contracts.
-- **YAGNI & Zero Overengineering:** Avoid premature abstractions, gratuitous interfaces, speculative micro-frontends, or unnecessary third-party runtime dependencies.
-
----
-
-## 2. Confirmed Requirements
-
-1. **Framework & Engine:**
-   - Next.js `16.4.3` utilizing the App Router (`src/app/`).
-   - React `19.3.0` with React Server Components (RSC) and React Compiler compatibility.
-   - TypeScript `5.9.3` with strict mode (`strict: true`) strictly enforced.
-   - Tailwind CSS `4.3.3` with native `@theme inline` styling and `@tailwindcss/turbopack`.
-   - pnpm `11.6.0` package manager.
-2. **Structural Separation:**
-   - Clear separation between:
-     - **Routes & Pages:** `src/app/`
-     - **Feature Modules:** `src/features/`
-     - **Shared Components:** `src/components/`
-     - **Core Utilities & Constants:** `src/lib/`
-     - **Domain Type Contracts:** `src/types/`
-3. **Medical Multi-Role Extensibility:**
-   - The directory layout must support future additions of the Patient, Doctor, and Pharmacist portals without requiring upfront implementation or boilerplate bloat.
+Key architectural pillars:
+- **Server Components by default:** Sections, static copy, headings, and layouts are React Server Components rendered at build time with zero client JavaScript payload.
+- **Strict Client Leaf Isolation:** Client state (`'use client'`) is restricted exclusively to interactive leaves:
+  1. `CountdownTimer`: Live 1-second interval timer using React 19's `useSyncExternalStore` to prevent hydration mismatches and cascading re-renders.
+  2. `LandingHeader`: Mobile drawer state toggle.
+- **Feature-Sliced Encapsulation:** All landing page domain code resides in `src/features/landing/`, completely isolating Phase 1 from future medical portal modules.
+- **Zero Overengineering:** Native CSS `@theme inline` tokens, standard SVG icons, and typed data files with zero external state management or animation bloat.
 
 ---
 
-## 3. Directory Layout & Module Structure
+## 2. Implemented Component Organization
 
 ```
 src/
-├── app/                        # App Router: Routing, layouts, metadata & loading boundaries
+├── app/
 │   ├── favicon.ico
-│   ├── globals.css             # Tailwind v4 import & CSS custom properties
-│   ├── layout.tsx              # Root HTML wrapper with font loading & base metadata
-│   └── page.tsx                # Entry point (currently minimal Phase 1 confirmation)
-├── components/                 # Shared, domain-agnostic UI primitives
-│   └── ui/                     # Primitives (e.g., Button, Card, Badge, Input)
-├── features/                   # Feature-sliced modules (independent domain logic)
-│   ├── landing/                # Public Launch Landing Page (Phase 2)
-│   │   └── components/         # Landing-specific sections (Hero, Countdown, Waitlist)
-│   ├── patient/                # Patient Portal (Phase 3 reserved)
-│   ├── doctor/                 # Doctor Portal (Phase 4 reserved)
-│   └── pharmacist/             # Pharmacist Portal (Phase 5 reserved)
-├── lib/                        # Cross-cutting utilities, configs & immutable constants
-│   ├── constants.ts            # Project-wide metadata, launch dates, roles
-│   └── utils.ts                # Zero-dependency utilities (e.g., cn helper)
-└── types/                      # Shared TypeScript definitions
-    └── index.ts                # Core types and interfaces
+│   ├── globals.css                       # Centralized theme tokens & custom scrollbar
+│   ├── layout.tsx                        # Root layout, Geist typography & Open Graph SEO
+│   └── page.tsx                          # Server Component composition of landing page
+├── components/
+│   └── ui/
+│       ├── icons.tsx                     # Zero-dependency SVG icons (LinkedIn, GitHub)
+│       └── logo.tsx                      # Reusable PulseLogo component (temporary brand mark)
+├── features/
+│   ├── landing/                          # Phase 1 Public Launch Landing Page
+│   │   ├── components/
+│   │   │   ├── countdown-section.tsx     # Server Component section wrapper
+│   │   │   ├── countdown-timer.tsx       # Isolated Client Component timer
+│   │   │   ├── hero-section.tsx          # Server Component hero introduction
+│   │   │   ├── landing-footer.tsx        # Server Component footer
+│   │   │   ├── landing-header.tsx        # Client Component navigation bar with mobile menu
+│   │   │   ├── team-member-card.tsx      # Reusable member card with conditional socials
+│   │   │   └── team-section.tsx          # Responsive team grid section
+│   │   ├── data/
+│   │   │   └── team-members.ts           # Centralized typed team roster data
+│   │   ├── types/
+│   │   │   └── team-member.ts            # TeamMember and TeamMemberSocials contracts
+│   │   └── index.ts                      # Barrel export for landing feature
+│   ├── doctor/                           # Reserved for Phase 4
+│   ├── patient/                          # Reserved for Phase 3
+│   └── pharmacist/                       # Reserved for Phase 5
+├── lib/
+│   ├── constants.ts                      # Immutable constants (dates, ISO, color tokens, links)
+│   └── utils.ts                          # Lightweight cn utility
+└── types/
+    └── index.ts                          # Shared core type definitions
 ```
 
 ---
 
-## 4. Component Architecture Guidelines
+## 3. Countdown Architecture & Timezone Handling
 
-### Server vs. Client Boundary Rules
-- **Server Components (Default):**
-  - Section layouts, static informational blocks, text typography, headers, footers, countdown targets, and initial data presentation.
-  - No client-side JavaScript sent to the browser for these components.
-- **Client Components (`'use client'`):**
-  - Only leaf nodes requiring interactivity (e.g., interactive waitlist submission form, client-side time countdown tick, interactive navigation toggle).
-  - Must never wrap entire pages in `'use client'`.
-
-### Dependency Management Policy
-- Native standard library before external packages.
-- Zero dependencies added for operations natively supported by modern browsers and ES2022+ (e.g., native fetch, date calculations, class filtering).
+- **Target Timestamp:** `2026-11-20T00:00:00+02:00` (`Africa/Cairo`, UTC+2).
+- **Time Calculation:** `diffMs = targetTimestamp - Date.now()`.
+- **Hydration Safe Pattern:** Utilizes `useSyncExternalStore` with:
+  - `serverSnapshot`: Initialized to empty/zero state for deterministic server rendering.
+  - `calculateTimeRemaining`: Client snapshot calculating exact remaining Days, Hours, Minutes, Seconds.
+  - `subscribeTimer`: Attaches a single 1000ms `window.setInterval` and cleans it up on component unmount.
+- **Accessibility:** An isolated live region (`aria-live="polite"`) delivers regular screen reader updates without visual disruption.
+- **Expired State:** When `diffMs <= 0`, the component transitions to an active rollout banner.
 
 ---
 
-## 5. Proposed Decisions
+## 4. Team Data Architecture
 
-1. **Routing Strategy for Future Medical Applications:**
-   - Use Next.js route groups `(public)`, `(patient)`, `(doctor)`, `(pharmacist)` when expanding beyond the landing page.
-   - Keep root `/` mapped to the public landing page for Phase 2.
-2. **State Management Strategy:**
-   - Phase 2 landing page requires zero global state management (no Redux, Zustand, or Jotai needed).
-   - Form state handled via React 19 `useActionState` or standard unmanaged inputs.
-   - Future application state will evaluate lightweight store solutions when medical data flows are introduced.
+- Data is stored in `src/features/landing/data/team-members.ts` adhering to the `TeamMember` interface.
+- To update the team roster, developers only update `team-members.ts` without touching `team-member-card.tsx` or `team-section.tsx`.
+- Missing photos fall back to neutral, initials-based typographic avatars with styled gradients.
+- Social links render conditionally — missing links produce zero broken UI elements.
 
 ---
 
-## 6. Open Questions
+## 5. Technology Stack Summary
 
-1. **API Integration Strategy for Phase 7:**
-   - Will the backend be a separate REST/GraphQL service (e.g., Go/NestJS/FastAPI), or Next.js Route Handlers / Server Actions with direct database drivers?
-2. **Component Library Decision:**
-   - Should future UI primitives be built directly with Tailwind CSS v4, or utilize headless primitives (e.g., Radix UI / shadcn patterns) for complex accessibility requirements (dialogs, tooltips, comboboxes)?
+| Technology | Version | Purpose |
+| :--- | :--- | :--- |
+| **Next.js** | `16.4.3` | App Router, Turbopack, Prerendering |
+| **React** | `19.3.0` | React Server Components & `useSyncExternalStore` |
+| **TypeScript** | `5.9.3` | Strict type validation (`strict: true`) |
+| **Tailwind CSS** | `4.3.3` | Native CSS variable theme tokens |
+| **lucide-react** | `1.64.0` | Approved iconography (Clock, ArrowDown, Calendar, Menu, X, Globe) |
+| **pnpm** | `11.6.0` | Deterministic package management |

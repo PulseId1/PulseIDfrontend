@@ -4,54 +4,52 @@
 
 **PulseID** is a next-generation healthcare technology platform designed to streamline, secure, and interconnect medical workflows between three core stakeholders: **Patients**, **Doctors**, and **Pharmacists**.
 
-While the full medical platform encompasses clinical diagnostics, electronic prescribing, patient medical identification, and drug-interaction monitoring, the immediate project priority is establishing a solid frontend foundation and publishing a high-converting, professional **public one-page launch landing page targeting 20 November 2026**.
+Phase 1 deliverable is the **public launch landing page targeting 20 November 2026**. The public landing page serves as an introduction to PulseID, showcases the team working to bring the platform to life, and features a live real-time launch countdown.
 
 ---
 
-## 2. Confirmed Requirements
+## 2. Confirmed Requirements (Landing Page Scope)
 
 1. **Platform Identity:**
    - Name: `PulseID`.
-   - Core positioning: A connected, secure healthcare technology ecosystem.
-2. **Three Core User Audiences:**
-   - **Patients:** Individual health profiles, personal medical records, digital medical identity, and prescription access.
-   - **Doctors:** Clinical consultation views, patient history exploration, diagnostic notation, and electronic prescription generation.
-   - **Pharmacists:** Prescription validation, dispensing verification queues, and drug interaction safety checks.
-3. **Immediate Deliverable (Phase 2):**
-   - A single, public, one-page launch website.
-   - Clear launch target date displayed: **20 November 2026**.
-   - No backend or database required for the initial phase.
-   - Server-first, highly responsive, and accessible.
-4. **Non-Goals for Current & Immediate Phases:**
-   - No patient portal implementation.
-   - No doctor portal implementation.
-   - No pharmacist portal implementation.
-   - No optical character recognition (OCR) or AI clinical assistant modules.
-   - No backend APIs, microservices, or database schemas.
+   - Core Positioning: Connected, secure personal healthcare information.
+   - Target Launch Date: **20 November 2026** at `00:00:00+02:00` (`Africa/Cairo` timezone).
+2. **Page Architecture (Exactly Four Primary Sections):**
+   - **Navigation:** Compact bar with custom SVG brand mark, navigation anchors (`#intro`, `#countdown`, `#team`), and launch CTA button scrolling to countdown.
+   - **Hero / Introduction:** Eyebrow (`THE FUTURE OF CONNECTED HEALTHCARE`), headline (`Your health. Connected.`), supporting description (`A more connected approach to personal healthcare information.`), launch announcement, and scroll CTA (`COUNTDOWN TO LAUNCH`).
+   - **Launch Countdown:** Real-time ticking client component calculating the exact delta to `2026-11-20T00:00:00+02:00`, displaying Days, Hours, Minutes, Seconds with expired state handling and screen reader support.
+   - **Meet the Team:** Dedicated team roster populated from centralized typed data (`TEAM_MEMBERS`), supporting portrait/initials placeholders, role, biography, and verified social links.
+   - **Footer:** Brand mark, mission statement, verified navigation anchors, and copyright notice.
+3. **Explicit Non-Goals (Strictly Excluded):**
+   - No login or registration.
+   - No patient, doctor, or pharmacist portals or dashboards.
+   - No medical records, PHI, or mock health data.
+   - No waitlist or email collection forms.
+   - No newsletter subscription inputs.
+   - No contact or inquiry forms.
+   - No fake product demonstrations or simulated UI screens.
+   - No unrequested sections.
 
 ---
 
-## 3. Proposed Decisions
+## 3. Implemented Decisions
 
-1. **Launch Landing Page Strategy:**
-   - **Audience:** Early-adopter medical practitioners, healthcare clinic directors, prospective patients, and institutional pharmacy partners.
-   - **Primary Objective:** Build credibility, communicate the unified healthcare vision, and collect waitlist / early access registrations.
-   - **Key Functional Sections:**
-     1. *Hero Section:* Clear value proposition, launch date countdown/announcement, primary CTA.
-     2. *Role Ecosystem Overview:* Highlighting the three personas (Patient, Doctor, Pharmacist) and how PulseID bridges their daily interactions.
-     3. *Trust & Security Foundations:* High-level statement on compliance, data integrity, and patient privacy.
-     4. *Waitlist / Early Access Invitation:* Simple email capture form.
-     5. *Footer:* Essential legal, privacy, and copyright disclosures.
-2. **Phase Boundary Enforcement:**
-   - All medical application routes and layouts remain gated until Phase 2 is successfully released and signed off.
+1. **Neutral Team Data Placeholders:**
+   - In accordance with the brief, no real human profiles, fake names, or AI-generated portraits are used.
+   - Clean, neutral role placeholders (`Founding Engineer`, `Clinical Informatics Lead`, `Product & Operations Lead`) are utilized with initials-based badges pending official roster announcements.
+2. **Temporary Visual Identity:**
+   - A custom minimalist SVG logo combining an electrocardiogram pulse rhythm with clinical geometry is deployed across navigation and footer.
+   - Clearly documented as a proposed temporary brand mark pending official corporate asset sign-off.
+3. **Zero-Backend Requirement:**
+   - The landing page is 100% frontend static prerendered with an isolated client leaf for the live countdown timer.
 
 ---
 
-## 4. Open Questions
+## 4. Open Questions & Next Milestones
 
-1. **Waitlist Collection Infrastructure:**
-   - What backend or third-party service will capture waitlist submissions during Phase 2? (e.g., lightweight Next.js Server Action with Airtable/Resend/Supabase/webhook, or pure static mailto link initially?).
-2. **Brand Assets & Imagery:**
-   - Will dedicated vector logos, brand palettes, or clinical photography assets be provided before implementing Phase 2?
-3. **Regulatory Jurisdiction Targeting:**
-   - Which primary regions should the initial messaging emphasize? (e.g., US HIPAA compliance, EU GDPR/MDR compliance, or regional health authorities).
+1. **Official Brand Asset Pack:**
+   - High-resolution vector SVGs for the approved PulseID logomark and favicon.
+2. **Founding Team Public Roster:**
+   - Official biographies, verified LinkedIn/GitHub profiles, and approved headshot photos to replace the role placeholders in `src/features/landing/data/team-members.ts`.
+3. **Official Domain & Canonical URL:**
+   - The production domain for canonical SEO tag insertion once DNS is delegated.

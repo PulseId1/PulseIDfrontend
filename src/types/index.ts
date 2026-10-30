@@ -20,3 +20,4 @@ export interface SiteMetadata {
   readonly description: string;
   readonly launchDate: string;
 }
+

@@ -50,3 +50,4 @@ This document provides a transparent, auditable record of all known technical de
 ## 4. Open Questions
 
 1. Should automated technical debt auditing (e.g., SonarQube, Knip for unused code) be introduced in Phase 8?
+

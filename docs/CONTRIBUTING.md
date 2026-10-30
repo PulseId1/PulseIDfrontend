@@ -60,3 +60,4 @@ Before submitting a PR for review:
    - Will pre-commit hooks (e.g., simple git hooks or lint-staged) be configured in Phase 2?
 2. **Review & Approval Hierarchy:**
    - Does merging to `main` require single or dual peer approval?
+
