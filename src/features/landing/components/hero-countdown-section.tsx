@@ -32,31 +32,6 @@ export function HeroCountdownSection() {
       {/* Clock Lines Flush on the Right Border (Desktop only) */}
       <HeroClockArc />
 
-      {/* Architectural Background Watermark: COMING SOON (Pure Background Text, 100% Unclipped) */}
-      <div
-        className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[95vw] px-4 flex items-center justify-center text-white/[0.05] sm:text-white/[0.035] z-0 leading-none"
-        aria-hidden="true"
-      >
-        <svg
-          viewBox="0 0 1300 160"
-          className="w-full h-auto max-h-[170px] overflow-visible"
-        >
-          <text
-            x="50%"
-            y="50%"
-            dominantBaseline="central"
-            textAnchor="middle"
-            fill="currentColor"
-            fontWeight="900"
-            letterSpacing="0.08em"
-            fontSize="115"
-            className="font-sans font-black uppercase"
-          >
-            COMING SOON
-          </text>
-        </svg>
-      </div>
-
       {/* Unified Cohesive Hero Stack: Minimized Spacing & Zero Dead Voids */}
       <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center w-full">
         {/* Official PulseID Brand Logo Centered (Minimal gap to headline) */}
@@ -64,7 +39,7 @@ export function HeroCountdownSection() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full flex items-center justify-center mb-2.5 sm:mb-4"
+          className="w-full flex items-center justify-center mb-2 sm:mb-3"
         >
           <a
             href="#countdown"
@@ -80,7 +55,7 @@ export function HeroCountdownSection() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#F4F8FC] mb-1.5 sm:mb-2.5 leading-tight"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#F4F8FC] mb-1.5 sm:mb-2 leading-tight"
         >
           {APP_HEADLINE}
         </motion.h1>
@@ -90,20 +65,47 @@ export function HeroCountdownSection() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="text-xs sm:text-sm md:text-base text-[#9BAFC3] max-w-lg mx-auto mb-3 sm:mb-5 font-normal leading-relaxed"
+          className="text-xs sm:text-sm md:text-base text-[#9BAFC3] max-w-lg mx-auto mb-3 sm:mb-4 font-normal leading-relaxed"
         >
           {APP_SUBTITLE}
         </motion.p>
 
-        {/* Interactive Mascot Face looking at the counter below */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-3 sm:mb-5 flex justify-center"
-        >
-          <MascotFace />
-        </motion.div>
+        {/* Interactive Mascot Face with Architectural COMING SOON Watermark directly behind it */}
+        <div className="relative w-full mb-3 sm:mb-4 flex items-center justify-center">
+          {/* Architectural Background Watermark: COMING SOON (Anchored directly behind mascot, 100% visible) */}
+          <div
+            className="pointer-events-none select-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-screen max-w-[100vw] px-2 flex items-center justify-center text-white/[0.11] sm:text-white/[0.07] -z-10 leading-none overflow-hidden"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 1300 160"
+              className="w-full max-w-4xl sm:max-w-5xl h-auto max-h-[135px] sm:max-h-[165px] overflow-visible"
+            >
+              <text
+                x="50%"
+                y="50%"
+                dominantBaseline="central"
+                textAnchor="middle"
+                fill="currentColor"
+                fontWeight="900"
+                letterSpacing="0.08em"
+                fontSize="115"
+                className="font-sans font-black uppercase"
+              >
+                COMING SOON
+              </text>
+            </svg>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="relative z-10 flex justify-center"
+          >
+            <MascotFace />
+          </motion.div>
+        </div>
 
         {/* The Dominant Countdown Component */}
         <motion.div

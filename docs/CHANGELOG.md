@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] - 2026-10-30
+
+### Fixed
+- **Founders Card Ratio & Uniform Bento Spacing (`team-section.tsx`):**
+  - Removed accidental vertical `desktopY` offset that caused Maryam and Youssef to be practically touching (2px gap) while Helmy and Mahmoud had an exaggerated 22px gap on mobile.
+  - Aligned all 4 cards to the exact same horizontal level across all breakpoints (`y: 0`), guaranteeing identical, uniform 12px gutters both horizontally and vertically.
+  - Refined card aspect ratio from rigid 340px vertical towers to balanced Pinterest/Bento proportions (`h-[280px] xs:h-[305px] sm:h-[365px] lg:h-[420px]`).
+  - Added Bento monospace index tagging (`01 • PID-EXE-01`, `02 • PID-EXE-02`, etc.) and streamlined glass nameplates.
+  - Reduced section padding from `py-14 sm:py-20 lg:py-26` to `py-10 sm:py-16 lg:py-22` to eliminate excess blank space between hero and team.
+- **Hero Watermark Positioning Behind Mascot (`hero-countdown-section.tsx`):**
+  - Relocated the architectural vector `COMING SOON` background watermark directly behind the Mascot Face container.
+  - Guarantees the watermark is 100% visible on both mobile and desktop, perfectly framed by the mascot eyes, and never covered by the countdown boxes below.
+  - Enhanced contrast and readability (`text-white/[0.11]` on mobile, `text-white/[0.07]` on desktop).
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (390x844).
+
+---
+
 ## [0.8.0] - 2026-10-30
 
 ### Fixed

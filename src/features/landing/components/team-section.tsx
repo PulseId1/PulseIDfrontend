@@ -86,20 +86,17 @@ interface FounderCardProps {
 
 function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProps) {
   const theme = CATEGORY_THEMES.leadership;
-
-  // Gentle parabolic arch elevation on desktop: outer cards slightly dipped, center slightly raised
-  // index: 0 (CEO) -> 10px, 1 (CTO) -> 0px, 2 (CBO) -> 0px, 3 (CMO) -> 10px
-  const desktopY = index === 0 || index === 3 ? 10 : 0;
+  const bentoIndex = String(index + 1).padStart(2, "0");
 
   return (
     <div
       style={{ perspective: 1200 }}
-      className="relative w-full h-[340px] sm:h-[390px] lg:h-[430px]"
+      className="relative w-full h-[280px] xs:h-[305px] sm:h-[365px] lg:h-[420px]"
     >
       <motion.div
         animate={{
           rotateY: isFlipped ? 180 : 0,
-          y: desktopY,
+          y: 0,
         }}
         transition={{
           type: "spring",
@@ -107,7 +104,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
           damping: 28,
           mass: 0.5,
         }}
-        className="w-full h-full relative [transform-style:preserve-3d] select-none rounded-3xl"
+        className="w-full h-full relative [transform-style:preserve-3d] select-none rounded-2xl sm:rounded-3xl"
       >
         {/* ================= FRONT SIDE ================= */}
         <div
@@ -121,18 +118,18 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
               onToggleFlip(member.id);
             }
           }}
-          className={`absolute inset-0 [backface-visibility:hidden] rounded-3xl border p-3 sm:p-4 lg:p-5 flex flex-col justify-between overflow-hidden transition-all duration-300 bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_12px_36px_rgba(2,6,12,0.8)] hover:shadow-[0_0_40px_rgba(53,214,232,0.28)] hover:border-[#35D6E8]/70 cursor-pointer ${
+          className={`absolute inset-0 [backface-visibility:hidden] rounded-2xl sm:rounded-3xl border p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-between overflow-hidden transition-all duration-300 bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_12px_36px_rgba(2,6,12,0.8)] hover:shadow-[0_0_40px_rgba(53,214,232,0.28)] hover:border-[#35D6E8]/70 cursor-pointer ${
             isFlipped ? "border-transparent pointer-events-none" : "border-[#1E3652]/80"
           }`}
         >
           {/* Top Header: Role Badge & Flip Cue */}
           <div className="relative z-10 flex items-center justify-between">
             <div
-              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[10px] font-mono font-semibold border ${theme.badgeBg}`}
+              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[10px] font-mono font-semibold border backdrop-blur-md bg-[#07111F]/80 ${theme.badgeBg}`}
             >
               <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${theme.dot} animate-pulse`} />
-              <span className="uppercase tracking-wider">
-                {member.badgeId}
+              <span className="uppercase tracking-wider font-mono">
+                {bentoIndex} • {member.badgeId}
               </span>
             </div>
 
@@ -144,7 +141,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
 
           {/* Studio Portrait Visual: Tailored Close-Up Face Framing */}
           {member.photoUrl && (
-            <div className="absolute inset-0 z-0 overflow-hidden rounded-3xl bg-[#081526]">
+            <div className="absolute inset-0 z-0 overflow-hidden rounded-2xl sm:rounded-3xl bg-[#081526]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={member.photoUrl}
@@ -160,16 +157,16 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
           )}
 
           {/* Bottom: Signature Frosted Floating Glass Nameplate */}
-          <div className="relative z-10 rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 lg:p-4 backdrop-blur-md bg-[#07111F]/90 border border-[#35D6E8]/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+          <div className="relative z-10 rounded-xl sm:rounded-2xl p-2 sm:p-3 lg:p-3.5 backdrop-blur-md bg-[#07111F]/90 border border-[#35D6E8]/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
             <h3 className="text-xs sm:text-base lg:text-lg font-bold text-[#F4F8FC] leading-tight truncate">
               {member.name}
             </h3>
 
-            <p className="text-[11px] sm:text-xs lg:text-sm font-semibold mt-0.5 sm:mt-1 text-[#35D6E8] truncate">
+            <p className="text-[10px] sm:text-xs lg:text-sm font-semibold mt-0.5 text-[#35D6E8] truncate">
               {member.role}
             </p>
 
-            <div className="flex items-center justify-between mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t border-[#1C344D]/80 text-[9px] sm:text-[10px] text-[#9BAFC3]/80">
+            <div className="flex items-center justify-between mt-1 sm:mt-1.5 pt-1 sm:pt-1.5 border-t border-[#1C344D]/80 text-[8.5px] sm:text-[10px] text-[#9BAFC3]/80">
               <span className="truncate">Leadership</span>
               <span className="text-[#35D6E8] shrink-0 font-medium ml-1 inline-flex items-center gap-1">
                 <span>View</span>
@@ -181,18 +178,18 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
 
         {/* ================= BACK SIDE (180° FLIPPED) ================= */}
         <div
-          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-3 sm:p-5 lg:p-6 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden ${
+          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-3 sm:p-4 lg:p-5 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden ${
             isFlipped ? "pointer-events-auto" : "pointer-events-none"
           }`}
         >
           {/* Top Header: Badge & Flip Back */}
-          <div className="relative z-10 flex items-center justify-between border-b border-[#1C344D]/80 pb-2">
+          <div className="relative z-10 flex items-center justify-between border-b border-[#1C344D]/80 pb-1.5">
             <div
               className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-mono font-semibold border ${theme.badgeBg}`}
             >
               <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${theme.dot} animate-pulse`} />
               <span className="uppercase tracking-wider truncate max-w-[90px] sm:max-w-none">
-                {member.role}
+                {bentoIndex} • {member.role}
               </span>
             </div>
 
@@ -211,9 +208,9 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
           </div>
 
           {/* Full Untruncated Bio with Smooth Scrollbar */}
-          <div className="relative z-10 flex-1 my-2 sm:my-3 overflow-y-auto pr-1 text-left [scrollbar-width:thin] [scrollbar-color:#35D6E8_transparent]">
+          <div className="relative z-10 flex-1 my-1.5 sm:my-2.5 overflow-y-auto pr-1 text-left [scrollbar-width:thin] [scrollbar-color:#35D6E8_transparent]">
             {member.bio ? (
-              <div className="text-[10px] sm:text-[12px] lg:text-[13px] text-[#E2E8F0] leading-relaxed whitespace-pre-line font-normal space-y-1.5">
+              <div className="text-[9.5px] sm:text-[11.5px] lg:text-[12.5px] text-[#E2E8F0] leading-relaxed whitespace-pre-line font-normal space-y-1">
                 {member.bio}
               </div>
             ) : (
@@ -226,7 +223,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
           </div>
 
           {/* Bottom Action: Direct LinkedIn Connect Button */}
-          <div className="relative z-20 pt-1.5 sm:pt-2 border-t border-[#1C344D]/80 flex flex-col gap-1">
+          <div className="relative z-20 pt-1.5 border-t border-[#1C344D]/80 flex flex-col gap-1">
             {member.socials?.linkedin ? (
               <a
                 href={member.socials.linkedin}
@@ -239,7 +236,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
                   e.stopPropagation();
                   window.open(member.socials?.linkedin, "_blank", "noopener,noreferrer");
                 }}
-                className="relative z-30 inline-flex items-center justify-center gap-1.5 w-full py-1.5 sm:py-2.5 px-2.5 sm:px-4 rounded-xl bg-[#0077B5] hover:bg-[#006399] active:bg-[#004e75] text-[10px] sm:text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] cursor-pointer"
+                className="relative z-30 inline-flex items-center justify-center gap-1.5 w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl bg-[#0077B5] hover:bg-[#006399] active:bg-[#004e75] text-[9.5px] sm:text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] cursor-pointer"
                 aria-label={`Open ${member.name}'s LinkedIn profile`}
               >
                 <LinkedInIcon size={12} className="text-white shrink-0" />
@@ -707,7 +704,7 @@ export function TeamSection() {
     <section
       id="team"
       aria-labelledby="team-heading"
-      className="relative py-14 sm:py-20 lg:py-26 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden"
+      className="relative py-10 sm:py-16 lg:py-22 px-3 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden"
     >
       {/* Background ambient lighting */}
       <div
@@ -716,10 +713,10 @@ export function TeamSection() {
       />
 
       {/* ================= SECTION A: FOUNDING LEADERSHIP ================= */}
-      {/* All 4 Founders are ALWAYS visible simultaneously: 2x2 grid on mobile, 4-in-a-row on desktop */}
-      <div className="relative z-10 mb-16 sm:mb-24">
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-3 shadow-sm">
+      {/* All 4 Founders are ALWAYS visible simultaneously: 2x2 Bento grid on mobile, 4-in-a-row on desktop */}
+      <div className="relative z-10 mb-14 sm:mb-20">
+        <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-2.5 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#35D6E8] animate-pulse" />
             <span>Executive Leadership</span>
           </div>
@@ -736,9 +733,9 @@ export function TeamSection() {
           </p>
         </div>
 
-        {/* 4 Founders Display: Strictly CEO -> CTO -> Business -> Marketing */}
-        {/* On mobile: 2x2 grid (all 4 visible at once, zero swapping). On desktop: 4 cards side-by-side on same level */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 max-w-6xl mx-auto items-center">
+        {/* 4 Founders Bento Grid: Strictly CEO -> CTO -> Business -> Marketing */}
+        {/* On mobile: 2x2 Bento grid (all 4 visible at once, uniform gaps, same level). On desktop: 4 cards side-by-side on same level */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 max-w-6xl mx-auto items-stretch">
           {LEADERSHIP_MEMBERS.map((founder, idx) => (
             <FounderCard
               key={founder.id}
