@@ -67,14 +67,14 @@ const CATEGORY_THEMES = {
  * Centers tightly on their faces while ensuring their face is never covered by the nameplate.
  */
 const FOUNDER_PHOTO_CONFIG: Record<string, string> = {
-  "maryam-ebrahim": "object-[center_22%] scale-[1.28] origin-[center_22%]",
-  "mohamed-helmy": "object-[center_24%] scale-[1.85] origin-[center_24%]",
-  "youssef-elgendy": "object-[center_26%] scale-[1.80] origin-[center_26%]",
-  "mahmoud-ibrahim": "object-[center_22%] scale-[1.32] origin-[center_22%]",
+  "maryam-ebrahim": "object-[center_20%] scale-[1.18] origin-[center_20%]",
+  "mohamed-helmy": "object-[center_22%] scale-[1.65] origin-[center_22%]",
+  "youssef-elgendy": "object-[center_24%] scale-[1.60] origin-[center_24%]",
+  "mahmoud-ibrahim": "object-[center_20%] scale-[1.25] origin-[center_20%]",
 };
 
 /* =========================================================================
-   1. FOUNDING LEADERSHIP CARD (3D In-Place Flip, Close-up Face Framing)
+   1. FOUNDING LEADERSHIP CARD (3D In-Place Flip, Intuitive Tap Anywhere)
    ========================================================================= */
 
 interface FounderCardProps {
@@ -84,14 +84,13 @@ interface FounderCardProps {
   readonly onToggleFlip: (id: string) => void;
 }
 
-function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProps) {
+function FounderCard({ member, isFlipped, onToggleFlip }: FounderCardProps) {
   const theme = CATEGORY_THEMES.leadership;
-  const bentoIndex = String(index + 1).padStart(2, "0");
 
   return (
     <div
       style={{ perspective: 1200 }}
-      className="relative w-full h-[280px] xs:h-[305px] sm:h-[365px] lg:h-[420px]"
+      className="relative w-full h-[360px] sm:h-[390px] lg:h-[420px]"
     >
       <motion.div
         animate={{
@@ -106,40 +105,35 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
         }}
         className="w-full h-full relative [transform-style:preserve-3d] select-none rounded-2xl sm:rounded-3xl"
       >
-        {/* ================= FRONT SIDE ================= */}
+        {/* ================= FRONT SIDE (Tap anywhere to flip) ================= */}
         <div
           onClick={() => onToggleFlip(member.id)}
           role="button"
           tabIndex={0}
-          aria-label={`${member.name}, ${member.role}. Tap to flip card and view biography.`}
+          aria-label={`${member.name}, ${member.role}. Tap anywhere to flip card and view biography.`}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               onToggleFlip(member.id);
             }
           }}
-          className={`absolute inset-0 [backface-visibility:hidden] rounded-2xl sm:rounded-3xl border p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-between overflow-hidden transition-all duration-300 bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_12px_36px_rgba(2,6,12,0.8)] hover:shadow-[0_0_40px_rgba(53,214,232,0.28)] hover:border-[#35D6E8]/70 cursor-pointer ${
+          className={`absolute inset-0 [backface-visibility:hidden] rounded-2xl sm:rounded-3xl border p-3 sm:p-4 flex flex-col justify-between overflow-hidden transition-all duration-300 bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_12px_36px_rgba(2,6,12,0.8)] hover:shadow-[0_0_40px_rgba(53,214,232,0.28)] hover:border-[#35D6E8]/70 cursor-pointer ${
             isFlipped ? "border-transparent pointer-events-none" : "border-[#1E3652]/80"
           }`}
         >
-          {/* Top Header: Role Badge & Flip Cue */}
-          <div className="relative z-10 flex items-center justify-between">
+          {/* Top Header: Pure Role Badge (No IDs, No reload icons, No flip buttons) */}
+          <div className="relative z-10 flex items-center justify-start">
             <div
-              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full text-[8px] sm:text-[10px] font-mono font-semibold border backdrop-blur-md bg-[#07111F]/80 ${theme.badgeBg}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold border backdrop-blur-md bg-[#07111F]/80 ${theme.badgeBg}`}
             >
-              <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${theme.dot} animate-pulse`} />
-              <span className="uppercase tracking-wider font-mono">
-                {bentoIndex} • {member.badgeId}
+              <span className={`w-1.5 h-1.5 rounded-full ${theme.dot} animate-pulse`} />
+              <span className="tracking-wide">
+                {member.role}
               </span>
-            </div>
-
-            <div className="inline-flex items-center gap-1 text-[8px] sm:text-[10px] font-medium text-[#35D6E8] bg-[#07111F]/90 px-1.5 sm:px-2 py-0.5 rounded-full border border-[#35D6E8]/40 shadow-sm">
-              <RotateCw className="w-2.5 h-2.5" />
-              <span className="hidden xs:inline">Flip bio</span>
             </div>
           </div>
 
-          {/* Studio Portrait Visual: Tailored Close-Up Face Framing */}
+          {/* Studio Portrait Visual */}
           {member.photoUrl && (
             <div className="absolute inset-0 z-0 overflow-hidden rounded-2xl sm:rounded-3xl bg-[#081526]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -156,110 +150,82 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
             </div>
           )}
 
-          {/* Bottom: Signature Frosted Floating Glass Nameplate */}
-          <div className="relative z-10 rounded-xl sm:rounded-2xl p-2 sm:p-3 lg:p-3.5 backdrop-blur-md bg-[#07111F]/90 border border-[#35D6E8]/40 shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
-            <h3 className="text-xs sm:text-base lg:text-lg font-bold text-[#F4F8FC] leading-tight truncate">
+          {/* Bottom: Signature Frosted Floating Glass Nameplate (Clean Name & Role, No View Button, No Reload Icon) */}
+          <div className="relative z-10 rounded-xl sm:rounded-2xl p-3 sm:p-4 backdrop-blur-md bg-[#07111F]/90 border border-[#35D6E8]/40 shadow-[0_4px_24px_rgba(0,0,0,0.7)]">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold text-[#F4F8FC] leading-tight">
               {member.name}
             </h3>
 
-            <p className="text-[10px] sm:text-xs lg:text-sm font-semibold mt-0.5 text-[#35D6E8] truncate">
+            <p className="text-xs sm:text-sm font-semibold mt-1 text-[#35D6E8]">
               {member.role}
             </p>
-
-            <div className="flex items-center justify-between mt-1 sm:mt-1.5 pt-1 sm:pt-1.5 border-t border-[#1C344D]/80 text-[8.5px] sm:text-[10px] text-[#9BAFC3]/80">
-              <span className="truncate">Leadership</span>
-              <span className="text-[#35D6E8] shrink-0 font-medium ml-1 inline-flex items-center gap-1">
-                <span>View</span>
-                <RotateCw className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* ================= BACK SIDE (180° FLIPPED) ================= */}
+        {/* ================= BACK SIDE (Tap anywhere to flip back) ================= */}
         <div
-          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-3 sm:p-4 lg:p-5 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden ${
+          onClick={() => onToggleFlip(member.id)}
+          role="button"
+          tabIndex={0}
+          aria-label={`${member.name}&apos;s biography. Tap anywhere to flip back.`}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggleFlip(member.id);
+            }
+          }}
+          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-2xl sm:rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-4 sm:p-5 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden cursor-pointer ${
             isFlipped ? "pointer-events-auto" : "pointer-events-none"
           }`}
         >
-          {/* Top Header: Badge & Flip Back */}
-          <div className="relative z-10 flex items-center justify-between border-b border-[#1C344D]/80 pb-1.5">
-            <div
-              className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-mono font-semibold border ${theme.badgeBg}`}
-            >
-              <span className={`w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full ${theme.dot} animate-pulse`} />
-              <span className="uppercase tracking-wider truncate max-w-[90px] sm:max-w-none">
-                {bentoIndex} • {member.role}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFlip(member.id);
-              }}
-              className="inline-flex items-center gap-1 text-[8px] sm:text-[10px] font-medium text-[#35D6E8] hover:text-white bg-[#07111F]/90 px-2 py-0.5 rounded-full border border-[#35D6E8]/40 shadow-sm transition-colors cursor-pointer"
-              aria-label="Flip card back to front"
-            >
-              <RotateCw className="w-2 sm:w-2.5 h-2 sm:h-2.5" />
-              <span>Back</span>
-            </button>
+          {/* Top Header: Clean Name & Role (No Back button, No reload icon) */}
+          <div className="relative z-10 border-b border-[#1C344D]/80 pb-2">
+            <h3 className="text-base sm:text-lg font-bold text-[#F4F8FC] leading-tight">
+              {member.name}
+            </h3>
+            <p className="text-xs sm:text-sm font-semibold text-[#35D6E8] mt-0.5">
+              {member.role}
+            </p>
           </div>
 
           {/* Full Untruncated Bio with Smooth Scrollbar */}
-          <div className="relative z-10 flex-1 my-1.5 sm:my-2.5 overflow-y-auto pr-1 text-left [scrollbar-width:thin] [scrollbar-color:#35D6E8_transparent]">
+          <div className="relative z-10 flex-1 my-3 overflow-y-auto pr-1 text-left [scrollbar-width:thin] [scrollbar-color:#35D6E8_transparent]">
             {member.bio ? (
-              <div className="text-[9.5px] sm:text-[11.5px] lg:text-[12.5px] text-[#E2E8F0] leading-relaxed whitespace-pre-line font-normal space-y-1">
+              <div className="text-xs sm:text-sm text-[#E2E8F0] leading-relaxed whitespace-pre-line font-normal space-y-1.5">
                 {member.bio}
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center text-[#9BAFC3] text-xs py-2">
-                <p className="text-[10px] sm:text-xs text-[#9BAFC3]/90">
+                <p className="text-xs text-[#9BAFC3]/90">
                   Official founding member contributing to PulseID&apos;s healthcare technology platform.
                 </p>
               </div>
             )}
           </div>
 
-          {/* Bottom Action: Direct LinkedIn Connect Button */}
-          <div className="relative z-20 pt-1.5 border-t border-[#1C344D]/80 flex flex-col gap-1">
+          {/* Bottom Action: Direct LinkedIn Connect Button (No Tap-to-flip text, No reload icon) */}
+          <div className="relative z-20 pt-2 border-t border-[#1C344D]/80">
             {member.socials?.linkedin ? (
               <a
                 href={member.socials.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                onPointerDown={(e) => e.stopPropagation()}
-                onTouchStart={(e) => e.stopPropagation()}
-                onTouchEnd={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
                   window.open(member.socials?.linkedin, "_blank", "noopener,noreferrer");
                 }}
-                className="relative z-30 inline-flex items-center justify-center gap-1.5 w-full py-1.5 sm:py-2 px-2.5 sm:px-3 rounded-xl bg-[#0077B5] hover:bg-[#006399] active:bg-[#004e75] text-[9.5px] sm:text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] cursor-pointer"
+                className="relative z-30 inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#0077B5] hover:bg-[#006399] active:bg-[#004e75] text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] cursor-pointer"
                 aria-label={`Open ${member.name}'s LinkedIn profile`}
               >
-                <LinkedInIcon size={12} className="text-white shrink-0" />
-                <span className="truncate">LinkedIn</span>
-                <ExternalLink size={10} className="text-white/80 shrink-0" />
+                <LinkedInIcon size={14} className="text-white shrink-0" />
+                <span>Connect on LinkedIn</span>
+                <ExternalLink size={12} className="text-white/80 shrink-0" />
               </a>
             ) : (
-              <div className="px-2 py-1 rounded-lg bg-[#07111F]/80 border border-[#1C344D] text-[10px] text-[#9BAFC3]/80 text-center font-mono">
+              <div className="px-2 py-1 rounded-lg bg-[#07111F]/80 border border-[#1C344D] text-xs text-[#9BAFC3]/80 text-center font-mono">
                 Founding Member
               </div>
             )}
-
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFlip(member.id);
-              }}
-              className="text-[8px] sm:text-[9px] text-[#35D6E8]/70 hover:text-[#35D6E8] font-mono tracking-wider text-center py-0.5 flex items-center justify-center gap-1 cursor-pointer transition-colors"
-            >
-              <RotateCw className="w-2 h-2" />
-              <span>Tap to flip</span>
-            </button>
           </div>
         </div>
       </motion.div>
@@ -733,9 +699,9 @@ export function TeamSection() {
           </p>
         </div>
 
-        {/* 4 Founders Bento Grid: Strictly CEO -> CTO -> Business -> Marketing */}
-        {/* On mobile: 2x2 Bento grid (all 4 visible at once, uniform gaps, same level). On desktop: 4 cards side-by-side on same level */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 max-w-6xl mx-auto items-stretch">
+        {/* 4 Founders Display: Strictly CEO -> CTO -> Business -> Marketing */}
+        {/* 1 card per row on mobile, 4 side-by-side on desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 max-w-sm sm:max-w-2xl lg:max-w-6xl mx-auto items-stretch">
           {LEADERSHIP_MEMBERS.map((founder, idx) => (
             <FounderCard
               key={founder.id}

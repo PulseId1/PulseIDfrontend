@@ -118,32 +118,68 @@ function CountdownBlock({ value, label, mounted }: AnimatedDigitBlockProps) {
 
   return (
     <div className="relative flex flex-col items-center group w-full min-w-0">
-      {/* Container with restrained glow on hover */}
-      <div className="relative w-full min-w-0 rounded-2xl sm:rounded-3xl border border-[#1C344D]/80 bg-[#0B192B]/90 py-3 sm:py-4 md:py-5 lg:py-6 px-2 sm:px-4 md:px-5 backdrop-blur-md shadow-[0_8px_32px_rgba(5,11,20,0.6)] transition-all duration-300 group-hover:border-[#2589FF]/60 group-hover:shadow-[0_0_36px_rgba(37,137,255,0.22)]">
-        {/* Subtle top accent highlight */}
-        <div className="absolute top-0 inset-x-4 sm:inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-[#2589FF]/40 to-transparent group-hover:via-[#35D6E8]/80 transition-all duration-300" />
+      {/* Calendar Stack Effect: Underneath Layer 2 (Bottom Page Depth) */}
+      <div
+        className="absolute -bottom-1.5 inset-x-2.5 h-3 rounded-b-2xl bg-[#050D18] border-b border-x border-[#162D4A]/60 -z-10 shadow-md"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -bottom-0.5 inset-x-1 h-2 rounded-b-2xl bg-[#081524] border-b border-x border-[#1A3656]/70 -z-10"
+        aria-hidden="true"
+      />
 
-        {/* Animated numeral - fully unclipped with leading-none */}
-        <div className="relative flex items-center justify-center py-1">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.span
-              key={formattedNumber}
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -10, opacity: 0 }}
-              transition={{ duration: 0.22, ease: "easeOut" }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-mono font-bold tracking-tight text-[#F4F8FC] tabular-nums select-none leading-none drop-shadow-[0_4px_24px_rgba(37,137,255,0.25)]"
-              aria-hidden="true"
-            >
-              {formattedNumber}
-            </motion.span>
-          </AnimatePresence>
+      {/* Main Calendar Block */}
+      <div className="relative w-full min-w-0 rounded-2xl sm:rounded-3xl border border-[#1E3652] bg-[#0A182A] overflow-hidden shadow-[0_12px_36px_rgba(2,6,12,0.85),0_1px_0_rgba(255,255,255,0.08)_inset] transition-all duration-300 group-hover:border-[#35D6E8]/60 group-hover:shadow-[0_0_32px_rgba(53,214,232,0.2)]">
+        {/* Top Calendar Binding Tab / Header with Binder Eyelets */}
+        <div className="relative bg-gradient-to-r from-[#10243C] via-[#162F4E] to-[#10243C] border-b border-[#1C3654] px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between">
+          {/* Left Binder Eyelet / Ring */}
+          <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#07111F] border border-[#35D6E8]/40 shadow-inner flex items-center justify-center">
+            <span className="w-0.5 h-0.5 rounded-full bg-[#35D6E8]/70" />
+          </span>
+
+          {/* Unit Header (Calendar Month/Category Style) */}
+          <span className="text-[9px] sm:text-[11px] font-mono font-bold tracking-[0.22em] uppercase text-[#35D6E8] group-hover:text-white transition-colors">
+            {label}
+          </span>
+
+          {/* Right Binder Eyelet / Ring */}
+          <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#07111F] border border-[#35D6E8]/40 shadow-inner flex items-center justify-center">
+            <span className="w-0.5 h-0.5 rounded-full bg-[#35D6E8]/70" />
+          </span>
         </div>
 
-        {/* Unit label below numeral */}
-        <span className="mt-1.5 sm:mt-2.5 block text-center text-[10px] sm:text-xs md:text-sm font-semibold tracking-widest uppercase text-[#35D6E8]/90 group-hover:text-[#35D6E8] transition-colors">
-          {label}
-        </span>
+        {/* Calendar Flip Tile Body */}
+        <div className="relative py-4 sm:py-5 md:py-6 lg:py-7 px-2 sm:px-4 flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#0C1B2E] via-[#091524] to-[#07111F]">
+          {/* Top Half Sheen */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.04] to-transparent" />
+
+          {/* Horizontal Split Line (Calendar Page Seam) */}
+          <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center z-20">
+            {/* Left mechanical hinge notch */}
+            <div className="w-1.5 sm:w-2 h-2.5 sm:h-3 rounded-r-md bg-[#07111F] border-y border-r border-[#1E3652] shrink-0" />
+            {/* Seam line with upper groove and lower shadow */}
+            <div className="flex-1 h-[1.5px] bg-[#050D18] border-b border-white/[0.06]" />
+            {/* Right mechanical hinge notch */}
+            <div className="w-1.5 sm:w-2 h-2.5 sm:h-3 rounded-l-md bg-[#07111F] border-y border-l border-[#1E3652] shrink-0" />
+          </div>
+
+          {/* Calendar Date Number */}
+          <div className="relative z-10 flex items-center justify-center py-1">
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={formattedNumber}
+                initial={{ y: 12, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -12, opacity: 0 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-mono font-black tracking-tight text-[#F4F8FC] tabular-nums select-none leading-none drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]"
+                aria-hidden="true"
+              >
+                {formattedNumber}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </div>
   );

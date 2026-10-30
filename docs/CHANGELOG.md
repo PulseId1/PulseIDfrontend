@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.11.0] - 2026-10-31
+
+### Changed
+- **1 Card Per Row for Leadership on Mobile (`team-section.tsx`):**
+  - Updated leadership grid layout to `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`, presenting 1 full, spacious card per row on mobile (`max-w-sm mx-auto`).
+  - Increased card height to `h-[360px] sm:h-[390px] lg:h-[420px]` for natural portrait framing.
+- **Removed UI Clutter from Leadership Cards (`team-section.tsx`):**
+  - Removed badge IDs (`PID-EXE-01`, etc.) from all cards.
+  - Removed "View" button, "Flip bio" button, "Back" button, and "Tap to flip" text.
+  - Removed all reload icons (`RotateCw`) from the leadership cards.
+- **Tap Anywhere to Flip (`team-section.tsx`):**
+  - Enabled intuitive card flipping by clicking anywhere on the front or back of the card.
+  - Clicking the LinkedIn CTA on the back opens the link directly without flipping the card.
+- **Perpetual Flip-Calendar Countdown Block (`countdown-timer.tsx`):**
+  - Redesigned countdown blocks to evoke an authentic perpetual flip-calendar / desktop calendar block.
+  - Added top calendar binding tab with metallic binder ring eyelets and uppercase unit headers (`DAYS`, `HOURS`, `MINUTES`, `SECONDS`).
+  - Added horizontal calendar flip seam across the middle with mechanical hinge notches.
+  - Added layered calendar page stack depth at the bottom.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (390x844).
+
+---
+
 ## [0.10.0] - 2026-10-31
 
 ### Fixed
