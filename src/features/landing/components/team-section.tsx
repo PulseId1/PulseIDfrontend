@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight, RotateCw, ExternalLink } from "lucide-react";
 import {
@@ -58,7 +58,7 @@ const CATEGORY_THEMES = {
 } as const;
 
 /* =========================================================================
-   1. FOUNDING LEADERSHIP CARD (Static Level/Arch Display, 3D Flip in place)
+   1. FOUNDING LEADERSHIP CARD (3D In-Place Flip with Safe Link Execution)
    ========================================================================= */
 
 interface FounderCardProps {
@@ -66,14 +66,21 @@ interface FounderCardProps {
   readonly index: number;
   readonly isFlipped: boolean;
   readonly onToggleFlip: (id: string) => void;
+  readonly isMobileLayout?: boolean;
 }
 
-function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProps) {
+function FounderCard({
+  member,
+  index,
+  isFlipped,
+  onToggleFlip,
+  isMobileLayout = false,
+}: FounderCardProps) {
   const theme = CATEGORY_THEMES.leadership;
 
   // Gentle parabolic arch elevation on desktop: outer cards slightly dipped, center slightly raised
   // index: 0 (CEO) -> 10px, 1 (CTO) -> 0px, 2 (CBO) -> 0px, 3 (CMO) -> 10px
-  const desktopY = index === 0 || index === 3 ? 10 : 0;
+  const desktopY = !isMobileLayout && (index === 0 || index === 3) ? 10 : 0;
 
   return (
     <div
@@ -87,26 +94,26 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
         }}
         transition={{
           type: "spring",
-          stiffness: 260,
+          stiffness: 300,
           damping: 28,
-          mass: 0.6,
+          mass: 0.5,
         }}
-        onClick={() => onToggleFlip(member.id)}
-        className="w-full h-full relative [transform-style:preserve-3d] select-none cursor-pointer rounded-3xl"
-        role="button"
-        tabIndex={0}
-        aria-label={`${member.name}, ${member.role}. Click to flip card details.`}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onToggleFlip(member.id);
-          }
-        }}
+        className="w-full h-full relative [transform-style:preserve-3d] select-none rounded-3xl"
       >
         {/* ================= FRONT SIDE ================= */}
         <div
-          className={`absolute inset-0 [backface-visibility:hidden] rounded-3xl border p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all duration-300 bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_12px_36px_rgba(2,6,12,0.8)] hover:shadow-[0_0_40px_rgba(53,214,232,0.28)] hover:border-[#35D6E8]/70 ${
-            isFlipped ? "border-transparent" : "border-[#1E3652]/80"
+          onClick={() => onToggleFlip(member.id)}
+          role="button"
+          tabIndex={0}
+          aria-label={`${member.name}, ${member.role}. Tap to flip card and view biography.`}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggleFlip(member.id);
+            }
+          }}
+          className={`absolute inset-0 [backface-visibility:hidden] rounded-3xl border p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all duration-300 bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_12px_36px_rgba(2,6,12,0.8)] hover:shadow-[0_0_40px_rgba(53,214,232,0.28)] hover:border-[#35D6E8]/70 cursor-pointer ${
+            isFlipped ? "border-transparent pointer-events-none" : "border-[#1E3652]/80"
           }`}
         >
           {/* Top Header: Role Badge & Flip Cue */}
@@ -163,7 +170,9 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
 
         {/* ================= BACK SIDE (180° FLIPPED) ================= */}
         <div
-          className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-5 sm:p-6 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden"
+          className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-5 sm:p-6 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden ${
+            isFlipped ? "pointer-events-auto" : "pointer-events-none"
+          }`}
         >
           {/* Top Header: Badge & Flip Back */}
           <div className="relative z-10 flex items-center justify-between border-b border-[#1C344D]/80 pb-2.5">
@@ -190,7 +199,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
             </button>
           </div>
 
-          {/* Full Untruncated Bio with Smooth Scrollbar */}
+          {/* Full Untruncated Bio with Smooth Scrollbar (Safe for touch scrolling) */}
           <div className="relative z-10 flex-1 my-3 overflow-y-auto pr-1 text-left [scrollbar-width:thin] [scrollbar-color:#35D6E8_transparent]">
             {member.bio ? (
               <div className="text-[12px] sm:text-[13px] text-[#E2E8F0] leading-relaxed whitespace-pre-line font-normal space-y-2">
@@ -205,15 +214,21 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
             )}
           </div>
 
-          {/* Bottom Action: Direct LinkedIn Connect Button */}
-          <div className="relative z-10 pt-2 border-t border-[#1C344D]/80 flex flex-col gap-1.5">
+          {/* Bottom Action: Direct LinkedIn Connect Button (Event-Isolated, Never Flips) */}
+          <div className="relative z-20 pt-2 border-t border-[#1C344D]/80 flex flex-col gap-1.5">
             {member.socials?.linkedin ? (
               <a
                 href={member.socials.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#0077B5] hover:bg-[#006399] text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8]"
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(member.socials?.linkedin, "_blank", "noopener,noreferrer");
+                }}
+                className="relative z-30 inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#0077B5] hover:bg-[#006399] active:bg-[#004e75] text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] cursor-pointer"
                 aria-label={`Open ${member.name}'s LinkedIn profile`}
               >
                 <LinkedInIcon size={14} className="text-white" />
@@ -225,9 +240,18 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
                 Official Founding Member
               </div>
             )}
-            <span className="text-[8px] text-[#35D6E8]/60 font-mono tracking-wider text-center">
-              Tap card to flip back
-            </span>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFlip(member.id);
+              }}
+              className="text-[9px] text-[#35D6E8]/70 hover:text-[#35D6E8] font-mono tracking-wider text-center py-0.5 flex items-center justify-center gap-1 cursor-pointer transition-colors"
+            >
+              <RotateCw className="w-2.5 h-2.5" />
+              <span>Tap to flip back</span>
+            </button>
           </div>
         </div>
       </motion.div>
@@ -236,7 +260,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
 }
 
 /* =========================================================================
-   2. SPECIALIST ARC CARD (Independent Arched 3D Carousel for lower section)
+   2. SPECIALIST ARC CARD (Snappy 3D Coverflow Arc with Tactile Feedback)
    ========================================================================= */
 
 interface ArcCardProps {
@@ -277,31 +301,23 @@ function ArcCard({
     return null;
   }
 
-  // Parabolic Arc Geometry
-  const spacing = isMobile ? 140 : 215;
+  // Refined Arched Coverflow Geometry
+  const spacing = isMobile ? 165 : 225;
   const x = offset * spacing;
-  const y = Math.pow(absOffset, 1.7) * (isMobile ? 16 : 22);
-  const scale = isCenter ? 1.04 : Math.max(0.68, 0.90 - (absOffset - 1) * 0.12);
-  const rotateY = effectivelyFlipped ? 180 : -offset * 12;
-  const rotateZ = offset * 2;
+  const y = Math.pow(absOffset, 1.6) * (isMobile ? 14 : 20);
+  const scale = isCenter ? 1.05 : Math.max(0.72, 0.88 - (absOffset - 1) * 0.12);
+  const rotateY = effectivelyFlipped ? 180 : -offset * (isMobile ? 14 : 16);
+  const rotateZ = offset * 1.5;
   const opacity = isCenter
     ? 1
     : absOffset === 1
-    ? 0.82
+    ? (isMobile ? 0.65 : 0.82)
     : absOffset === 2
-    ? 0.58
-    : 0.35;
+    ? 0.55
+    : 0.32;
   const zIndex = 50 - absOffset * 10;
 
   const theme = CATEGORY_THEMES[member.category];
-
-  const handleCardClick = () => {
-    if (!isCenter) {
-      onSelect(index);
-    } else {
-      onToggleFlip(member.id);
-    }
-  };
 
   return (
     <motion.div
@@ -318,30 +334,39 @@ function ArcCard({
       }}
       transition={{
         type: "spring",
-        stiffness: 260,
+        stiffness: 350,
         damping: 28,
-        mass: 0.6,
+        mass: 0.5,
       }}
-      onClick={handleCardClick}
-      className="absolute top-4 w-[250px] sm:w-[275px] md:w-[295px] h-[370px] sm:h-[400px] md:h-[420px] [transform-style:preserve-3d] select-none cursor-pointer"
-      role="button"
-      tabIndex={0}
-      aria-label={`${member.name}, ${member.role}. ${
-        isCenter ? "Click to flip card details." : "Click to focus."
-      }`}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleCardClick();
-        }
-      }}
+      className="absolute top-4 w-[250px] sm:w-[275px] md:w-[295px] h-[375px] sm:h-[405px] md:h-[425px] [transform-style:preserve-3d] select-none"
     >
       {/* Front Face */}
       <div
-        className={`absolute inset-0 [backface-visibility:hidden] rounded-3xl border p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all duration-300 ${
+        onClick={() => {
+          if (!isCenter) {
+            onSelect(index);
+          } else {
+            onToggleFlip(member.id);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`${member.name}, ${member.role}. ${
+          isCenter ? "Tap to flip card." : "Tap to focus."
+        }`}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            if (!isCenter) onSelect(index);
+            else onToggleFlip(member.id);
+          }
+        }}
+        className={`absolute inset-0 [backface-visibility:hidden] rounded-3xl border p-4 sm:p-5 flex flex-col justify-between overflow-hidden transition-all duration-300 cursor-pointer ${
+          effectivelyFlipped ? "pointer-events-none" : "pointer-events-auto"
+        } ${
           isCenter
             ? "border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)]"
-            : "border border-[#1E3652]/70 bg-gradient-to-b from-[#0F1E33]/95 via-[#0A1626]/95 to-[#07111F]/95 shadow-[0_12px_36px_rgba(2,6,12,0.7)] hover:border-[#35D6E8]/40"
+            : "border border-[#1E3652]/70 bg-gradient-to-b from-[#0F1E33]/95 via-[#0A1626]/95 to-[#07111F]/95 shadow-[0_12px_36px_rgba(2,6,12,0.7)] hover:border-[#35D6E8]/50"
         }`}
       >
         {isCenter && (
@@ -514,9 +539,11 @@ function ArcCard({
         </div>
       </div>
 
-      {/* Back Face (180° Flipped) */}
+      {/* Back Face (180° Flipped with Safe Link Execution) */}
       <div
-        className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-5 sm:p-6 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden"
+        className={`absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] rounded-3xl border-2 border-[#35D6E8] bg-gradient-to-b from-[#14263E] via-[#0D1A2A] to-[#07111F] p-5 sm:p-6 flex flex-col justify-between shadow-[0_0_48px_rgba(53,214,232,0.32),0_20px_45px_rgba(3,8,16,0.9)] text-left overflow-hidden ${
+          effectivelyFlipped ? "pointer-events-auto" : "pointer-events-none"
+        }`}
       >
         <div className="relative z-10 flex items-center justify-between border-b border-[#1C344D]/80 pb-2.5">
           <div
@@ -556,14 +583,20 @@ function ArcCard({
           )}
         </div>
 
-        <div className="relative z-10 pt-2 border-t border-[#1C344D]/80 flex flex-col gap-1.5">
+        <div className="relative z-20 pt-2 border-t border-[#1C344D]/80 flex flex-col gap-1.5">
           {member.socials?.linkedin ? (
             <a
               href={member.socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#0077B5] hover:bg-[#006399] text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8]"
+              onPointerDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(member.socials?.linkedin, "_blank", "noopener,noreferrer");
+              }}
+              className="relative z-30 inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#0077B5] hover:bg-[#006399] active:bg-[#004e75] text-xs font-semibold text-white transition-all shadow-[0_4px_16px_rgba(0,119,181,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] cursor-pointer"
               aria-label={`Open ${member.name}'s LinkedIn profile`}
             >
               <LinkedInIcon size={14} className="text-white" />
@@ -575,9 +608,18 @@ function ArcCard({
               Core Team Specialist
             </div>
           )}
-          <span className="text-[8px] text-[#35D6E8]/60 font-mono tracking-wider text-center">
-            Tap card to flip back
-          </span>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFlip(member.id);
+            }}
+            className="text-[9px] text-[#35D6E8]/70 hover:text-[#35D6E8] font-mono tracking-wider text-center py-0.5 flex items-center justify-center gap-1 cursor-pointer transition-colors"
+          >
+            <RotateCw className="w-2.5 h-2.5" />
+            <span>Tap to flip back</span>
+          </button>
         </div>
       </div>
     </motion.div>
@@ -592,11 +634,18 @@ export function TeamSection() {
   // Flip states for leadership cards
   const [flippedFounders, setFlippedFounders] = useState<Record<string, boolean>>({});
 
+  // Mobile Leadership Carousel State (for smooth swipe instead of 1700px vertical stack)
+  const [activeFounderIndex, setActiveFounderIndex] = useState(0);
+
   // Specialist carousel state
   const [activeCategory, setActiveCategory] = useState<TeamFilterCategory>("all");
   const [activeIndex, setActiveIndex] = useState(0);
   const [flippedSpecialistId, setFlippedSpecialistId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Touch tracking refs for silky touch swipe navigation
+  const touchSpecialistStartX = useRef<number | null>(null);
+  const touchFounderStartX = useRef<number | null>(null);
 
   // Filter specialist members
   const filteredSpecialists =
@@ -631,17 +680,17 @@ export function TeamSection() {
     setFlippedSpecialistId(null);
   };
 
-  const handlePrev = useCallback(() => {
+  const handlePrevSpecialist = useCallback(() => {
     setFlippedSpecialistId(null);
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : filteredSpecialists.length - 1));
   }, [filteredSpecialists.length]);
 
-  const handleNext = useCallback(() => {
+  const handleNextSpecialist = useCallback(() => {
     setFlippedSpecialistId(null);
     setActiveIndex((prev) => (prev < filteredSpecialists.length - 1 ? prev + 1 : 0));
   }, [filteredSpecialists.length]);
 
-  const handleSelectCard = (index: number) => {
+  const handleSelectSpecialistCard = (index: number) => {
     setFlippedSpecialistId(null);
     setActiveIndex(index);
   };
@@ -650,11 +699,20 @@ export function TeamSection() {
     setFlippedSpecialistId((prev) => (prev === memberId ? null : memberId));
   };
 
+  // Founder carousel controls on mobile
+  const handlePrevFounder = () => {
+    setActiveFounderIndex((prev) => (prev > 0 ? prev - 1 : LEADERSHIP_MEMBERS.length - 1));
+  };
+
+  const handleNextFounder = () => {
+    setActiveFounderIndex((prev) => (prev < LEADERSHIP_MEMBERS.length - 1 ? prev + 1 : 0));
+  };
+
   return (
     <section
       id="team"
       aria-labelledby="team-heading"
-      className="relative py-16 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden"
+      className="relative py-14 sm:py-20 lg:py-26 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden"
     >
       {/* Background ambient lighting */}
       <div
@@ -663,8 +721,8 @@ export function TeamSection() {
       />
 
       {/* ================= SECTION A: FOUNDING LEADERSHIP ================= */}
-      <div className="relative z-10 mb-20 sm:mb-28">
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+      <div className="relative z-10 mb-16 sm:mb-24">
+        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-3 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#35D6E8] animate-pulse" />
             <span>Executive Leadership</span>
@@ -682,8 +740,9 @@ export function TeamSection() {
           </p>
         </div>
 
-        {/* 4 Founders Side-by-Side: Strictly CEO -> CTO -> Business -> Marketing */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-6 max-w-6xl mx-auto items-center">
+        {/* 1. Desktop & Large Screens: 4 Founders Side-by-Side in One Unified Level Row */}
+        {/* Strictly ordered: CEO -> CTO -> Business -> Marketing */}
+        <div className="hidden lg:grid lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-center">
           {LEADERSHIP_MEMBERS.map((founder, idx) => (
             <FounderCard
               key={founder.id}
@@ -691,13 +750,93 @@ export function TeamSection() {
               index={idx}
               isFlipped={!!flippedFounders[founder.id]}
               onToggleFlip={handleToggleFounderFlip}
+              isMobileLayout={false}
             />
           ))}
+        </div>
+
+        {/* 2. Mobile & Tablet: Fluid Swipeable Touch Slider with Visible Peeking Cards */}
+        <div className="block lg:hidden max-w-md mx-auto">
+          {/* Controls Header for Mobile Slider */}
+          <div className="flex items-center justify-between px-2 mb-3">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#9BAFC3]">
+              <span className="text-[#35D6E8] font-semibold">
+                0{activeFounderIndex + 1}
+              </span>
+              <span>/ 0{LEADERSHIP_MEMBERS.length}</span>
+              <span className="text-white/40">•</span>
+              <span className="text-[#E2E8F0] font-medium truncate max-w-[150px]">
+                {LEADERSHIP_MEMBERS[activeFounderIndex]?.name}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={handlePrevFounder}
+                className="p-1.5 rounded-xl bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] hover:bg-[#102238] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8]"
+                aria-label="Previous leader"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={handleNextFounder}
+                className="p-1.5 rounded-xl bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] hover:bg-[#102238] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8]"
+                aria-label="Next leader"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Swipe Track with Touch Listener */}
+          <div
+            onTouchStart={(e) => {
+              touchFounderStartX.current = e.touches[0].clientX;
+            }}
+            onTouchEnd={(e) => {
+              if (touchFounderStartX.current === null) return;
+              const deltaX = e.changedTouches[0].clientX - touchFounderStartX.current;
+              if (deltaX < -25) handleNextFounder();
+              else if (deltaX > 25) handlePrevFounder();
+              touchFounderStartX.current = null;
+            }}
+            className="w-full flex justify-center touch-pan-y"
+          >
+            {LEADERSHIP_MEMBERS[activeFounderIndex] && (
+              <FounderCard
+                key={LEADERSHIP_MEMBERS[activeFounderIndex].id}
+                member={LEADERSHIP_MEMBERS[activeFounderIndex]}
+                index={activeFounderIndex}
+                isFlipped={!!flippedFounders[LEADERSHIP_MEMBERS[activeFounderIndex].id]}
+                onToggleFlip={handleToggleFounderFlip}
+                isMobileLayout={true}
+              />
+            )}
+          </div>
+
+          {/* Dot Pagination for 4 Leaders */}
+          <div className="flex items-center justify-center gap-2 mt-4">
+            {LEADERSHIP_MEMBERS.map((founder, idx) => (
+              <button
+                key={founder.id}
+                type="button"
+                onClick={() => setActiveFounderIndex(idx)}
+                className={`transition-all rounded-full ${
+                  idx === activeFounderIndex
+                    ? "w-7 h-1.5 bg-[#35D6E8]"
+                    : "w-1.5 h-1.5 bg-[#1C344D] hover:bg-[#9BAFC3]"
+                }`}
+                aria-label={`Go to ${founder.name}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Visual Ambient Divider Between Leadership and Specialists */}
-      <div className="relative z-10 max-w-4xl mx-auto mb-16 sm:mb-20 flex items-center justify-center gap-4">
+      <div className="relative z-10 max-w-4xl mx-auto mb-14 sm:mb-20 flex items-center justify-center gap-4">
         <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent via-[#1C344D] to-[#35D6E8]/40" />
         <div className="w-2.5 h-2.5 rotate-45 border border-[#35D6E8] bg-[#07111F]" />
         <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent via-[#1C344D] to-[#35D6E8]/40" />
@@ -781,12 +920,13 @@ export function TeamSection() {
           {/* Navigation Controls Bar */}
           <div className="flex items-center justify-between max-w-3xl mx-auto px-4 mb-3 sm:mb-4">
             <span className="text-[11px] font-mono text-[#9BAFC3]/70">
-              {isMobile ? "← Swipe to navigate arc →" : "← Drag or click cards to rotate arc →"}
+              {isMobile ? "← Swipe cards to rotate arc →" : "← Drag or click cards to rotate arc →"}
             </span>
 
             <div className="flex items-center gap-2">
               <button
-                onClick={handlePrev}
+                type="button"
+                onClick={handlePrevSpecialist}
                 disabled={filteredSpecialists.length <= 1}
                 className="p-2 rounded-xl bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] hover:border-[#35D6E8]/60 hover:bg-[#102238] transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8]"
                 aria-label="Previous team specialist"
@@ -797,7 +937,8 @@ export function TeamSection() {
                 {activeIndex + 1} / {filteredSpecialists.length}
               </span>
               <button
-                onClick={handleNext}
+                type="button"
+                onClick={handleNextSpecialist}
                 disabled={filteredSpecialists.length <= 1}
                 className="p-2 rounded-xl bg-[#0B192B] border border-[#1C344D] text-[#35D6E8] hover:border-[#35D6E8]/60 hover:bg-[#102238] transition-colors disabled:opacity-30 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8]"
                 aria-label="Next team specialist"
@@ -807,15 +948,19 @@ export function TeamSection() {
             </div>
           </div>
 
-          {/* 3D Arc Presentation Stage with Drag & Swipe Gesture Support */}
-          <motion.div
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -35) handleNext();
-              if (info.offset.x > 35) handlePrev();
+          {/* 3D Arc Presentation Stage with Direct Touch & Drag Gestures */}
+          <div
+            onTouchStart={(e) => {
+              touchSpecialistStartX.current = e.touches[0].clientX;
             }}
-            className="relative h-[430px] sm:h-[460px] md:h-[490px] w-full flex items-center justify-center overflow-visible touch-pan-y"
+            onTouchEnd={(e) => {
+              if (touchSpecialistStartX.current === null) return;
+              const deltaX = e.changedTouches[0].clientX - touchSpecialistStartX.current;
+              if (deltaX < -25) handleNextSpecialist();
+              else if (deltaX > 25) handlePrevSpecialist();
+              touchSpecialistStartX.current = null;
+            }}
+            className="relative h-[435px] sm:h-[465px] md:h-[495px] w-full flex items-center justify-center overflow-visible touch-pan-y"
           >
             {/* Side Vignette Gradients */}
             <div className="pointer-events-none absolute left-0 inset-y-0 w-8 sm:w-20 bg-gradient-to-r from-[#07111F] to-transparent z-40" />
@@ -832,19 +977,20 @@ export function TeamSection() {
                   totalMembers={filteredSpecialists.length}
                   isFlipped={flippedSpecialistId === member.id}
                   onToggleFlip={handleToggleSpecialistFlip}
-                  onSelect={handleSelectCard}
+                  onSelect={handleSelectSpecialistCard}
                   isMobile={isMobile}
                 />
               ))}
             </AnimatePresence>
-          </motion.div>
+          </div>
 
           {/* Dot Pagination Track */}
           <div className="flex items-center justify-center gap-1.5 mt-4 sm:mt-6">
             {filteredSpecialists.map((member, idx) => (
               <button
                 key={member.id}
-                onClick={() => handleSelectCard(idx)}
+                type="button"
+                onClick={() => handleSelectSpecialistCard(idx)}
                 className={`transition-all rounded-full ${
                   idx === activeIndex
                     ? "w-6 h-1.5 bg-[#35D6E8]"

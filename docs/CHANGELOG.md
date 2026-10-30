@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2026-10-30
+
+### Fixed
+- **Mobile Clock Arc Visibility (`hero-clock-arc.tsx`):**
+  - Removed `hidden sm:flex` constraint and enabled responsive right-border positioning across all viewport sizes.
+  - Added SVG `vectorEffect="non-scaling-stroke"` and calibrated tick geometry (`cx: 620, cy: 400, rOuter: 590, rInner: 515`) so the 9 ticks render crisply on mobile screens without clipping or subpixel thinning.
+- **"COMING SOON" Mobile Visibility (`hero-countdown-section.tsx`):**
+  - Added a prominent glowing status pill (`• COMING SOON`) centered directly above the main headline matching `inspire/1.jpeg` and `inspire/2.jpeg`.
+  - Elevated the architectural vector watermark so it frames the headline and mascot rather than being obscured behind the opaque mobile countdown digit boxes.
+- **LinkedIn Link Click & Card Flip Bug (`team-section.tsx`):**
+  - Completely decoupled 3D card flip triggers from the card back and child interactive elements.
+  - Isolated pointer, touch, and click events (`onPointerDown`, `onTouchStart`, `onTouchEnd`, `onClick`) with `e.stopPropagation()` and explicit `window.open(..., '_blank', 'noopener,noreferrer')` execution.
+  - Prevented bio touch-scrolling from accidentally flipping the card.
+  - Added dedicated "Tap to flip back" controls on the back face.
+
+### Changed
+- **Mobile Founding Leadership Presentation (`team-section.tsx`):**
+  - Replaced the cumbersome 1700px vertical block stack on mobile (`< 1024px`) with an interactive, fluid swipeable slider featuring leader indexing (`01 / 04 • Name`), Prev/Next arrow controls, and dot indicators.
+  - Retained the side-by-side 4-column unified grid on desktop (`lg:grid-cols-4`) in strict order: **CEO $\to$ CTO $\to$ Business $\to$ Marketing**.
+- **Specialists Arched Carousel Motion Dynamics:**
+  - Upgraded spring physics to snappy, responsive parameters (`stiffness: 350, damping: 28, mass: 0.5`).
+  - Added direct mobile touch gesture swipe support with a responsive 25px flick threshold.
+  - Tuned 3D coverflow geometry to provide prominent, elegant peeking cards on both mobile and desktop.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly in Turbopack.
+- Verified in headless browser test with automated LinkedIn navigation interception and visual screenshot captures.
+
+---
+
 ## [0.5.0] - 2026-10-30
 
 ### Added

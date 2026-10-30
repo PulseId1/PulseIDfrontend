@@ -29,17 +29,17 @@ export function HeroCountdownSection() {
         aria-hidden="true"
       />
 
-      {/* Clock Lines Flush on the Right Border (Inspired by inspire/2.jpeg) */}
+      {/* Clock Lines Flush on the Right Border (Visible on phone and desktop) */}
       <HeroClockArc />
 
-      {/* Giant Architectural Background Watermark: COMING SOON (SVG Text: 100% visible, perfectly centered, never cut) */}
+      {/* Architectural Background Watermark: COMING SOON (Elevated & scaled so it is never obscured) */}
       <div
-        className="pointer-events-none select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[96vw] px-2 flex items-center justify-center text-white/[0.035] z-0 leading-none"
+        className="pointer-events-none select-none absolute top-[28%] sm:top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[94vw] px-4 flex items-center justify-center text-white/[0.06] sm:text-white/[0.04] z-0 leading-none"
         aria-hidden="true"
       >
         <svg
-          viewBox="0 0 1200 160"
-          className="w-full h-auto max-h-[170px] overflow-visible"
+          viewBox="0 0 1300 160"
+          className="w-full h-auto max-h-[160px] overflow-visible"
         >
           <text
             x="50%"
@@ -48,8 +48,8 @@ export function HeroCountdownSection() {
             textAnchor="middle"
             fill="currentColor"
             fontWeight="900"
-            letterSpacing="0.10em"
-            fontSize="125"
+            letterSpacing="0.08em"
+            fontSize="115"
             className="font-sans font-black uppercase"
           >
             COMING SOON
@@ -75,6 +75,17 @@ export function HeroCountdownSection() {
 
       {/* Center: Main Countdown Hero Payload */}
       <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center my-auto py-2 sm:py-4 w-full px-4 sm:px-6">
+        {/* Prominent High-Visibility "Coming Soon" Pill Indicator */}
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#35D6E8]/10 border border-[#35D6E8]/30 text-[#35D6E8] text-[10px] sm:text-xs font-mono font-semibold tracking-[0.2em] uppercase mb-3 shadow-[0_0_16px_rgba(53,214,232,0.15)]"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-[#35D6E8] animate-pulse" />
+          <span>Coming Soon</span>
+        </motion.div>
+
         {/* Main Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 12 }}

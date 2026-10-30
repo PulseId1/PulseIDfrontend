@@ -5,9 +5,9 @@ import { motion } from "motion/react";
 
 /**
  * Right-Border Clock Dial Arc
- * Minimalist, grand-radius architectural clock arc (max 9 lines).
+ * Minimalist, grand-radius architectural clock arc (9 lines max).
  * Subdued opacity with live active indicator tracking seconds.
- * Matches inspire/2.jpeg aesthetic.
+ * Matches inspire/2.jpeg aesthetic. Renders clearly on mobile and desktop.
  */
 
 function subscribeSeconds(callback: () => void): () => void {
@@ -36,18 +36,18 @@ export function HeroClockArc({ className = "" }: { readonly className?: string }
 
   // Exactly 9 tick lines maximum across a grand-radius arc
   const tickCount = 9;
-  const startAngle = 132; // degrees
-  const endAngle = 228;   // degrees
-  const step = (endAngle - startAngle) / (tickCount - 1); // 12 degrees step
+  const startAngle = 138; // degrees
+  const endAngle = 222;   // degrees
+  const step = (endAngle - startAngle) / (tickCount - 1); // 10.5 degrees step
 
   // Grand radius circle geometry:
-  // ViewBox: 450 wide by 900 high
-  // Right border is x = 450
-  const cx = 580;
-  const cy = 450;
-  const rOuter = 580; // Sweeps up to the left (cx - rOuter = 0 at apex 180°)
-  const rInner = 518; // Tick length: 62px
-  const rPill = 478;  // Companion active indicator pill radius
+  // ViewBox: 300 wide by 800 high
+  // Center is off-screen to the right at cx = 620, cy = 400
+  const cx = 620;
+  const cy = 400;
+  const rOuter = 590; // Sweeps towards the left (apex at x = 30)
+  const rInner = 515; // Tick length: 75px
+  const rPill = 475;  // Active indicator pill radius
 
   // Map 0..59 seconds to which tick index is active (0..8)
   const activeTickIndex = isMounted ? Math.floor((seconds % 60) / (60 / tickCount)) : 4;
@@ -56,13 +56,13 @@ export function HeroClockArc({ className = "" }: { readonly className?: string }
     const angleDeg = startAngle + i * step;
     const rad = (angleDeg * Math.PI) / 180;
 
-    const x1 = Math.min(450, cx + rOuter * Math.cos(rad));
+    const x1 = cx + rOuter * Math.cos(rad);
     const y1 = cy + rOuter * Math.sin(rad);
     const x2 = cx + rInner * Math.cos(rad);
     const y2 = cy + rInner * Math.sin(rad);
 
-    const pillX1 = cx + (rPill + 26) * Math.cos(rad);
-    const pillY1 = cy + (rPill + 26) * Math.sin(rad);
+    const pillX1 = cx + (rPill + 32) * Math.cos(rad);
+    const pillY1 = cy + (rPill + 32) * Math.sin(rad);
     const pillX2 = cx + rPill * Math.cos(rad);
     const pillY2 = cy + rPill * Math.sin(rad);
 
@@ -86,19 +86,18 @@ export function HeroClockArc({ className = "" }: { readonly className?: string }
 
   return (
     <div
-      className={`pointer-events-none select-none absolute right-0 top-0 bottom-0 h-full w-48 sm:w-64 md:w-80 lg:w-[460px] overflow-hidden hidden sm:flex items-center justify-end z-0 opacity-80 sm:opacity-90 ${className}`}
+      className={`pointer-events-none select-none absolute right-0 top-0 bottom-0 h-full w-28 sm:w-44 md:w-60 lg:w-76 overflow-hidden flex items-center justify-end z-0 opacity-80 sm:opacity-90 ${className}`}
       aria-hidden="true"
     >
       {/* Subdued Ambient Radial Lighting on right edge */}
-      <div className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-64 h-[450px] bg-gradient-to-l from-[#35D6E8]/08 via-[#2589FF]/04 to-transparent blur-3xl rounded-full" />
+      <div className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 w-48 sm:w-64 h-[440px] bg-gradient-to-l from-[#35D6E8]/10 via-[#2589FF]/05 to-transparent blur-3xl rounded-full" />
 
       <svg
-        viewBox="0 0 450 900"
+        viewBox="0 0 300 800"
         className="w-full h-full overflow-visible"
         preserveAspectRatio="xMaxYMid meet"
       >
         <defs>
-          {/* Subtle soft glow for active indicator */}
           <filter id="soft-arc-glow" x="-40%" y="-40%" width="180%" height="180%">
             <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feMerge>
@@ -108,7 +107,7 @@ export function HeroClockArc({ className = "" }: { readonly className?: string }
           </filter>
         </defs>
 
-        {/* Dial Ticks along the grand arc (9 lines total with subdued opacity) */}
+        {/* Dial Ticks along the grand arc (9 lines total) */}
         {ticks.map((t) => (
           <line
             key={t.index}
@@ -116,27 +115,29 @@ export function HeroClockArc({ className = "" }: { readonly className?: string }
             y1={t.y1}
             x2={t.x2}
             y2={t.y2}
-            stroke={t.isActive ? "rgba(255, 255, 255, 0.75)" : "rgba(244, 248, 252, 0.16)"}
-            strokeWidth={t.isActive ? "3.2" : "2.2"}
+            stroke={t.isActive ? "rgba(255, 255, 255, 0.90)" : "rgba(244, 248, 252, 0.32)"}
+            strokeWidth={t.isActive ? "3" : "2"}
+            vectorEffect="non-scaling-stroke"
             strokeLinecap="round"
             filter={t.isActive ? "url(#soft-arc-glow)" : undefined}
             className="transition-colors duration-300"
           />
         ))}
 
-        {/* Companion Active Highlight Pill (subtle cyan indicator dash) */}
+        {/* Companion Active Highlight Pill (vibrant cyan indicator dash) */}
         {activeTick && (
           <motion.line
             key={`pill-${activeTick.index}`}
             initial={{ opacity: 0.5, scale: 0.9 }}
-            animate={{ opacity: 0.85, scale: 1 }}
+            animate={{ opacity: 0.95, scale: 1 }}
             transition={{ duration: 0.2 }}
             x1={activeTick.pillX1}
             y1={activeTick.pillY1}
             x2={activeTick.pillX2}
             y2={activeTick.pillY2}
             stroke="#35D6E8"
-            strokeWidth="4.5"
+            strokeWidth="4"
+            vectorEffect="non-scaling-stroke"
             strokeLinecap="round"
             filter="url(#soft-arc-glow)"
           />
