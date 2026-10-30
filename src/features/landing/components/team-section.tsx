@@ -7,11 +7,6 @@ import {
   ChevronRight,
   RotateCw,
   ExternalLink,
-  Layers,
-  Cpu,
-  Activity,
-  Pill,
-  TrendingUp,
 } from "lucide-react";
 import {
   LEADERSHIP_MEMBERS,
@@ -22,7 +17,7 @@ import type { TeamFilterCategory, TeamMember } from "../types/team-member";
 import { LinkedInIcon } from "@/components/ui/icons";
 
 /**
- * Category Visual Theme Map & Icons
+ * Category Visual Theme Map
  */
 const CATEGORY_THEMES = {
   leadership: {
@@ -32,7 +27,6 @@ const CATEGORY_THEMES = {
     badgeBg: "bg-[#35D6E8]/15 text-[#35D6E8] border-[#35D6E8]/30",
     dot: "bg-[#35D6E8]",
     department: "Executive Leadership",
-    accentColor: "#35D6E8",
   },
   technology: {
     gradient: "from-[#2589FF] to-[#35D6E8]",
@@ -41,7 +35,6 @@ const CATEGORY_THEMES = {
     badgeBg: "bg-[#2589FF]/15 text-[#35D6E8] border-[#35D6E8]/30",
     dot: "bg-[#35D6E8]",
     department: "Technology & Engineering",
-    accentColor: "#35D6E8",
   },
   pharmaceutical: {
     gradient: "from-[#10B981] to-[#35D6E8]",
@@ -50,7 +43,6 @@ const CATEGORY_THEMES = {
     badgeBg: "bg-[#10B981]/15 text-[#34D399] border-[#10B981]/30",
     dot: "bg-[#34D399]",
     department: "Pharmaceutical Division",
-    accentColor: "#10B981",
   },
   marketing: {
     gradient: "from-[#8B5CF6] to-[#EC4899]",
@@ -59,7 +51,6 @@ const CATEGORY_THEMES = {
     badgeBg: "bg-[#8B5CF6]/15 text-[#C084FC] border-[#8B5CF6]/30",
     dot: "bg-[#C084FC]",
     department: "Growth & Marketing",
-    accentColor: "#C084FC",
   },
   "clinical-research": {
     gradient: "from-[#0284C7] to-[#38BDF8]",
@@ -68,21 +59,22 @@ const CATEGORY_THEMES = {
     badgeBg: "bg-[#0284C7]/15 text-[#38BDF8] border-[#38BDF8]/30",
     dot: "bg-[#38BDF8]",
     department: "Clinical & Research",
-    accentColor: "#38BDF8",
   },
 } as const;
 
-const CATEGORY_ICONS: Record<TeamFilterCategory, React.ComponentType<{ className?: string }>> = {
-  all: Layers,
-  leadership: Layers,
-  technology: Cpu,
-  "clinical-research": Activity,
-  pharmaceutical: Pill,
-  marketing: TrendingUp,
+/**
+ * Tailored Executive Portrait Headshot Zoom & Center per Founder
+ * Centers tightly on their faces while ensuring their face is never covered by the nameplate.
+ */
+const FOUNDER_PHOTO_CONFIG: Record<string, string> = {
+  "maryam-ebrahim": "object-[center_22%] scale-[1.28] origin-[center_22%]",
+  "mohamed-helmy": "object-[center_24%] scale-[1.85] origin-[center_24%]",
+  "youssef-elgendy": "object-[center_26%] scale-[1.80] origin-[center_26%]",
+  "mahmoud-ibrahim": "object-[center_22%] scale-[1.32] origin-[center_22%]",
 };
 
 /* =========================================================================
-   1. FOUNDING LEADERSHIP CARD (3D In-Place Flip, Responsive 2x2 & 4-Grid)
+   1. FOUNDING LEADERSHIP CARD (3D In-Place Flip, Close-up Face Framing)
    ========================================================================= */
 
 interface FounderCardProps {
@@ -150,14 +142,16 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
             </div>
           </div>
 
-          {/* Studio Portrait Visual */}
+          {/* Studio Portrait Visual: Tailored Close-Up Face Framing */}
           {member.photoUrl && (
-            <div className="absolute inset-0 z-0 overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 z-0 overflow-hidden rounded-3xl bg-[#081526]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={member.photoUrl}
                 alt={member.name}
-                className="w-full h-full object-cover object-[center_18%] select-none pointer-events-none transition-transform duration-500 group-hover:scale-105"
+                className={`w-full h-full object-cover select-none pointer-events-none transition-transform duration-500 ${
+                  FOUNDER_PHOTO_CONFIG[member.id] ?? "object-[center_18%]"
+                }`}
               />
               {/* Cinematic Gradient Overlays to preserve text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#07111F] via-[#07111F]/35 to-transparent" />
@@ -231,7 +225,7 @@ function FounderCard({ member, index, isFlipped, onToggleFlip }: FounderCardProp
             )}
           </div>
 
-          {/* Bottom Action: Direct LinkedIn Connect Button (Safe Execution) */}
+          {/* Bottom Action: Direct LinkedIn Connect Button */}
           <div className="relative z-20 pt-1.5 sm:pt-2 border-t border-[#1C344D]/80 flex flex-col gap-1">
             {member.socials?.linkedin ? (
               <a
@@ -781,12 +775,12 @@ export function TeamSection() {
           </p>
         </div>
 
-        {/* REDESIGNED CATEGORY DISCIPLINE MATRIX: Responsive Flow, Never Cut Off, Full Visual Identity */}
-        <div className="w-full mb-8 sm:mb-10 px-2">
+        {/* ULTRA-CLEAN UNIFIED SEGMENTED PILL BAR: Single Row, Zero Clutter, Zero Multi-line Mess */}
+        <div className="w-full flex justify-center mb-8 sm:mb-10 px-2">
           <div
             role="tablist"
             aria-label="Specialist disciplines"
-            className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-5xl mx-auto"
+            className="inline-flex items-center p-1 rounded-full bg-[#0B192B]/95 border border-[#1C344D] backdrop-blur-md shadow-[0_8px_32px_rgba(2,6,12,0.7)] max-w-full overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {TEAM_CATEGORIES.map((category) => {
               const count =
@@ -798,7 +792,18 @@ export function TeamSection() {
                         m.secondaryCategory === category.id
                     ).length;
               const isActive = activeCategory === category.id;
-              const Icon = CATEGORY_ICONS[category.id];
+
+              // Ultra-clean concise label on mobile, full label on tablet/desktop
+              const mobileLabel =
+                category.id === "all"
+                  ? "All"
+                  : category.id === "technology"
+                  ? "Tech"
+                  : category.id === "clinical-research"
+                  ? "Clinical"
+                  : category.id === "pharmaceutical"
+                  ? "Pharma"
+                  : "Mktg";
 
               return (
                 <button
@@ -808,23 +813,19 @@ export function TeamSection() {
                   aria-selected={isActive}
                   aria-controls={`panel-${category.id}`}
                   onClick={() => handleCategoryChange(category.id)}
-                  className={`group relative px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-semibold tracking-wide transition-all duration-200 select-none flex items-center gap-2 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] ${
+                  className={`relative px-2 sm:px-4 py-1 sm:py-2 rounded-full text-[10px] sm:text-xs md:text-sm font-semibold tracking-wide transition-all duration-200 select-none flex items-center gap-1 sm:gap-1.5 shrink-0 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35D6E8] ${
                     isActive
-                      ? "bg-gradient-to-r from-[#102238] via-[#142842] to-[#0D1D30] border-2 border-[#35D6E8] text-[#F4F8FC] shadow-[0_0_24px_rgba(53,214,232,0.32)] scale-[1.02]"
-                      : "bg-[#0B192B]/80 hover:bg-[#102238] border border-[#1C344D]/80 text-[#9BAFC3] hover:text-[#F4F8FC] hover:border-[#35D6E8]/40"
+                      ? "bg-[#102238] border border-[#35D6E8]/70 text-[#F4F8FC] shadow-[0_0_16px_rgba(53,214,232,0.25)]"
+                      : "border border-transparent text-[#9BAFC3] hover:text-[#F4F8FC] hover:bg-[#102238]/40"
                   }`}
                 >
-                  <Icon
-                    className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
-                      isActive ? "text-[#35D6E8]" : "text-[#9BAFC3]/80 group-hover:text-[#35D6E8]"
-                    }`}
-                  />
-                  <span>{category.label}</span>
+                  <span className="sm:hidden">{mobileLabel}</span>
+                  <span className="hidden sm:inline">{category.label}</span>
                   <span
-                    className={`inline-flex items-center justify-center text-[10px] font-mono font-bold px-1.5 py-0.5 min-w-[20px] rounded-full transition-colors ${
+                    className={`inline-flex items-center justify-center text-[8px] sm:text-[10px] font-mono font-bold w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full transition-colors ${
                       isActive
                         ? "bg-[#35D6E8] text-[#07111F]"
-                        : "bg-[#07111F] text-[#9BAFC3] border border-[#1C344D]"
+                        : "bg-[#07111F] text-[#9BAFC3]/70"
                     }`}
                   >
                     {count}

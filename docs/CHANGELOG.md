@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.8.0] - 2026-10-30
+
+### Fixed
+- **Mobile Clock Removal (`hero-clock-arc.tsx`):**
+  - Completely hid the clock arc on mobile and tablet (`hidden lg:flex`), retaining the right-border clock dial only on desktop viewports.
+- **Minimized Vertical Spacing in Hero (`hero-countdown-section.tsx`):**
+  - Removed `justify-between` and `my-auto` extremes that created 150px+ dead voids above and below the hero content.
+  - Reduced the gap between the centered PulseID brand logo and the headline to a tight, minimal margin.
+  - Repositioned the "Meet the team" scroll indicator closely beneath the countdown timer, removing the large empty blank void.
+- **Close-Up Face Framing for Founders (`team-section.tsx`):**
+  - Calibrated tailored portrait zooms (`scale-[1.85]` for Mohamed Helmy, `scale-[1.80]` for Youssef Elgendy, `scale-[1.28]` for Maryam Ebrahim, `scale-[1.32]` for Mahmoud Ibrahim) with matched `origin-[center_24%]` focal points.
+  - Eliminated full-body background clutter (floor, pots, bags, stairs), bringing their faces and suit collars front and center without being obscured by the bottom nameplate.
+- **Ultra-Clean Single-Capsule Category Bar (`team-section.tsx`):**
+  - Replaced the scattered multi-line pills with a sleek, unified, continuous segmented pill capsule.
+  - Displayed cleanly in a single row across all screen sizes (`All 14`, `Tech 5`, `Clinical 7`, `Pharma 1`, `Mktg 1` on mobile; full labels on desktop) with zero overflow, zero jagged line wraps, and zero messy appearance.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (390x844).
+
+---
+
 ## [0.7.0] - 2026-10-30
 
 ### Changed

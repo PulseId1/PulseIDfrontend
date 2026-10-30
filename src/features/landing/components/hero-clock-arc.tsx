@@ -7,7 +7,7 @@ import { motion } from "motion/react";
  * Right-Border Clock Dial Arc
  * Minimalist, grand-radius architectural clock arc (9 lines max).
  * Subdued opacity with live active indicator tracking seconds.
- * Matches inspire/2.jpeg aesthetic. Renders clearly on mobile and desktop.
+ * Matches inspire/2.jpeg aesthetic. Renders cleanly on desktop (hidden on mobile).
  */
 
 function subscribeSeconds(callback: () => void): () => void {
@@ -86,7 +86,7 @@ export function HeroClockArc({ className = "" }: { readonly className?: string }
 
   return (
     <div
-      className={`pointer-events-none select-none absolute right-0 top-0 bottom-0 h-full w-28 sm:w-44 md:w-60 lg:w-76 overflow-hidden flex items-center justify-end z-0 opacity-80 sm:opacity-90 ${className}`}
+      className={`pointer-events-none select-none absolute right-0 top-0 bottom-0 h-full w-28 sm:w-44 md:w-60 lg:w-76 overflow-hidden hidden lg:flex items-center justify-end z-0 opacity-80 sm:opacity-90 ${className}`}
       aria-hidden="true"
     >
       {/* Subdued Ambient Radial Lighting on right edge */}
