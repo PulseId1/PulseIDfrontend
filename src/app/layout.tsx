@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
   APP_NAME,
-  APP_TAGLINE,
-  APP_DESCRIPTION,
+  APP_HEADLINE,
+  APP_SUBTITLE,
   LAUNCH_DISPLAY_DATE,
 } from "@/lib/constants";
 
@@ -27,30 +27,29 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: `${APP_NAME} — ${APP_TAGLINE}`,
+    default: `${APP_NAME} — ${APP_HEADLINE}`,
     template: `%s | ${APP_NAME}`,
   },
-  description: `${APP_DESCRIPTION} Launching ${LAUNCH_DISPLAY_DATE}.`,
+  description: `${APP_SUBTITLE} Launching ${LAUNCH_DISPLAY_DATE}.`,
   keywords: [
     "PulseID",
     "connected healthcare",
-    "digital medical ID",
     "healthcare technology",
-    "patient portal",
-    "e-prescriptions",
+    "launch countdown",
+    "medical innovation",
   ],
   authors: [{ name: "PulseID Team" }],
   openGraph: {
-    title: `${APP_NAME} — ${APP_TAGLINE}`,
-    description: `${APP_DESCRIPTION} Launching ${LAUNCH_DISPLAY_DATE}.`,
+    title: `${APP_NAME} — ${APP_HEADLINE}`,
+    description: `${APP_SUBTITLE} Launching ${LAUNCH_DISPLAY_DATE}.`,
     siteName: APP_NAME,
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `${APP_NAME} — ${APP_TAGLINE}`,
-    description: `${APP_DESCRIPTION} Launching ${LAUNCH_DISPLAY_DATE}.`,
+    title: `${APP_NAME} — ${APP_HEADLINE}`,
+    description: `${APP_SUBTITLE} Launching ${LAUNCH_DISPLAY_DATE}.`,
   },
   icons: {
     icon: "/favicon.ico",

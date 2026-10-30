@@ -7,6 +7,120 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.5.0] - 2026-10-30
+
+### Added
+- **Dedicated Founding Leadership Section:**
+  - Extracted the 4 executive founders into a dedicated top section above the rest of the team.
+  - Displayed side-by-side on the same level (no carousel navigation needed) in strict order:
+    1. **Maryam Ebrahim:** Founder & CEO (`PID-EXE-01`)
+    2. **Mohamed Helmy:** Co-founder & CTO (`PID-EXE-02`)
+    3. **Youssef Elgendy:** Co-founder & CBO (`PID-EXE-03`)
+    4. **Mahmoud Ibrahim:** Chief Marketing Officer (`PID-EXE-04`)
+  - Each card supports independent 180° 3D flip to view 100% full, untruncated bios and direct LinkedIn connect button.
+- **Multidisciplinary Team Carousel:**
+  - Placed the 14 specialized team members in an independent 3D coverflow arc carousel below leadership.
+  - Discipline filter tabs: `01. All Specialists (14)`, `02. Technology (5)`, `03. Clinical & Research (7)`, `04. Pharmaceutical (1)`, `05. Marketing (1)`.
+- **Right-Border Clock Arc (`hero-clock-arc.tsx`):**
+  - Minimalist 9-line clock dial arc anchored flush against the right browser border with grand architectural radius.
+  - Subdued opacity with live active tick indicator tracking real-time seconds, inspired by `inspire/2.jpeg`.
+- **Responsive Vector "COMING SOON" Watermark:**
+  - Centered SVG vector typography across the hero background ensuring the letter 'C' and 'N' are completely unclipped across all screen sizes.
+
+### Changed
+- Centered the PulseID brand mark in the hero header.
+- Removed the top-right coming soon pill and announcement eyebrow tag per user request.
+- Removed lateral margin and padding from the hero container for an edge-to-edge layout.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (390x844).
+
+---
+
+## [0.4.0] - 2026-10-30
+
+### Added
+- **Co-founder & CTO Mohamed Helmy Integration:**
+  - Added **Mohamed Helmy: Co-founder & Chief Technology Officer (CTO)** (`PID-EXE-02`) leading the technical vision, platform architecture, cybersecurity, scientific research, and AI technology integration.
+  - Added real high-resolution studio portrait photo (`/team/MohamedHelmy.jpg`).
+  - Integrated direct LinkedIn profile: `https://www.linkedin.com/in/mohahelmy7`.
+  - Added to both `Leadership` and `Technology` discipline rosters.
+- **Card Flip Backside Redesign (Maximized Untruncated Text):**
+  - Completely redesigned the 180° flipped card face per user specification:
+    - Removed redundant barcode SVG and verification code.
+    - Removed duplicate member name, role, and badge ID from the back since they are already prominently displayed on the front face.
+    - Dedicated the entire card interior to 100% full, untruncated bio text with whitespace preservation and smooth slim cyan scrollbar (`[scrollbar-width:thin]`).
+    - Added clean category badge, interactive `Flip back ↻` button, and direct `Connect on LinkedIn` CTA.
+- **Executive Leadership & Founders Integration (`public/team` & `public/refrence/g.txt`):**
+  - Integrated confirmed executive co-founders into the official roster (18 multidisciplinary members total):
+    - **Maryam Ebrahim:** Founder & CEO (`PID-EXE-01`) — Researcher behind the original clinical study; recognized at PASID 2026 and Startup Grind MNU win.
+    - **Mohamed Helmy:** Co-founder & CTO (`PID-EXE-02`) — Technical team lead, AI systems architect, cybersecurity & research lead.
+    - **Youssef Elgendy:** Co-founder & CBO (`PID-EXE-03`) — Financial business modeling, commercial GTM framework, Delta region pharmacy partnerships.
+    - **Mahmoud Ibrahim:** Chief Marketing Officer (`PID-EXE-04`) — Brand identity, growth strategies, commercial partnerships.
+  - Added real studio portrait photographs for all 4 co-founders with cinematic gradient overlays.
+- **Untitled UI Symmetrical Parabolic Arc 3D Coverflow Carousel:**
+  - 3D coverflow geometry with cyclic wrap-around calculation, producing a symmetrical parabolic arc on both sides of the center card.
+  - Frosted floating glass nameplate at the bottom of each card with full, untruncated names.
+
+### Changed
+- Reordered founding roster so **Maryam Ebrahim, Founder & CEO** holds the initial spotlight on page load, with **Mohamed Helmy (CTO)**, **Youssef Elgendy (CBO)**, and **Mahmoud Ibrahim (CMO)** completing the executive suite.
+- Updated category tabs: `01. All Team (18)`, `02. Leadership (4)`, `03. Pharmaceutical (1)`, `04. Marketing (3)`, `05. Clinical & Research (8)`, `06. Technology (6)`.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build compiled cleanly.
+- Visual verification across Desktop (1440x950) and Mobile (375x812) confirmed flawless photo framing, full bio display, and flip card mechanics.
+
+---
+
+## [0.3.0] - 2026-10-30
+
+### Added
+- **Technology & Engineering Team:**
+  - Expanded team roster to 14 members across 4 disciplines (`01. Technology & Engineering`, `02. Pharmaceutical`, `03. Clinical & Research`, `04. Marketing`).
+  - Added confirmed Tech Team members:
+    - **Ahmed Mohamed Albelasy:** Backend Developer (`PID-ENG-01`)
+    - **Mostafa Hussein:** UI/UX Designer (`PID-DSN-02`)
+    - **Mohamed Mahrous:** Cybersecurity Specialist (`PID-SEC-03`)
+    - **Mohamed Mostafa Badr:** AI Engineer (`PID-AIM-04`)
+    - **Abdelrahman Ataa:** Frontend Developer (`PID-ENG-05`)
+  - Direct LinkedIn profile integrations with custom SVG icon buttons.
+- **Interactive PulseID Mascot (`MascotFace`):**
+  - Interactive white pill mascot inspired by user brief, positioned directly above the countdown timer.
+  - Smooth spring-driven vector calculation (`useSpring` via `motion`) so pupils dynamically track cursor position across the screen.
+  - Idle timeout behavior: eyes smoothly tilt downward to look at the countdown timer when mouse is idle or off-screen.
+  - Clean, unadorned white capsule face per user specification (removed chest/chin badge).
+  - Random natural eye blink loop (every 2.5s–6s) and speech bubble interaction on click.
+- **Official Brand Mark Integration:**
+  - Integrated `public/logo.svg` as the official brand logo in the hero header.
+- **Viewport Calibration & Countdown Visibility:**
+  - Recalibrated vertical rhythm using `min-h-[100dvh]` with balanced typography and container padding.
+  - Ensured the countdown timer, digits, labels, and launch date metadata are 100% visible immediately above the fold across all screen sizes (laptops with 650–700px height, 1080p desktop, and mobile viewports) without requiring any scrolling.
+- **3D Flip Card Architecture & Mobile Swipe Carousel:**
+  - Redesigned team cards into interactive 3D flip cards inspired by Untitled UI and BlockJoy references.
+  - **Front Face:** Minimalist dark luxury card with glowing monogram portrait, badge ID, and frosted-glass nameplate.
+  - **Back Face:** 180° 3D flip revealing verified credentials, specialization details, direct "Connect on LinkedIn" button, and digital security barcode.
+  - **Desktop Layout:** Max 3 cards in view at a time with previous/next chevron navigation controls and pagination dots.
+  - **Mobile Layout:** High-performance horizontal snap-scroll track with peek-through cards, eliminating vertical clutter on phones.
+
+### Changed
+- Refactored landing page into a focused 2-section launch experience:
+  1. **Section A:** Hero Launch Countdown (Top logo, Eyebrow, Editorial headline, Subtitle, Interactive Mascot, Giant Countdown numerals, Scroll invitation).
+  2. **Section B:** Meet the Team (ID Credential Badges with 4 animated category tabs).
+- Set `Technology & Engineering` as the default active discipline tab.
+
+### Verified
+- `pnpm run typecheck`: Passed with 0 errors.
+- `pnpm run lint`: Passed with 0 errors and 0 warnings.
+- `pnpm run build`: Production build completed successfully.
+- Cross-browser verified on Desktop (1440px) and Mobile (375px) via headless Edge with zero layout blowout or font clipping.
+
+---
+
 ## [0.2.0] - 2026-10-30
 
 ### Added

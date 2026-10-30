@@ -1,15 +1,12 @@
 /**
- * PulseID Public Launch Landing Page Feature Module
+ * PulseID Pre-Reveal Launch Countdown Feature Module
  */
 
-export { LandingHeader } from "./components/landing-header";
-export { HeroSection } from "./components/hero-section";
-export { CountdownSection } from "./components/countdown-section";
+export { HeroCountdownSection } from "./components/hero-countdown-section";
 export { CountdownTimer } from "./components/countdown-timer";
+export { MascotFace } from "./components/mascot-face";
 export { TeamSection } from "./components/team-section";
-export { TeamMemberCard } from "./components/team-member-card";
-export { LandingFooter } from "./components/landing-footer";
+export { MinimalFooter } from "./components/minimal-footer";
 
-export { TEAM_MEMBERS } from "./data/team-members";
-export type { TeamMember, TeamMemberSocials } from "./types/team-member";
-
+export { TEAM_MEMBERS, TEAM_CATEGORIES } from "./data/team-members";
+export type { TeamMember, TeamCategory, TeamCategoryInfo } from "./types/team-member";

@@ -5,10 +5,12 @@
  */
 
 export const APP_NAME = "PulseID" as const;
-export const APP_TAGLINE = "Your health. Connected." as const;
-export const APP_EYEBROW = "THE FUTURE OF CONNECTED HEALTHCARE" as const;
-export const APP_DESCRIPTION =
+export const APP_HEADLINE = "Something meaningful is coming." as const;
+export const APP_SUBTITLE =
   "A more connected approach to personal healthcare information." as const;
+
+export const TEAM_HEADING = "The people behind PulseID" as const;
+export const TEAM_SUBTITLE = "Different disciplines. One shared vision." as const;
 
 /**
  * Public launch target specifications
@@ -39,12 +41,3 @@ export const COLOR_TOKENS = {
   textSecondary: "#9BAFC3",
   borderSubtle: "#1C344D",
 } as const;
-
-/**
- * Landing Page Section Anchors
- */
-export const LANDING_NAV_LINKS = [
-  { label: "Overview", href: "#intro" },
-  { label: "Launch Countdown", href: "#countdown" },
-  { label: "Team", href: "#team" },
-] as const;
