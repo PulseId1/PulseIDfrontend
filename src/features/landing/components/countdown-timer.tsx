@@ -55,8 +55,38 @@ const serverSnapshot: TimeRemaining = {
   totalSeconds: 0,
 };
 
+// Cached client snapshot to prevent infinite re-renders in useSyncExternalStore
+let cachedSnapshot: TimeRemaining = calculateTimeRemaining();
+
+function getClientSnapshot(): TimeRemaining {
+  const latest = calculateTimeRemaining();
+  if (
+    latest.seconds !== cachedSnapshot.seconds ||
+    latest.minutes !== cachedSnapshot.minutes ||
+    latest.hours !== cachedSnapshot.hours ||
+    latest.days !== cachedSnapshot.days ||
+    latest.isExpired !== cachedSnapshot.isExpired
+  ) {
+    cachedSnapshot = latest;
+  }
+  return cachedSnapshot;
+}
+
 function subscribeTimer(callback: () => void): () => void {
-  const id = window.setInterval(callback, 1000);
+  const id = window.setInterval(() => {
+    const next = calculateTimeRemaining();
+    if (
+      next.seconds !== cachedSnapshot.seconds ||
+      next.minutes !== cachedSnapshot.minutes ||
+      next.hours !== cachedSnapshot.hours ||
+      next.days !== cachedSnapshot.days ||
+      next.isExpired !== cachedSnapshot.isExpired
+    ) {
+      cachedSnapshot = next;
+      callback();
+    }
+  }, 1000);
+
   return () => {
     window.clearInterval(id);
   };
@@ -79,10 +109,10 @@ export function CountdownTimer() {
   const liveRegionId = useId();
   const mounted = useHasMounted();
 
-  // Subscribe to live second-by-second updates via useSyncExternalStore
+  // Subscribe to live second-by-second updates via useSyncExternalStore with referentially stable snapshot
   const timeLeft = useSyncExternalStore(
     subscribeTimer,
-    calculateTimeRemaining,
+    getClientSnapshot,
     () => serverSnapshot
   );
 

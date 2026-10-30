@@ -18,3 +18,4 @@ export interface TeamMember {
   readonly socials?: TeamMemberSocials;
   readonly isPlaceholder?: boolean;
 }
+

@@ -45,3 +45,4 @@ export function GitHubIcon({ size = 16, className = "", ...props }: IconProps) {
     </svg>
   );
 }
+

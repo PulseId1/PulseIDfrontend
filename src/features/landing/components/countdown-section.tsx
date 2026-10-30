@@ -42,3 +42,4 @@ export function CountdownSection() {
     </section>
   );
 }
+

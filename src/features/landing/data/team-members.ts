@@ -42,3 +42,4 @@ export const TEAM_MEMBERS: readonly TeamMember[] = [
     socials: {},
   },
 ] as const;
+

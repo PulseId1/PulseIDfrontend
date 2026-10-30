@@ -12,3 +12,4 @@ export { LandingFooter } from "./components/landing-footer";
 
 export { TEAM_MEMBERS } from "./data/team-members";
 export type { TeamMember, TeamMemberSocials } from "./types/team-member";
+
