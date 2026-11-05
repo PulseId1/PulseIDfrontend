@@ -16,6 +16,16 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Docker Support
+
+You can run PulseID in a lightweight Docker container across Windows, macOS, and Linux:
+
+```bash
+docker compose up --build -d
+```
+
+See the full [DOCKER.md](./DOCKER.md) guide for multi-OS instructions, production standalone configuration, and development container setups.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

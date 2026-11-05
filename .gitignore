@@ -41,3 +41,10 @@ yarn-error.log*
 next-env.d.ts
 refrence
 inspire
+# Documentation & large design raw files
+*.pdf
+decorations
+docs
+public/inspire
+public/refrence
+*.tsbuildinfo

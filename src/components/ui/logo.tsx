@@ -6,6 +6,7 @@ interface LogoProps {
   readonly className?: string;
   readonly size?: "sm" | "md" | "lg";
   readonly showSymbolOnly?: boolean;
+  readonly theme?: "dark" | "light"; // "dark" = dark text on light bg, "light" = light text on dark bg
 }
 
 /**
@@ -17,25 +18,27 @@ export function PulseLogo({
   className = "",
   size = "md",
   showSymbolOnly = false,
+  theme = "light",
 }: LogoProps) {
   const dimensions = {
-    sm: { width: 30, height: 28 },
-    md: { width: 36, height: 34 },
-    lg: { width: 44, height: 41 },
+    sm: { width: 28, height: 26 },
+    md: { width: 32, height: 30 },
+    lg: { width: 40, height: 38 },
   }[size];
 
   const textClasses = {
-    sm: "text-base tracking-wider",
-    md: "text-lg tracking-wider",
-    lg: "text-xl tracking-wider",
+    sm: "text-sm tracking-wider",
+    md: "text-base tracking-wider",
+    lg: "text-lg tracking-wider",
   }[size];
 
   return (
     <div
-      className={`inline-flex items-center gap-2.5 select-none ${className}`}
+      dir="ltr"
+      className={`inline-flex items-center gap-3 select-none ${className}`}
       aria-label={`${APP_NAME} brand mark`}
     >
-      <div className="relative shrink-0 transition-transform duration-300 hover:scale-105 drop-shadow-[0_0_16px_rgba(13,225,241,0.35)]">
+      <div className="relative shrink-0 transition-transform duration-300 hover:scale-105">
         <Image
           src="/logo.svg"
           alt="PulseID Logo"
@@ -48,10 +51,11 @@ export function PulseLogo({
 
       {!showSymbolOnly && (
         <span
-          className={`font-bold font-sans ${textClasses} text-[#F4F8FC] uppercase tracking-wider flex items-center`}
+          className={`font-bold font-sans ${textClasses} ${
+            theme === "dark" ? "text-[#002D62]" : "text-white"
+          } uppercase tracking-wider flex items-center leading-none`}
         >
-          <span>PULSE</span>
-          <span className="text-[#35D6E8] ml-1">ID</span>
+          PULSEID
         </span>
       )}
     </div>
