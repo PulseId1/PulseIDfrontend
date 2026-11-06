@@ -170,7 +170,7 @@ export const SPECIALIST_MEMBERS: readonly TeamMember[] = [
   {
     id: "abdelrahman-ataa",
     name: "Abdelrahman Ataa",
-    role: "Frontend Developer",
+    role: "Frontend Developer sw",
     category: "technology",
     initials: "AA",
     badgeId: "PID-ENG-05",
