@@ -97,7 +97,7 @@ I established and lead the technical team, driving product innovation and steeri
   {
     id: "mahmoud-ibrahim",
     name: "Mahmoud Ibrahim",
-    role: "Chief Marketing Officer",
+    role: "Chief Marketing Officer CMO",
     category: "leadership",
     secondaryCategory: "marketing",
     initials: "MI",
