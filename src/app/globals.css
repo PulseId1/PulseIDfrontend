@@ -13,10 +13,6 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-
-  /* Design Tokens from Figma */
-  --Text-s-1: #02307D;
-  --Text-primary-color-dark-2: #41474F;
 }
 
 @theme inline {
