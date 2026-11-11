@@ -1,145 +1,174 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "motion/react";
-import { useAuth } from "../context/AuthContext";
 import { AuthCardShell } from "./AuthCardShell";
-import { PhoneInput } from "./PhoneInput";
-import { Button } from "@/components/ui/button";
-import { DEFAULT_COUNTRY } from "../utils/countries";
-import { CountryItem } from "../types/auth";
-import { validatePhoneNumber } from "../schemas/authValidation";
 
 export function RegisterEntryForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { role, language } = useAuth();
+  const role = searchParams.get("role") || "patient";
 
   const [phone, setPhone] = useState(searchParams.get("phone") || "");
-  const [selectedCountry, setSelectedCountry] = useState<CountryItem>(DEFAULT_COUNTRY);
-  const [error, setError] = useState<string | undefined>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const validation = validatePhoneNumber(phone, selectedCountry, language);
-    if (!validation.isValid) {
-      setError(validation.error);
+    if (!phone || phone.trim().length < 8) {
+      setError("Please enter a valid phone number.");
       return;
     }
 
-    setIsSubmitting(true);
+    setIsLoading(true);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("pulseid_register_phone", phone);
+      localStorage.setItem("pulseid_register_role", role);
+    }
+
     setTimeout(() => {
-      setIsSubmitting(false);
-      router.push(
-        `/auth/verify?mode=register&phone=${encodeURIComponent(
-          phone
-        )}&country=${selectedCountry.code}&role=${role}&lang=${language}`
-      );
-    }, 400);
+      setIsLoading(false);
+      router.push(`/auth/verify?mode=register&phone=${encodeURIComponent(phone)}&role=${role}`);
+    }, 350);
   };
 
   return (
-    <AuthCardShell
-      heroImage="/auth/hero-register.jpg"
-      heroAlt="PulseID Doctors and Healthcare Providers"
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="w-full space-y-6 text-start"
-      >
-        {/* Header - Matching 1-register.jpg */}
-        <div className="space-y-1.5">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#002D62] tracking-tight">
-            {language === "ar" ? "مرحبًا بك في " : "Welcome to "}
-            <span className="text-[#0080DF]">Pulse ID</span>
+    <AuthCardShell heroImage="/assets/auth/auth-phone-hero.png">
+      <div className="w-full flex flex-col items-start min-w-0" data-node-id="116:907">
+        {/* Heading Block matching Figma node 116:908 */}
+        <div className="pb-8 w-full">
+          <h1 className="text-[28px] sm:text-[30px] font-bold leading-tight font-heading">
+            <span className="text-[#02307D]">Welcome to </span>
+            <span className="text-[#078BDE]">Pulse ID</span>
           </h1>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            {language === "ar"
-              ? "يرجى إدخال بياناتك للمتابعة."
-              : "Please enter your details to sign in."}
+          <p className="mt-2 text-[15px] sm:text-[16px] text-[#41474F] font-normal leading-normal">
+            Please enter your details to sign in.
           </p>
         </div>
 
-        {/* Form - Matching 1-register.jpg */}
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-          <PhoneInput
-            id="register-phone"
-            label={language === "ar" ? "رقم الهاتف" : "Phone Number"}
-            value={phone}
-            selectedCountry={selectedCountry}
-            onChangePhone={(val) => {
-              setPhone(val);
-              if (error) setError(undefined);
-            }}
-            onSelectCountry={(c) => {
-              setSelectedCountry(c);
-              if (error) setError(undefined);
-            }}
-            error={error}
-            disabled={isSubmitting}
-            placeholder="01000000100000"
-          />
+        {/* Form matching Figma node 116:915 */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+          {/* Phone Field Block */}
+          <div className="flex flex-col gap-2 w-full">
+            <label
+              htmlFor="register-phone"
+              className="text-[12px] font-medium text-[#41474F] block"
+            >
+              Phone Number
+            </label>
 
-          {/* Security Notice Box (Matching 1-register.jpg) */}
-          <div className="bg-[#F0F9FF] border border-[#BAE6FD] rounded-xl p-3.5 flex items-start gap-3">
-            <div className="text-[#0080DF] shrink-0 mt-0.5">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
+            <div className="bg-[#C0CAE3]/10 border border-[#DDE7FF] rounded-[8px] h-[56px] relative flex items-center overflow-hidden focus-within:border-[#078BDE] transition-colors w-full">
+              {/* Left Phone Icon */}
+              <div className="pl-4 pr-3 flex items-center justify-center shrink-0">
+                <div className="w-6 h-6 relative">
+                  <Image
+                    src="/assets/auth/icon-phone.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* Number Input */}
+              <input
+                id="register-phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  if (error) setError(null);
+                }}
+                placeholder="01000000100000"
+                className="flex-1 bg-transparent border-none outline-none text-[16px] text-[#040A17] placeholder:text-[#8B8B8B] font-normal min-w-0"
+              />
+
+              {/* Right Flag & +20 Prefix Block */}
+              <div className="border-l border-[#D0DEFF] h-full px-3.5 flex items-center justify-center gap-1.5 shrink-0 bg-transparent">
+                <div className="w-6 h-6 relative shrink-0">
+                  <Image
+                    src="/assets/auth/flag-egypt.svg"
+                    alt="Egypt flag"
+                    width={24}
+                    height={24}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <span className="text-[12px] font-medium text-[#040A17] font-sans">
+                  +20
+                </span>
+              </div>
             </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              {language === "ar"
-                ? "سنرسل لك رمز تحقق لمرة واحدة (OTP) لتأكيد هويتك وحماية حسابك الصحي."
-                : "We'll send you a one-time verification code (OTP) to verify your identity and secure your account."}
+
+            {error && (
+              <p className="text-xs text-rose-500 font-medium">{error}</p>
+            )}
+          </div>
+
+          {/* Security Notice Card matching Figma node 116:938 */}
+          <div className="bg-[#C0CAE3]/10 border border-[#DDE7FF] rounded-[16px] p-4 flex items-start gap-3.5 w-full">
+            <div className="w-[30px] h-[30px] rounded-[8px] bg-white border border-[#DDE7FF] flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+              <div className="w-5 h-5 relative">
+                <Image
+                  src="/assets/auth/icon-lock.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  unoptimized
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            </div>
+            <p className="text-[13px] sm:text-[14px] text-[#41474F] font-normal leading-snug">
+              We’ll send you a one-time verification code (OTP) to verify your
+              identity and secure your account.
             </p>
           </div>
 
-          {/* Submit Button */}
-          <Button
+          {/* Next Button matching Figma node 116:945 */}
+          <button
             type="submit"
-            variant="primary"
-            size="lg"
-            className="w-full h-12 text-sm mt-2 rounded-xl bg-[#0080DF] hover:bg-[#0073C8]"
-            isLoading={isSubmitting}
-            rightIcon={
-              <span className={language === "ar" ? "rotate-180" : ""}>→</span>
-            }
+            disabled={isLoading}
+            className="h-[56px] rounded-[12px] bg-[#078BDE] hover:bg-[#0070B8] active:scale-[0.99] text-white font-medium text-[14px] flex items-center justify-center gap-2 cursor-pointer transition-all w-full shadow-sm disabled:opacity-70"
           >
-            {language === "ar" ? "التالي" : "Next"}
-          </Button>
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+            ) : (
+              <>
+                <span>Next</span>
+                <div className="w-[18px] h-[18px] relative rotate-90">
+                  <Image
+                    src="/assets/auth/icon-arrow-next.svg"
+                    alt=""
+                    width={18}
+                    height={18}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </>
+            )}
+          </button>
         </form>
 
-        {/* Footer Link - Matching 1-register.jpg */}
-        <div className="text-center pt-2 text-xs sm:text-sm text-slate-500">
-          <span>
-            {language === "ar"
-              ? "لديك حساب بالفعل؟ "
-              : "Already have an account? "}
-          </span>
-          <Link
-            href={`/auth/login?role=${role}&lang=${language}`}
-            className="text-[#0080DF] hover:underline font-semibold"
-          >
-            {language === "ar" ? "تسجيل الدخول" : "Sign In"}
-          </Link>
+        {/* Bottom Link matching Figma node 116:949 */}
+        <div className="pt-8 w-full">
+          <p className="text-[14px] text-[#41474F] text-center">
+            Already have an account?{" "}
+            <Link
+              href="/auth/login"
+              className="font-bold text-[#078BDE] hover:text-[#0060A8] transition-colors ml-1"
+            >
+              Sign In
+            </Link>
+          </p>
         </div>
-      </motion.div>
+      </div>
     </AuthCardShell>
   );
 }

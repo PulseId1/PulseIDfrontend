@@ -1,100 +1,242 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function PatientHero() {
+  const router = useRouter();
+  const [activeSlide, setActiveSlide] = useState(0);
+  const slides = [
+    "/assets/patient-home/hero-slide-1.png",
+    "/assets/patient-home/hero-slide-2.png",
+    "/assets/patient-home/hero-slide-3.png",
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const completed =
+      typeof window !== "undefined" &&
+      localStorage.getItem("pulseid_patient_profile_completed") === "true";
+    if (!completed) {
+      router.push("/patient/profile/edit?first_time=true");
+    } else {
+      router.push("/patient/profile");
+    }
+  };
+
   return (
-    <section className="relative min-h-[580px] lg:min-h-[620px] bg-[#01091E] overflow-hidden pt-12 sm:pt-14 lg:pt-[64px] pb-14 sm:pb-16 flex items-center">
-      {/* Background Visual Hierarchy matching Figma Home Patient */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
-        {/* Layer 1: Doctor & Biometric Holographic Interface */}
-        <Image
-          src="/landing/hero-image.svg"
-          alt="Medical holographic interface"
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-top lg:object-[center_top] w-full h-full"
-        />
-
-        {/* Layer 2: Hero Gradient SVG */}
-        <Image
-          src="/landing/hero-gradient.svg"
-          alt=""
-          fill
-          priority
-          unoptimized
-          aria-hidden="true"
-          className="object-cover object-top w-full h-full"
-        />
-
-        {/* Layer 3: Contrast preservation linear gradient */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(1, 9, 30, 0.95) 0%, rgba(1, 9, 30, 0.85) 35%, rgba(1, 9, 30, 0.70) 55%, rgba(1, 9, 30, 0) 100%)",
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Layer 4: Soft bottom fade */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#01091E] to-transparent pointer-events-none"
-          aria-hidden="true"
-        />
+    <section
+      className="relative w-full h-[668px] overflow-hidden bg-[#01091E]"
+      data-node-id="299:4932"
+    >
+      {/* Background Slideshow with Exact Figma Gradients matching Component 2 (Node 288:561) */}
+      <div className="absolute inset-0 size-full overflow-hidden" data-node-id="288:561">
+        {slides.map((slideSrc, idx) => (
+          <div
+            key={slideSrc}
+            className={`absolute inset-0 size-full transition-opacity duration-1000 ${
+              idx === activeSlide ? "opacity-100" : "opacity-0 pointer-events-none"
+            }`}
+          >
+            <Image
+              src={slideSrc}
+              alt=""
+              fill
+              priority={idx === 0}
+              unoptimized
+              className="object-cover object-center size-full"
+            />
+            {/* Linear gradient matching Figma Node 288:564 */}
+            <div
+              className="absolute inset-0 bg-gradient-to-r from-[rgba(1,9,30,0.95)] via-[rgba(1,9,30,0.75)] to-[rgba(1,9,30,0)] size-full pointer-events-none"
+              data-node-id="288:564"
+            />
+          </div>
+        ))}
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        {/* Headline */}
-        <div className="w-full max-w-[637px]">
-          <h1 className="text-3xl sm:text-4xl md:text-[50px] lg:text-[54px] font-extrabold tracking-tight leading-[1.12] text-white">
-            <span className="block drop-shadow-sm">Your Health Data.</span>
-            <span className="block text-[#078BDE] mt-1 sm:mt-2 drop-shadow-[0_0_35px_rgba(7,139,222,0.35)]">
-              One Secure Identity.
-            </span>
-          </h1>
-        </div>
+      {/* Hero Content Container matching Figma Node 299:4934 */}
+      <div className="relative z-10 max-w-[1280px] h-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+        <div className="w-full max-w-[1216px] flex flex-col items-start pt-6" data-node-id="299:4934">
+          {/* Main Title & Copy Block */}
+          <div className="flex flex-col items-start pb-[24px]" data-node-id="299:4936">
+            <h1
+              className="font-heading font-bold text-[40px] sm:text-[52px] lg:text-[64px] leading-tight flex flex-col gap-[4px] not-italic"
+              data-node-id="299:4938"
+            >
+              <span className="text-white drop-shadow-sm" data-node-id="299:4939">
+                Your Health Journey.
+              </span>
+              <span className="text-[#078BDE]" data-node-id="299:4940">
+                All in One Place.
+              </span>
+            </h1>
 
-        {/* Subtitle Paragraph */}
-        <div className="w-full max-w-[672px] mt-4 sm:mt-6">
-          <p className="text-base sm:text-[18px] text-slate-200/95 leading-relaxed font-normal">
-            PulseID brings your medical records together in one secure place,
-            helping you manage your health information and control how it is
-            shared with authorized healthcare professionals.
-          </p>
-        </div>
+            <p
+              className="mt-[20px] pb-[8px] font-sans font-normal text-[16px] sm:text-[18px] text-[#EAEDF6] leading-[1.4] max-w-[662px]"
+              data-node-id="299:4942"
+            >
+              Access your medical records and health information securely, all in one place.
+              Stay informed and in control of your healthcare journey.
+            </p>
 
-        {/* Action Button: View my profile */}
-        <div className="mt-8 flex items-center">
-          <Link
-            href="/patient/profile"
-            className="inline-flex items-center justify-center bg-[#0080DF] hover:bg-[#0070C5] text-white font-semibold text-base px-7 py-3.5 rounded-xl shadow-lg shadow-blue-900/40 transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
-          >
-            <span>View my profile</span>
-          </Link>
-        </div>
+            {/* Action Buttons matching Figma Node 299:4943 / 288:602 / 288:616 */}
+            <div className="mt-[24px] flex flex-wrap items-center gap-[16px]" data-node-id="299:4944">
+              {/* Primary Button: Medical Information */}
+              <Link
+                href="/patient/medical-info"
+                className="bg-[#078BDE] hover:bg-[#0677BE] text-[#EAEDF6] font-semibold text-[16px] px-[28px] py-[14px] rounded-[10px] flex items-center justify-center gap-[8px] transition-all transform hover:-translate-y-0.5 shadow-md shadow-[#078BDE]/30"
+                data-node-id="288:602"
+              >
+                <span>Medical Information</span>
+                <div className="size-[12px] relative shrink-0">
+                  <Image
+                    src="/assets/patient-home/btn-arrow-right.svg"
+                    alt=""
+                    width={12}
+                    height={12}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </Link>
 
-        {/* Partner Bar: FOLLOW THE SUMMIT */}
-        <div className="mt-12 sm:mt-16 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <span className="text-xs uppercase tracking-widest text-slate-400 font-bold shrink-0">
-            FOLLOW THE SUMMIT:
-          </span>
-          <div className="flex flex-wrap items-center gap-6 sm:gap-8 opacity-75">
-            <span className="text-white/80 font-bold text-sm tracking-wider">
-              EGYPT HEALTHCARE AUTHORITY
-            </span>
-            <span className="text-white/60 font-medium text-xs tracking-wider">
-              MINISTRY OF HEALTH & POPULATION
-            </span>
-            <span className="text-white/60 font-medium text-xs tracking-wider">
-              UNIFIED MEDICAL REGISTRY
-            </span>
+              {/* Secondary Button: View my profile (First-time redirect logic) */}
+              <button
+                type="button"
+                onClick={handleProfileClick}
+                className="bg-[rgba(2,48,125,0.55)] hover:bg-[rgba(2,48,125,0.8)] border border-[#02307D] text-[#EAEDF6] font-semibold text-[16px] px-[28px] py-[14px] rounded-[10px] flex items-center justify-center gap-[8px] transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                data-node-id="288:616"
+              >
+                <span>View my profile</span>
+                <div className="size-[12px] relative shrink-0">
+                  <Image
+                    src="/assets/patient-home/btn-arrow-right.svg"
+                    alt=""
+                    width={12}
+                    height={12}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Social / Summit Bar matching Figma Node 299:4947 / 299:4948 */}
+          <div className="w-full pt-[24px]" data-node-id="299:4947">
+            <div
+              className="border-t border-[rgba(255,255,255,0.15)] pt-[33px] flex flex-wrap items-center gap-[12px]"
+              data-node-id="299:4948"
+            >
+              <div className="pr-[8px]">
+                <span
+                  className="font-semibold text-[12px] text-[rgba(255,255,255,0.7)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]"
+                  data-node-id="299:4951"
+                >
+                  FOLLOW THE SUMMIT:
+                </span>
+              </div>
+
+              {/* 4 Social Media Buttons matching Figma Component (146:429, 146:441, 146:447, 146:453) */}
+              <div className="flex items-center gap-[8px]" data-node-id="299:4952">
+                {/* Facebook */}
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#DDE7FF] rounded-[8px] size-[36px] flex items-center justify-center p-[0.5px] hover:bg-[rgba(192,202,227,0.25)] transition-colors"
+                  aria-label="Facebook"
+                  data-node-id="146:429"
+                >
+                  <div className="size-[16px] relative shrink-0">
+                    <Image
+                      src="/assets/patient-home/social-fb.svg"
+                      alt="Facebook"
+                      width={16}
+                      height={16}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </a>
+
+                {/* LinkedIn */}
+                <a
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#DDE7FF] rounded-[8px] size-[36px] flex items-center justify-center p-[0.5px] hover:bg-[rgba(192,202,227,0.25)] transition-colors"
+                  aria-label="LinkedIn"
+                  data-node-id="146:441"
+                >
+                  <div className="size-[16px] relative shrink-0">
+                    <Image
+                      src="/assets/patient-home/social-linkedin.svg"
+                      alt="LinkedIn"
+                      width={16}
+                      height={16}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </a>
+
+                {/* Instagram */}
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#DDE7FF] rounded-[8px] size-[36px] flex items-center justify-center p-[0.5px] hover:bg-[rgba(192,202,227,0.25)] transition-colors"
+                  aria-label="Instagram"
+                  data-node-id="146:447"
+                >
+                  <div className="size-[16px] relative shrink-0">
+                    <Image
+                      src="/assets/patient-home/social-insta.svg"
+                      alt="Instagram"
+                      width={16}
+                      height={16}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </a>
+
+                {/* TikTok */}
+                <a
+                  href="https://tiktok.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#DDE7FF] rounded-[8px] size-[36px] flex items-center justify-center p-[0.5px] hover:bg-[rgba(192,202,227,0.25)] transition-colors"
+                  aria-label="TikTok"
+                  data-node-id="146:453"
+                >
+                  <div className="size-[16px] relative shrink-0">
+                    <Image
+                      src="/assets/patient-home/social-tiktok.svg"
+                      alt="TikTok"
+                      width={16}
+                      height={16}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
-

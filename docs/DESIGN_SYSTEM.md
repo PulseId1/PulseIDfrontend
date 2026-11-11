@@ -6,10 +6,11 @@ PulseID employs a **premium dark healthcare-technology aesthetic**. The design c
 
 ---
 
-## 2. Centralized Color Tokens
+## 2. Centralized Color Tokens & Figma Tokens
 
-The visual system is built upon a dark clinical palette defined in both `src/app/globals.css` (Tailwind CSS v4 `@theme inline`) and `src/lib/constants.ts`:
+The visual system combines the core dark application palette with the verified light-clinical palette extracted from the official Figma source (`WEEB` Canvas / Node `233:46` & `218:419`):
 
+### Core Application Tokens
 | Token Name | Hex Value | CSS Variable | Semantic Usage |
 | :--- | :--- | :--- | :--- |
 | **Main Background** | `#07111F` | `--bg-main` | Deep navy page background |
@@ -20,6 +21,21 @@ The visual system is built upon a dark clinical palette defined in both `src/app
 | **Primary Text** | `#F4F8FC` | `--text-primary` | High-contrast editorial headlines and card titles |
 | **Secondary Text** | `#9BAFC3` | `--text-secondary` | Descriptive paragraphs, subtitles, and unit labels |
 | **Subtle Borders** | `#1C344D` | `--border-subtle` | Structural dividers, card borders, and input boundaries |
+
+### Verified Figma Design Tokens (`Node 233:46`)
+| Figma Token Name | Value | CSS Variable | Usage |
+| :--- | :--- | :--- | :--- |
+| `primary/primary color` | `#078BDE` | `--figma-primary` | Main brand blue, active highlights, primary buttons |
+| `secondary/s 1` | `#02307D` | `--figma-secondary-navy` | Navigation header background, dark section accents |
+| `background/primary background`| `#FBFEFF` | `--figma-bg-primary` | Clinical white surface for Challenges & Solutions |
+| `background/box background` | `#FFFFFF` | `--figma-bg-box` | Elevated card surfaces |
+| `background/box background 2` | `#F9F9F9` | `--figma-bg-box-2` | Secondary cards, subtle containers |
+| `Text/primary color dark 2` | `#41474F` | `--figma-text-dark` | Standard body text on light backgrounds |
+| `Text/6` | `#727272` | `--figma-text-muted` | Secondary muted descriptions |
+| `strok/strok gray` | `#E9EFFD` | `--figma-border-gray` | Subtle card borders |
+| `strok/strok gray 2` | `#DDE7FF` | `--figma-border-gray-2` | Highlighted borders |
+
+> Detailed specifications, screenshots, and component inventories are documented in [docs/design-system/FIGMA_DESIGN_SPEC.md](file:///E:/Technology/GitHub%20REPOS/PulseID/docs/design-system/FIGMA_DESIGN_SPEC.md).
 
 ---
 
@@ -38,10 +54,14 @@ The visual system is built upon a dark clinical palette defined in both `src/app
 ## 4. Typography Hierarchy
 
 Configured via Next.js `next/font/google`:
-- **Primary Body & Headings:** `Geist Sans`
-  - Hero Headline: `text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight`
-  - Section Headings: `text-2xl sm:text-3xl md:text-4xl font-bold`
-  - Body Text: `text-sm sm:text-base md:text-lg leading-relaxed`
+- **Primary Body & Headings (Figma `Inter/font-family`):** `Inter` (`--font-inter`, Google Font)
+  - Weights: `400` (Regular), `500` (Medium), `600` (Semi-Bold), `700` (Bold), `800` (Extra-Bold)
+  - Hero Headline: `text-4xl sm:text-5xl md:text-[56px] font-extrabold tracking-tight`
+  - Section Headings: `text-3xl sm:text-4xl lg:text-[40px] font-extrabold`
+  - Body Text: `text-[14px] sm:text-[16px] leading-relaxed text-[#41474F]`
+- **Display & Card Numbers/Titles (Figma `Space_Grotesk:Bold`):** `Space Grotesk` (`--font-space-grotesk`, Google Font)
+  - Weights: `600` (Semi-Bold), `700` (Bold)
+  - Card Titles (Solutions & Services): `text-[18px] font-bold text-[#02307D]`
 - **Tabular & Numeric Displays:** `Geist Mono`
   - Countdown numerals: `font-mono tabular-nums text-3xl sm:text-5xl md:text-6xl font-bold`
   - Technical metadata and timezones.

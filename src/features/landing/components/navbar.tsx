@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PulseLogo } from "@/components/ui/logo";
 
@@ -27,8 +28,8 @@ export function Navbar({
   const currentLang = onLanguageToggle ? activeLanguage : internalLang;
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 w-full h-[81px] bg-[#02307D] border-b border-[#1B458A]">
-      <div className="w-full max-w-[1280px] mx-auto h-full px-6 sm:px-8 flex items-center justify-between">
+    <header className="sticky top-0 left-0 right-0 z-50 w-full h-[69px] sm:h-[81px] bg-[#02307D] border-b border-[#1B458A]">
+      <div className="w-full max-w-[1280px] mx-auto h-full px-4 sm:px-8 flex items-center justify-between">
         {/* Left: Brand Logo */}
         <Link
           href="/"
@@ -44,9 +45,10 @@ export function Navbar({
         >
           <Link
             href="/"
-            className="h-[36px] min-w-[80px] inline-flex items-center justify-center bg-[#0080DF] hover:bg-[#0072C6] text-white font-medium px-5 rounded-xl shadow-sm transition-colors"
+            className="h-[36px] min-w-[80px] inline-flex items-center justify-center gap-2 bg-[#0080DF] hover:bg-[#0072C6] text-white font-medium px-4 rounded-xl shadow-sm transition-colors"
           >
-            Home
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_6px_rgba(53,214,232,0.8)]" />
+            <span>Home</span>
           </Link>
           <a
             href="#about"
@@ -79,17 +81,25 @@ export function Navbar({
             Log In
           </Link>
           <Link
-            href="/auth/register"
-            className="h-[41px] inline-flex items-center justify-center bg-[#0080DF] hover:bg-[#0072C6] text-white font-semibold text-sm px-5 rounded-xl transition-all shadow-md shadow-blue-900/40 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            href="/auth/role"
+            className="h-[41px] inline-flex items-center justify-center gap-2 bg-[#0080DF] hover:bg-[#0072C6] text-white font-semibold text-sm px-5 rounded-xl transition-all shadow-md shadow-blue-900/40 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
           >
-            Create Account
+            <span>Create Account</span>
+            <Image
+              src="/assets/figma/icons/icon-arrow-button.svg"
+              alt=""
+              width={12}
+              height={12}
+              unoptimized
+              className="size-[12px] transition-transform group-hover:translate-x-0.5"
+            />
           </Link>
         </div>
 
         {/* Mobile Hamburger Button */}
         <div className="flex sm:hidden items-center gap-2">
           <Link
-            href="/auth/register"
+            href="/auth/role"
             className="inline-flex items-center bg-[#0080DF] text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm"
           >
             Join

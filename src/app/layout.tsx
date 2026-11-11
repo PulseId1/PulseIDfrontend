@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import {
   APP_NAME,
@@ -6,6 +7,21 @@ import {
   APP_SUBTITLE,
   LAUNCH_DISPLAY_DATE,
 } from "@/lib/constants";
+import { AuthProvider } from "@/lib/auth/auth-context";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+  weight: ["600", "700"],
+});
 
 export const viewport: Viewport = {
   themeColor: "#07111F",
@@ -45,14 +61,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
-      className="h-full antialiased scroll-smooth"
+      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-[#07111F] text-[#F4F8FC]">
-        {children}
+      <body className="min-h-full flex flex-col bg-[#07111F] text-[#F4F8FC] font-sans">
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

@@ -44,7 +44,9 @@ inspire
 # Documentation & large design raw files
 *.pdf
 decorations
-docs
+docs/screenshots/
+!docs/*.md
 public/inspire
 public/refrence
+scratch/
 *.tsbuildinfo

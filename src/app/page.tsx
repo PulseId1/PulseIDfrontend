@@ -16,7 +16,7 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#01091E] text-slate-900 selection:bg-[#0080DF]/30 selection:text-[#0080DF]">
+    <div className="min-h-screen flex flex-col bg-white text-slate-900 selection:bg-[#0080DF]/30 selection:text-[#0080DF]">
       {/* 1. Sticky Navigation Bar */}
       <Navbar />
 

@@ -11,10 +11,31 @@
   --text-secondary: #9BAFC3;
   --border-subtle: #1C344D;
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-space-grotesk);
 
-  /* Design Tokens from Figma */
+  /* Design Tokens from Figma (Verified Node 233:46 & 218:419) */
+  --figma-primary: #078BDE;
+  --figma-primary-light: #FFFFFF;
+  --figma-secondary-navy: #02307D;
+  --figma-bg-primary: #FBFEFF;
+  --figma-bg-box: #FFFFFF;
+  --figma-bg-box-2: #F9F9F9;
+  --figma-text-primary: #078BDE;
+  --figma-text-navy: #02307D;
+  --figma-text-dark: #41474F;
+  --figma-text-muted: #727272;
+  --figma-text-tertiary: #8B8B8B;
+  --figma-text-light: #FFFFFF;
+  --figma-text-subtle: #EAEDF6;
+  --figma-text-summit: #BACFD7;
+  --figma-border-navy: #02307D;
+  --figma-border-gray: #E9EFFD;
+  --figma-border-gray-2: #DDE7FF;
+  --figma-icon-primary: #078BDE;
+  --figma-icon-inactive: #C0CAE3;
+
+  /* Legacy aliases for backward compatibility */
   --Text-s-1: #02307D;
   --Text-primary-color-dark-2: #41474F;
 }
@@ -29,8 +50,18 @@
   --color-txt-secondary: var(--text-secondary);
   --color-border-subtle: var(--border-subtle);
 
+  --color-figma-primary: var(--figma-primary);
+  --color-figma-navy: var(--figma-secondary-navy);
+  --color-figma-bg: var(--figma-bg-primary);
+  --color-figma-box: var(--figma-bg-box);
+  --color-figma-box-2: var(--figma-bg-box-2);
+  --color-figma-text-dark: var(--figma-text-dark);
+  --color-figma-text-muted: var(--figma-text-muted);
+  --color-figma-border-gray: var(--figma-border-gray);
+  --color-figma-border-gray-2: var(--figma-border-gray-2);
+
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-heading: var(--font-heading);
 }
 
 html {
@@ -47,7 +78,7 @@ html {
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
-  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-inter), var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
   text-rendering: optimizeLegibility;

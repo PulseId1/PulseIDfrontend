@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "motion/react";
-import { useAuth } from "../context/AuthContext";
 import { AuthCardShell } from "./AuthCardShell";
-import { Button } from "@/components/ui/button";
-import { VerificationSuccessModal } from "./VerificationSuccessModal";
 
 const OTP_LENGTH = 4;
 const INITIAL_COUNTDOWN = 50;
@@ -15,40 +12,34 @@ const INITIAL_COUNTDOWN = 50;
 export function OtpVerification() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { role, language } = useAuth();
 
-  const phoneParam = searchParams.get("phone") || "01000000100000";
-  const countryParam = searchParams.get("country") || "EG";
-  const mode = (searchParams.get("mode") as "login" | "register") || "register";
+  const phoneParam = searchParams.get("phone") || "";
+  const role = searchParams.get("role") || "patient";
+  const mode = searchParams.get("mode") || "register";
 
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(INITIAL_COUNTDOWN);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  const canResend = countdown <= 0;
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Countdown timer
+  // 50s Countdown timer
   useEffect(() => {
     if (countdown <= 0) return;
-
     const timer = setInterval(() => {
       setCountdown((prev) => prev - 1);
     }, 1000);
     return () => clearInterval(timer);
   }, [countdown]);
 
-  // Focus first input on mount
+  // Autofocus first box
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);
 
   const handleChange = (index: number, value: string) => {
-    if (error) setError(undefined);
-
+    if (error) setError(null);
     const char = value.slice(-1);
     if (char && !/^\d$/.test(char)) return;
 
@@ -61,10 +52,7 @@ export function OtpVerification() {
     }
   };
 
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Backspace") {
       if (!digits[index] && index > 0) {
         inputRefs.current[index - 1]?.focus();
@@ -96,205 +84,164 @@ export function OtpVerification() {
   };
 
   const handleResend = () => {
-    if (!canResend) return;
+    if (countdown > 0) return;
     setDigits(Array(OTP_LENGTH).fill(""));
     setCountdown(INITIAL_COUNTDOWN);
-    setError(undefined);
+    setError(null);
     inputRefs.current[0]?.focus();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const enteredOtp = digits.join("");
-
-    if (enteredOtp.length < OTP_LENGTH) {
-      setError(
-        language === "ar"
-          ? "يرجى إدخال رمز التحقق المكون من 4 أرقام كاملًا."
-          : "Please enter the complete 4-digit verification code."
-      );
-      return;
-    }
-
-    if (enteredOtp === "0000") {
-      setError(
-        language === "ar"
-          ? "رمز التحقق غير صالح. حاول مرة أخرى."
-          : "Invalid verification code. Please try again."
-      );
+    const code = digits.join("");
+    if (code.length < OTP_LENGTH) {
+      setError("Please enter the complete 4-digit code.");
       return;
     }
 
     setIsVerifying(true);
-    setTimeout(() => {
-      setIsVerifying(false);
-      if (mode === "register") {
-        router.push(
-          `/auth/register/info?phone=${encodeURIComponent(
-            phoneParam
-          )}&country=${countryParam}&role=${role}&lang=${language}`
-        );
-      } else {
-        setShowSuccessModal(true);
-      }
-    }, 500);
+    // Note: SMS verification is unsupported by backend API v1 (BACKEND_UNSUPPORTED).
+    // This step permits workflow navigation without claiming live verification.
+    setIsVerifying(false);
+
+    if (mode === "login") {
+      router.push(`/auth/login?phone=${encodeURIComponent(phoneParam)}&role=${role}`);
+    } else {
+      router.push(
+        `/auth/register/info?phone=${encodeURIComponent(phoneParam)}&role=${role}`
+      );
+    }
   };
 
-  const backUrl =
-    mode === "login"
-      ? `/auth/login?role=${role}&phone=${encodeURIComponent(
-          phoneParam
-        )}&lang=${language}`
-      : `/auth/register?role=${role}&phone=${encodeURIComponent(
-          phoneParam
-        )}&lang=${language}`;
-
   return (
-    <>
-      <AuthCardShell
-        heroImage="/auth/hero-verify.jpg"
-        heroAlt="PulseID Clinical Consultation"
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="w-full space-y-6 text-start"
-        >
-          {/* Header - Matching 2-otb.jpg */}
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#002D62] tracking-tight">
-              {language === "ar" ? "تحقق من رقم هاتفك" : "Verify Your Phone"}
-            </h1>
-            <p className="text-sm text-slate-500 leading-relaxed">
-              {language === "ar"
-                ? "أدخل الرمز المكون من 4 أرقام المرسل إلى رقم هاتفك"
-                : "Enter the 4-digit code sent to your phone number"}
-            </p>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-semibold text-slate-800">
-                +20 {phoneParam}
-              </span>
+    <AuthCardShell heroImage="/assets/auth/auth-otp-hero.png">
+      <div className="w-full flex flex-col items-start min-w-0" data-node-id="116:1131">
+        {/* Heading Block matching Figma node 116:1133 */}
+        <div className="pb-8 w-full">
+          <h1 className="text-[28px] sm:text-[30px] font-bold leading-tight text-[#02307D] font-heading">
+            Verify Your Phone
+          </h1>
+          <div className="mt-2 text-[15px] sm:text-[16px] text-[#41474F] font-normal leading-normal">
+            <p>Enter the 4-digit code sent to your phone number</p>
+            <p className="mt-0.5">
+              <span className="font-semibold text-[#01091E]">+20 {phoneParam}</span>
+              <span className="mx-2 text-slate-300">|</span>
               <Link
-                href={backUrl}
-                className="text-[#0080DF] hover:underline font-semibold text-xs"
+                href={`/auth/register?role=${role}&phone=${encodeURIComponent(phoneParam)}`}
+                className="font-bold text-[#078BDE] hover:text-[#0060A8] transition-colors"
               >
-                {language === "ar" ? "تعديل" : "Edit"}
+                Edit
               </Link>
-            </div>
+            </p>
           </div>
+        </div>
 
-          {/* Form - Matching 2-otb.jpg */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* 4 Digit Boxes */}
-            <div
-              className="flex items-center justify-center gap-3 sm:gap-4 my-2"
-              onPaste={handlePaste}
-            >
-              {digits.map((digit, idx) => {
-                const isCurrent =
-                  idx === digits.findIndex((d) => d === "") ||
-                  (digits.every((d) => d !== "") && idx === OTP_LENGTH - 1);
+        {/* Prototype notice: SMS gateway unsupported in v1 */}
+        <div className="w-full mb-6 p-3 rounded-lg bg-amber-50/80 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2">
+          <span className="font-bold text-amber-600 mt-0.5">ℹ</span>
+          <span>
+            <strong>Prototype Notice:</strong> SMS OTP Gateway dispatch is not implemented in backend API v1 (classified as BACKEND_UNSUPPORTED). Enter any 4 digits to continue the prototype registration flow.
+          </span>
+        </div>
 
-                return (
+        {/* OTP Input Form matching Figma node 116:1139 */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-full">
+          {/* 4-Digit Boxes */}
+          <div className="flex items-center justify-between gap-3 sm:gap-4 w-full">
+            {digits.map((digit, index) => {
+              const isFilled = digit !== "";
+              return (
+                <div
+                  key={index}
+                  className={`w-[72px] sm:w-[92px] h-[80px] sm:h-[100px] rounded-[10px] bg-[#F0F2F6] flex items-center justify-center transition-all ${
+                    isFilled
+                      ? "border border-[#078BDE] bg-white shadow-sm"
+                      : "border border-transparent hover:border-slate-300"
+                  }`}
+                >
                   <input
-                    key={idx}
                     ref={(el) => {
-                      inputRefs.current[idx] = el;
+                      inputRefs.current[index] = el;
                     }}
                     type="text"
                     inputMode="numeric"
-                    autoComplete="one-time-code"
                     maxLength={1}
                     value={digit}
-                    placeholder="0"
-                    onChange={(e) => handleChange(idx, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(idx, e)}
-                    disabled={isVerifying}
-                    className={`w-14 h-14 sm:w-16 sm:h-16 text-center text-xl sm:text-2xl font-bold rounded-xl sm:rounded-2xl transition-all focus:outline-none placeholder:text-slate-300 ${
-                      digit
-                        ? "bg-white text-slate-900 border-2 border-[#0080DF] shadow-sm"
-                        : isCurrent
-                        ? "bg-[#F0F9FF] text-slate-900 border-2 border-[#0080DF]"
-                        : "bg-[#F3F4F6] text-slate-400 border border-transparent"
-                    }`}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={handlePaste}
+                    className="w-full h-full bg-transparent text-center font-bold text-[28px] sm:text-[32px] text-[#01091E] outline-none caret-[#078BDE]"
                   />
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
+          </div>
 
-            {error && (
-              <p className="text-xs text-red-500 font-medium text-center">
-                {error}
-              </p>
-            )}
+          {error && (
+            <p className="text-xs text-rose-500 font-medium text-center -mt-4">
+              {error}
+            </p>
+          )}
 
-            {/* Resend Area - Matching 2-otb.jpg */}
-            <div className="text-center space-y-1">
-              <p className="text-xs text-slate-500">
-                {language === "ar"
-                  ? "لم يصلك الرمز؟"
-                  : "Didn't receive the code?"}
-              </p>
+          {/* Resend Code Info matching Figma node 116:1149 */}
+          <div className="flex flex-col items-center gap-3 w-full">
+            <p className="text-[14px] text-[#01091E] font-normal">
+              Didn’t receive the code?
+            </p>
+
+            <div className="flex items-center gap-3">
+              <div className="w-[18px] h-[18px] relative shrink-0">
+                <Image
+                  src="/assets/auth/icon-reset.svg"
+                  alt=""
+                  width={18}
+                  height={18}
+                  unoptimized
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
               <button
                 type="button"
                 onClick={handleResend}
-                disabled={!canResend || isVerifying}
-                className={`inline-flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${
-                  canResend
-                    ? "text-[#0080DF] hover:underline"
-                    : "text-[#0080DF] opacity-90 cursor-default"
-                }`}
+                disabled={countdown > 0}
+                className="text-[14px] font-medium text-[#078BDE] hover:text-[#0060A8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                <svg
-                  className={`w-3.5 h-3.5 ${
-                    canResend ? "animate-none" : "animate-spin-reverse"
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                <span>
-                  {language === "ar" ? "إعادة إرسال الرمز" : "Resend Code"}
-                  {!canResend && ` ( ${countdown}s )`}
-                </span>
+                Resend Code
               </button>
+
+              <span className="text-[14px] text-[#01091E] font-medium">
+                ( {countdown}s )
+              </span>
             </div>
+          </div>
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full h-12 text-sm rounded-xl bg-[#0080DF] hover:bg-[#0073C8]"
-              isLoading={isVerifying}
-              rightIcon={
-                <span className={language === "ar" ? "rotate-180" : ""}>→</span>
-              }
-            >
-              {language === "ar" ? "التالي" : "Next"}
-            </Button>
-          </form>
-        </motion.div>
-      </AuthCardShell>
-
-      {/* Verification Success Modal for simulated completion */}
-      <VerificationSuccessModal
-        isOpen={showSuccessModal}
-        role={role}
-        phone={phoneParam}
-        onClose={() => {
-          setShowSuccessModal(false);
-          router.push(`/auth/login?role=${role}&lang=${language}`);
-        }}
-      />
-    </>
+          {/* Next Button matching Figma node 116:1157 */}
+          <button
+            type="submit"
+            disabled={isVerifying}
+            className="h-[56px] rounded-[12px] bg-[#078BDE] hover:bg-[#0070B8] active:scale-[0.99] text-white font-medium text-[14px] flex items-center justify-center gap-2 cursor-pointer transition-all w-full shadow-sm disabled:opacity-70"
+          >
+            {isVerifying ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+            ) : (
+              <>
+                <span>Next</span>
+                <div className="w-[18px] h-[18px] relative rotate-90">
+                  <Image
+                    src="/assets/auth/icon-arrow-next.svg"
+                    alt=""
+                    width={18}
+                    height={18}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </AuthCardShell>
   );
 }

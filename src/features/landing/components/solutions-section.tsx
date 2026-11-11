@@ -2,20 +2,17 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { CardCurvedBorder } from "@/components/ui/card-curved-border";
 
 interface SolutionCardData {
   id: string;
   title: string;
   description: string;
   expandedDetail: string;
-  iconBg: string;
-  iconColor: string;
-  accentStroke?: string;
-  iconSvg: React.ReactNode;
+  accentStroke: string;
+  iconSrc: string;
 }
 
-// Desktop cards (surround layout matching Figma desktop landing.png)
+// Desktop cards (surround layout matching Figma node 233:502 & 233:506)
 const DESKTOP_SOLUTIONS: SolutionCardData[] = [
   {
     id: "sol-01",
@@ -24,18 +21,8 @@ const DESKTOP_SOLUTIONS: SolutionCardData[] = [
       "Instant digital timeline uniting past hospital visits, labs, prescriptions, and diagnoses.",
     expandedDetail:
       "Connects disparate hospital EHR systems via zero-knowledge encrypted bridges, granting patients an immutable passport for global medical consultations.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004 11m0 0a8.003 8.003 0 001.21 4.258"
-        />
-      </svg>
-    ),
+    accentStroke: "#00609B",
+    iconSrc: "/assets/figma/icons/solution-card-01-biometric.svg",
   },
   {
     id: "sol-02",
@@ -44,18 +31,8 @@ const DESKTOP_SOLUTIONS: SolutionCardData[] = [
       "Patients can control or audit which clinics, third parties, or doctors access their data.",
     expandedDetail:
       "Every medical disclosure requires an explicit digital consent signature. Patients can revoke clinic or specialist access with one click at any time.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-        />
-      </svg>
-    ),
+    accentStroke: "#00AEC7",
+    iconSrc: "/assets/figma/icons/solution-card-02-consent.svg",
   },
   {
     id: "sol-03",
@@ -64,18 +41,8 @@ const DESKTOP_SOLUTIONS: SolutionCardData[] = [
       "Get intelligent answers and summaries based on your medical records.",
     expandedDetail:
       "Summarizes 10+ years of dense clinical notes, highlighted abnormal laboratory lab values, and chronic condition progressions in seconds.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
+    accentStroke: "#00609B",
+    iconSrc: "/assets/figma/icons/solution-card-03-ai.svg",
   },
   {
     id: "sol-04",
@@ -84,24 +51,8 @@ const DESKTOP_SOLUTIONS: SolutionCardData[] = [
       "Turn prescription images into structured digital records.",
     expandedDetail:
       "Uses computer vision calibrated on handwritten doctor scripts to digitize prescriptions into interoperable FHIR format and standardized RxNorm codes.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-        />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-        />
-      </svg>
-    ),
+    accentStroke: "#3B5BA9",
+    iconSrc: "/assets/figma/icons/solution-card-04-prescription.svg",
   },
   {
     id: "sol-05",
@@ -110,128 +61,62 @@ const DESKTOP_SOLUTIONS: SolutionCardData[] = [
       "Get notified about potential drug interactions and conflicts.",
     expandedDetail:
       "Simultaneously verifies contraindications against patient genetic flags, renal clearance rates, and active medications to prevent adverse events.",
-    iconBg: "bg-[#FFF0F1]",
-    iconColor: "text-[#BA1A1A]",
     accentStroke: "#BA1A1A",
-    iconSvg: (
-      <svg className="w-6 h-6 text-[#BA1A1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-        />
-      </svg>
-    ),
+    iconSrc: "/assets/figma/icons/solution-card-05-drugs.svg",
   },
 ];
 
-// Mobile cards (sequential 1-5 harmonized with official landing.pdf design)
+// Mobile cards (matching Figma node 218:515 & 218:524)
 const MOBILE_SOLUTIONS: SolutionCardData[] = [
   {
     id: "m-sol-01",
-    title: "01. Unified Biometric Health Record",
+    title: "1. Unified Biometric Health Record",
     description:
-      "Instant digital timeline uniting past hospital visits, labs, prescriptions, and diagnoses.",
+      "Instant digital timeline uniting past hospital visits, labs, prescriptions, and diagnostics in one verifiable identity hub.",
     expandedDetail:
       "Connects disparate hospital EHR systems via zero-knowledge encrypted bridges, granting patients an immutable passport for global medical consultations.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 004 11m0 0a8.003 8.003 0 001.21 4.258"
-        />
-      </svg>
-    ),
+    accentStroke: "#00609B",
+    iconSrc: "/assets/figma/icons/solution-01-biometric-record.svg",
   },
   {
     id: "m-sol-02",
-    title: "02. Granular Patient-Owned Consent Control",
+    title: "2. Patient-Owned Consent Control",
     description:
-      "Patients can control or audit which clinics, third parties, or doctors access their data.",
+      "Patients can grant, inspect, or revoke doctor and clinic access in one tap from mobile with time- locked tokens.",
     expandedDetail:
       "Every medical disclosure requires an explicit digital consent signature. Patients can revoke clinic or specialist access with one click at any time.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-        />
-      </svg>
-    ),
+    accentStroke: "#00AEC7",
+    iconSrc: "/assets/figma/icons/solution-02-consent-control.svg",
   },
   {
     id: "m-sol-03",
-    title: "03. AI-Powered Medical Assistant",
+    title: "3. Digital Pharmacy Synchronization",
     description:
-      "Get intelligent answers and summaries based on your medical records.",
+      "Verified e-prescriptions routed directly to partner pharmacies with automated dispensing and zero counterfeit risk.",
     expandedDetail:
-      "Summarizes 10+ years of dense clinical notes, highlighted abnormal laboratory lab values, and chronic condition progressions in seconds.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-        />
-      </svg>
-    ),
+      "Eliminates handwritten prescription misreads, duplicate dispensing, and fraudulent paper scripts.",
+    accentStroke: "#3B5BA9",
+    iconSrc: "/assets/figma/icons/solution-04-smart-prescription.svg",
   },
   {
     id: "m-sol-04",
-    title: "04. Smart Prescription & OCR",
+    title: "4. Interoperable Diagnostic Hub",
     description:
-      "Turn prescription images into structured digital records.",
+      "Zero redundant lab tests—share certified DICOM imaging and blood results securely between independent centers.",
     expandedDetail:
-      "Uses computer vision calibrated on handwritten doctor scripts to digitize prescriptions into interoperable FHIR format and standardized RxNorm codes.",
-    iconBg: "bg-[#E8F3FF]",
-    iconColor: "text-[#0080DF]",
-    iconSvg: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-        />
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-        />
-      </svg>
-    ),
+      "Prevents duplicate patient billing and repeated diagnostic testing across siloed diagnostic providers.",
+    accentStroke: "#00609B",
+    iconSrc: "/assets/figma/icons/solution-03-ai-assistant.svg",
   },
   {
     id: "m-sol-05",
-    title: "05. Drug Interaction Alerts",
+    title: "5. Accredited Clinical Directory",
     description:
-      "Get notified about potential drug interactions and conflicts.",
+      "Direct booking and tele-consultation with MOH- verified specialists, hospitals, and certified laboratory centers.",
     expandedDetail:
-      "Simultaneously verifies contraindications against patient genetic flags, renal clearance rates, and active medications to prevent adverse events.",
-    iconBg: "bg-[#FFF0F1]",
-    iconColor: "text-[#BA1A1A]",
+      "Simultaneously verifies provider clinical license credentials and insurance eligibility prior to appointments.",
     accentStroke: "#BA1A1A",
-    iconSvg: (
-      <svg className="w-6 h-6 text-[#BA1A1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-        />
-      </svg>
-    ),
+    iconSrc: "/assets/figma/icons/solution-05-drug-alerts.svg",
   },
 ];
 
@@ -249,100 +134,142 @@ export function SolutionsSection() {
   const rightBottomCard = DESKTOP_SOLUTIONS[4];// 05. Drug Interaction Alerts
 
   return (
-    <section id="solutions" className="w-full bg-white pt-16 lg:pt-20 pb-16 lg:pb-0 overflow-hidden">
+    <section id="solutions" className="w-full bg-[#FBFEFF] pt-8 pb-0 overflow-hidden">
       {/* 
-        Section Heading:
-        Centered in top 190px on clean white background
+        Section Heading (Figma Node 233:503):
+        Left-aligned across all breakpoints as requested by user
       */}
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8 lg:mb-10">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0080DF] tracking-tight">
-          How PulseID Makes a Difference jef
-        </h2>
-        <p className="mt-3 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
-          We designed practical solutions to address these challenges and create
-          a smoother, more accessible healthcare experience for everyone.
-        </p>
+      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 lg:mb-[62px]">
+        <div className="max-w-[770px] text-left">
+          <h2 className="text-3xl sm:text-4xl lg:text-[36px] font-bold text-[#078BDE] tracking-tight leading-tight text-left">
+            How PulseID Makes a Difference
+          </h2>
+          <p className="mt-2 text-base sm:text-[16px] text-[#41474F] leading-relaxed text-left">
+            We designed practical solutions to address these challenges and create
+            a smoother, more accessible healthcare experience for everyone.
+          </p>
+        </div>
       </div>
 
       {/* 
-        Full-bleed background wrapper taking 100% width of the screen:
-        Background: 3rd-bg.svg (1280x579) scaled edge-to-edge
-        Inner frame: width: 1280; height: 579; gap: 40px; padding: 48px 32px;
+        Background wrapper matching Figma Node 233:506:
+        width: 100% full-width edge-to-edge (no space-x), height: 579px;
+        Background: Wave mesh matrix from sec3-bg-clippath.svg, dual ambient radiance orbs, and connecting arcs
       */}
-      <div className="w-full relative min-h-[579px] overflow-hidden">
-        {/* Full-bleed background graphic edge-to-edge */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
-          <Image
-            src="/landing/3rd-bg.svg"
-            alt=""
-            fill
-            priority
-            unoptimized
-            aria-hidden="true"
-            className="object-cover object-center w-full h-full"
-          />
-        </div>
-
-        {/* Desktop Surround Layout (matching 1280x579 frame) */}
-        <div className="hidden lg:flex flex-col justify-between w-full max-w-[1280px] mx-auto min-h-[579px] lg:h-[579px] pt-12 pb-12 px-8 relative z-10 gap-10">
-          {/* Top Card: 01. Unified Biometric Health Record */}
-          <div className="flex justify-center">
-            <div className="w-full max-w-[440px]">
-              <SolutionCardDesktop data={topCard} />
+      <div className="w-full">
+        <div className="w-full relative min-h-[579px] h-[579px] overflow-hidden bg-gradient-to-b from-[#E7F2FF] via-[#FAF8FF] via-[51.5%] to-[#F0F3FB] rounded-none border-y border-[#E1EAF5]">
+          {/* Layer 1: Figma Node 233:507 / 233:510 Wave Mesh Background Layer from sec3-bg-clippath.svg */}
+          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden flex items-center justify-center z-0" aria-hidden="true">
+            <div className="relative w-full max-w-[1280px] h-[579px]">
+              <Image
+                src="/sec3-bg-clippath.svg"
+                alt=""
+                fill
+                priority
+                unoptimized
+                className="object-contain object-center w-full h-full"
+              />
             </div>
           </div>
 
-          {/* Middle Row with gap: 40px (gap-10) */}
-          <div className="grid grid-cols-12 gap-10 items-center my-auto">
-            {/* Left Column: 02 & 04 */}
-            <div className="col-span-4 flex flex-col gap-6 max-w-[370px]">
-              <SolutionCardDesktop data={leftTopCard} />
-              <SolutionCardDesktop data={leftBottomCard} />
-            </div>
+          {/* Layer 2: Figma Node 233:555 Soft Ambient Radiance Blurs */}
+          <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0" aria-hidden="true">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] rounded-full bg-[rgba(52,216,225,0.12)] blur-[64px]" />
+            <div className="absolute left-1/2 top-[-40px] -translate-x-1/2 w-[420px] h-[420px] rounded-full bg-[rgba(7,139,222,0.12)] blur-[64px]" />
+          </div>
 
-            {/* Center Column: Solution Illustration (solution.svg) */}
-            <div className="col-span-4 flex justify-center items-center">
-              <div className="relative w-full max-w-[440px] aspect-[455/351] transition-transform hover:scale-105 duration-300">
-                <Image
-                  src="/landing/solution.svg"
-                  alt="Doctor with unified digital healthcare solutions"
-                  fill
-                  className="object-contain"
-                  priority
-                />
+          {/* Layer 3: Figma Node 233:554 Radial Connecting Arcs */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 flex items-center justify-center" aria-hidden="true">
+            <div className="relative w-[1214px] h-[500px]">
+              <Image
+                src="/assets/figma/landing/solution-connecting-arcs.svg"
+                alt=""
+                fill
+                priority
+                unoptimized
+                className="object-contain object-center w-full h-full"
+              />
+            </div>
+          </div>
+
+          {/* Desktop Surround Layout (matching 1280x579 frame) */}
+          <div className="hidden lg:flex flex-col justify-between w-full max-w-[1214px] mx-auto min-h-[579px] lg:h-[579px] pt-10 pb-12 px-8 relative z-10 gap-8">
+            {/* Top Card: 01. Unified Biometric Health Record */}
+            <div className="flex justify-center">
+              <div className="w-[448px]">
+                <SolutionCardDesktop data={topCard} />
               </div>
             </div>
 
-            {/* Right Column: 03 & 05 */}
-            <div className="col-span-4 flex flex-col gap-6 max-w-[370px] ml-auto">
-              <SolutionCardDesktop data={rightTopCard} />
-              <SolutionCardDesktop data={rightBottomCard} />
+            {/* Middle Row with gap: 32px */}
+            <div className="grid grid-cols-12 gap-8 xl:gap-10 items-center my-auto w-full">
+              {/* Left Column: 02 & 04 */}
+              <div className="col-span-4 flex flex-col gap-6 max-w-[383px]">
+                <SolutionCardDesktop data={leftTopCard} />
+                <SolutionCardDesktop data={leftBottomCard} />
+              </div>
+
+              {/* Center Column: Original Figma Physician with glowing cross shield and background ambient badge */}
+              <div className="col-span-4 flex justify-center items-center relative">
+                {/* Figma Node 233:602 Ambient ID Card behind doctor */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-40 pointer-events-none z-0" aria-hidden="true">
+                  <div className="-rotate-1 bg-white border border-[#B9D9F8] rounded-[16px] w-[288px] h-[176px] p-[13px] shadow-sm flex flex-col justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-[12px] bg-[#EBF1F9]" />
+                      <div className="flex flex-col gap-1">
+                        <div className="w-16 h-2 rounded-[2px] bg-[#DCE4F0]" />
+                        <div className="w-10 h-1.5 rounded-[2px] bg-[#EBF1F9]" />
+                      </div>
+                    </div>
+                    <div className="w-full h-1 rounded-[2px] bg-[#F4F8FC]" />
+                  </div>
+                </div>
+
+                <div className="relative w-[340px] h-[340px] max-w-full aspect-square transition-transform hover:scale-105 duration-300 z-10">
+                  <Image
+                    src="/assets/figma/landing/solution-physician-cross.png"
+                    alt="Doctor with unified digital healthcare solutions"
+                    fill
+                    unoptimized
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </div>
+
+              {/* Right Column: 03 & 05 */}
+              <div className="col-span-4 flex flex-col gap-6 max-w-[383px] ml-auto">
+                <SolutionCardDesktop data={rightTopCard} />
+                <SolutionCardDesktop data={rightBottomCard} />
+              </div>
             </div>
           </div>
         </div>
 
         {/* 
-          Mobile Version matching Figma lADING MOBAIL.svg:
-          5 cards stacked in a single column, no center illustration, with Details ⌄ toggle
+          Mobile Version matching Figma lADING MOBAIL (Node 218:515 & 218:524):
+          5 cards stacked in a single column, 358px wide, with Details ⌄ toggle
         */}
-        <div className="block lg:hidden w-full max-w-[420px] mx-auto px-4 py-8 flex flex-col gap-3.5 relative z-10">
+        <div className="block lg:hidden w-full max-w-[358px] sm:max-w-md mx-auto px-4 py-6 flex flex-col gap-3 relative z-10" data-node-id="218:523">
           {MOBILE_SOLUTIONS.map((card) => {
             const isExpanded = expandedId === card.id;
             return (
               <div
                 key={card.id}
-                className="relative bg-white rounded-2xl p-4 border border-[#DCE4F0] shadow-sm flex flex-col gap-2 transition-all overflow-hidden"
+                className="bg-[#F8FAFC] rounded-[16px] p-4 border border-[#E1EAF5] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex flex-col gap-2 transition-all"
               >
-                {card.accentStroke && <CardCurvedBorder color={card.accentStroke} />}
-
-                <div className="flex items-center justify-between gap-2 relative z-10">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${card.iconBg} ${card.iconColor}`}
-                    >
-                      {card.iconSvg}
+                    <div className="w-9 h-9 rounded-[12px] bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center shrink-0">
+                      <Image
+                        src={card.iconSrc}
+                        alt=""
+                        width={16}
+                        height={16}
+                        className="object-contain"
+                      />
                     </div>
-                    <h3 className="font-bold text-[#02307D] text-[15px] sm:text-[16px] truncate">
+                    <h3 className="font-bold text-[#01091E] text-[12px] sm:text-[13px] truncate font-sans">
                       {card.title}
                     </h3>
                   </div>
@@ -350,26 +277,30 @@ export function SolutionsSection() {
                   <button
                     type="button"
                     onClick={() => toggleExpand(card.id)}
-                    className="text-[#0080DF] hover:text-[#0060A8] text-xs font-semibold flex items-center gap-1 shrink-0 px-1 py-0.5 rounded cursor-pointer"
+                    className="text-[#078BDE] hover:text-[#0060A8] text-[11px] font-semibold flex items-center gap-1 shrink-0 px-1 py-0.5 rounded cursor-pointer"
                     aria-expanded={isExpanded}
                   >
                     <span>Details</span>
-                    <span
-                      className={`inline-block transition-transform duration-200 text-xs ${
+                    <svg
+                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
                         isExpanded ? "rotate-180" : ""
                       }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
                     >
-                      ⌄
-                    </span>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
                   </button>
                 </div>
 
-                <p className="text-[13px] text-[#41474F] leading-normal pl-13 relative z-10">
+                <p className="text-[11px] text-[#41474F] leading-normal pl-12">
                   {card.description}
                 </p>
 
                 {isExpanded && (
-                  <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-[#41474F] italic bg-slate-50 p-2.5 rounded-lg animate-in fade-in duration-200 relative z-10">
+                  <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-[#41474F] italic bg-slate-50 p-2.5 rounded-lg animate-in fade-in duration-200 ml-12">
                     <span className="font-semibold text-[#02307D] not-italic block mb-0.5">
                       Architecture & Benefit:
                     </span>
@@ -386,21 +317,31 @@ export function SolutionsSection() {
 }
 
 function SolutionCardDesktop({ data }: { readonly data: SolutionCardData }) {
+  const isDrugAlerts = data.id === "sol-05";
   return (
-    <div className="relative bg-white rounded-2xl p-5 border border-[#DCE4F0] shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-md">
-      {data.accentStroke && <CardCurvedBorder color={data.accentStroke} />}
-
+    <div
+      className="relative bg-white rounded-[16px] p-6 pl-7 border border-[#DCE4F0] border-l-4 shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.06),0px_2px_4px_-2px_rgba(0,0,0,0.06)] transition-all duration-300 hover:shadow-md"
+      style={{ borderLeftColor: data.accentStroke }}
+    >
       <div className="relative z-10 flex items-start gap-4">
         <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${data.iconBg} ${data.iconColor}`}
+          className={`w-12 h-12 rounded-[8px] flex items-center justify-center shrink-0 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] ${
+            isDrugAlerts ? "bg-[#FFF0F1]" : "bg-[#EBF1F9]"
+          }`}
         >
-          {data.iconSvg}
+          <Image
+            src={data.iconSrc}
+            alt=""
+            width={22}
+            height={22}
+            className="object-contain"
+          />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-[18px] font-bold text-[#02307D] leading-normal tracking-[-0.01em]">
+          <h3 className="text-[18px] font-bold text-[#02307D] leading-normal tracking-tight font-heading">
             {data.title}
           </h3>
-          <p className="mt-1 text-[14px] font-normal text-[#41474F] leading-normal">
+          <p className="mt-1.5 text-[14px] font-normal text-[#41474F] leading-normal">
             {data.description}
           </p>
         </div>

@@ -1,319 +1,318 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "motion/react";
-import { useAuth } from "../context/AuthContext";
 import { AuthCardShell } from "./AuthCardShell";
-import { PhoneInput } from "./PhoneInput";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DEFAULT_COUNTRY } from "../utils/countries";
-import { CountryItem } from "../types/auth";
-import { validatePhoneNumber } from "../schemas/authValidation";
+import { useAuth, UserRole } from "@/lib/auth/auth-context";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { role, language } = useAuth();
+  const role = (searchParams.get("role") as UserRole) || "patient";
+  const justRegistered = searchParams.get("registered") === "true";
+  const { login } = useAuth();
 
   const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
-  const [phone, setPhone] = useState(searchParams.get("phone") || "");
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState(() => searchParams.get("phone") || "");
+  const [email, setEmail] = useState(() => searchParams.get("email") || "");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<CountryItem>(DEFAULT_COUNTRY);
-  const [error, setError] = useState<string | undefined>();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const identifier = activeTab === "phone" ? phone.trim() : email.trim();
 
-    if (activeTab === "phone") {
-      const phoneValidation = validatePhoneNumber(phone, selectedCountry, language);
-      if (!phoneValidation.isValid) {
-        setError(phoneValidation.error);
-        return;
-      }
-    } else {
-      if (!email.trim() || !email.includes("@")) {
-        setError(
-          language === "ar"
-            ? "يرجى إدخال عنوان بريد إلكتروني صالح."
-            : "Please enter a valid email address."
-        );
-        return;
-      }
-    }
-
-    if (!password.trim()) {
+    if (!identifier) {
       setError(
-        language === "ar"
-          ? "يرجى إدخال كلمة المرور."
-          : "Please enter your password."
+        activeTab === "phone"
+          ? "Please enter your phone number."
+          : "Please enter your email address."
       );
       return;
     }
 
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      router.push(
-        `/auth/verify?mode=login&phone=${encodeURIComponent(
-          phone || "01000000100000"
-        )}&country=${selectedCountry.code}&role=${role}&lang=${language}`
+    if (!password.trim()) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await login({
+        userName: identifier,
+        password,
+        role,
+      });
+
+      setIsLoading(false);
+
+      if (result.success) {
+        // Route according to verified backend role; do not trust client query param alone
+        if (result.role === "doctor") {
+          router.push("/doctor");
+        } else if (result.role === "pharmacist") {
+          router.push("/pharmacist");
+        } else {
+          router.push("/patient");
+        }
+      } else {
+        setError(result.error || "Invalid username or password.");
+      }
+    } catch (err) {
+      setIsLoading(false);
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred during login."
       );
-    }, 400);
+    }
   };
 
   return (
-    <AuthCardShell
-      heroImage="/auth/hero-login.jpg"
-      heroAlt="PulseID Digital Healthcare Technology"
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25 }}
-        className="w-full space-y-6 text-start"
-      >
-        {/* Header - Matching 4-login.jpg */}
-        <div className="space-y-1.5">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#002D62] tracking-tight">
-            {language === "ar" ? "مرحبًا بعودتك" : "Welcome Back"}
+    <AuthCardShell heroImage="/assets/auth/auth-login-hero.png">
+      <div className="w-full flex flex-col items-start min-w-0" data-node-id="116:960">
+        {/* Header Block matching Figma node 116:962 */}
+        <div className="pb-6 w-full">
+          <h1 className="text-[28px] sm:text-[30px] font-bold leading-tight text-[#02307D] font-heading">
+            Welcome Back
           </h1>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            {language === "ar"
-              ? "سجل الدخول للوصول إلى هويتك الصحية الرقمية والبقاء على اتصال."
-              : "Sign in to access your healthcare identity and stay connected."}
+          <p className="mt-2 text-[14px] sm:text-[15px] text-[#41474F] font-normal leading-normal">
+            Sign in to access your healthcare identity and stay connected.
           </p>
         </div>
 
-        {/* Tab Toggle: Phone Number / Email Address - Matching 4-login.jpg */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Just registered confirmation notification */}
+        {justRegistered && (
+          <div className="w-full mb-5 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm flex items-center gap-2.5 animate-in fade-in">
+            <span className="text-base text-emerald-600 font-bold">✓</span>
+            <div>
+              <span className="font-semibold">Account created successfully!</span>{" "}
+              Please enter your password to sign in.
+            </div>
+          </div>
+        )}
+
+        {/* Tab Toggle: Phone Number / Email Address matching Figma node 116:968 */}
+        <div className="border border-[#D0DEFF] rounded-[10px] p-[3px] flex items-center justify-between w-full mb-6 bg-white">
           <button
             type="button"
             onClick={() => {
               setActiveTab("phone");
-              setError(undefined);
+              setError(null);
             }}
-            className={`h-11 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer border min-w-0 ${
+            className={`flex-1 h-[48px] rounded-[8px] flex items-center justify-center gap-2.5 transition-all cursor-pointer font-medium text-[14px] sm:text-[15px] ${
               activeTab === "phone"
-                ? "bg-[#F0F9FF] border-[#0080DF] text-[#0080DF] shadow-sm"
-                : "bg-white border-slate-200 text-slate-500 hover:text-slate-800"
+                ? "bg-[rgba(142,191,222,0.2)] border border-[#078BDE] text-[#078BDE] shadow-sm font-semibold"
+                : "text-[#727272] hover:text-[#078BDE] border border-transparent"
             }`}
           >
-            <svg
-              className="w-4 h-4 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <rect
-                x="5"
-                y="2"
-                width="14"
-                height="20"
-                rx="2"
-                ry="2"
-                strokeWidth="2"
+            <div className="w-5 h-5 relative">
+              <Image
+                src="/assets/auth/icon-phone.svg"
+                alt=""
+                width={20}
+                height={20}
+                unoptimized
+                className="w-full h-full object-contain"
               />
-              <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2" />
-            </svg>
-            <span className="truncate">{language === "ar" ? "رقم الهاتف" : "Phone Number"}</span>
+            </div>
+            <span>Phone Number</span>
           </button>
 
           <button
             type="button"
             onClick={() => {
               setActiveTab("email");
-              setError(undefined);
+              setError(null);
             }}
-            className={`h-11 px-2 sm:px-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer border min-w-0 ${
+            className={`flex-1 h-[48px] rounded-[8px] flex items-center justify-center gap-2.5 transition-all cursor-pointer font-medium text-[14px] sm:text-[15px] ${
               activeTab === "email"
-                ? "bg-[#F0F9FF] border-[#0080DF] text-[#0080DF] shadow-sm"
-                : "bg-white border-slate-200 text-slate-500 hover:text-slate-800"
+                ? "bg-[rgba(142,191,222,0.2)] border border-[#078BDE] text-[#078BDE] shadow-sm font-semibold"
+                : "text-[#727272] hover:text-[#078BDE] border border-transparent"
             }`}
           >
-            <svg
-              className="w-4 h-4 shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            <div className="w-5 h-5 relative">
+              <Image
+                src="/assets/auth/icon-email.svg"
+                alt=""
+                width={20}
+                height={20}
+                unoptimized
+                className="w-full h-full object-contain"
               />
-            </svg>
-            <span className="truncate">{language === "ar" ? "البريد الإلكتروني" : "Email Address"}</span>
+            </div>
+            <span>Email Address</span>
           </button>
         </div>
 
-        {/* Form - Matching 4-login.jpg */}
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        {/* Form matching Figma node 116:982 */}
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+          {/* Active Tab Input: Phone OR Email */}
           {activeTab === "phone" ? (
-            <PhoneInput
-              id="login-phone"
-              label={language === "ar" ? "رقم الهاتف" : "Phone Number"}
-              value={phone}
-              selectedCountry={selectedCountry}
-              onChangePhone={(newVal) => {
-                setPhone(newVal);
-                if (error) setError(undefined);
-              }}
-              onSelectCountry={(c) => {
-                setSelectedCountry(c);
-                if (error) setError(undefined);
-              }}
-              error={error}
-              disabled={isSubmitting}
-              placeholder="01000000100000"
-            />
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-[12px] font-medium text-[#41474F]">Phone Number</label>
+              <div className="bg-[#C0CAE3]/10 border border-[#DDE7FF] rounded-[8px] h-[56px] relative flex items-center overflow-hidden focus-within:border-[#078BDE] transition-colors w-full">
+                <div className="pl-4 pr-3 flex items-center justify-center shrink-0">
+                  <div className="w-6 h-6 relative">
+                    <Image
+                      src="/assets/auth/icon-phone.svg"
+                      alt=""
+                      width={24}
+                      height={24}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => {
+                    setPhone(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  placeholder="01000000100000"
+                  className="flex-1 bg-transparent border-none outline-none text-[15px] text-[#040A17] placeholder:text-[#8B8B8B] font-normal min-w-0"
+                />
+
+                <div className="border-l border-[#D0DEFF] h-full px-3.5 flex items-center justify-center gap-1.5 shrink-0">
+                  <div className="w-6 h-6 relative shrink-0">
+                    <Image
+                      src="/assets/auth/flag-egypt.svg"
+                      alt="Egypt flag"
+                      width={24}
+                      height={24}
+                      unoptimized
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <span className="text-[12px] font-medium text-[#040A17] font-sans">
+                    +20
+                  </span>
+                </div>
+              </div>
+            </div>
           ) : (
-            <Input
-              id="login-email"
-              type="email"
-              label={language === "ar" ? "البريد الإلكتروني" : "Email Address"}
-              placeholder="ahmed@gmail.com"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (error) setError(undefined);
-              }}
-              error={error}
-              disabled={isSubmitting}
-              leftIcon={
-                <svg
-                  className="w-4 h-4 text-slate-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-[12px] font-medium text-[#41474F]">Email Address</label>
+              <div className="bg-[#C0CAE3]/10 border border-[#DDE7FF] rounded-[8px] h-[56px] relative flex items-center px-4 focus-within:border-[#078BDE] transition-colors w-full">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError(null);
+                  }}
+                  placeholder="ahmed@gmail.com"
+                  className="flex-1 bg-transparent border-none outline-none text-[15px] text-[#040A17] placeholder:text-[#8B8B8B] font-normal min-w-0 pr-2"
+                />
+                <div className="w-6 h-6 relative shrink-0 opacity-70">
+                  <Image
+                    src="/assets/auth/icon-email.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                    unoptimized
+                    className="w-full h-full object-contain"
                   />
-                </svg>
-              }
-            />
+                </div>
+              </div>
+            </div>
           )}
 
-          {/* Password Field - Matching 4-login.jpg */}
-          <div className="space-y-1 text-start">
-            <label
-              htmlFor="login-password"
-              className="block text-xs font-semibold text-slate-700"
-            >
-              {language === "ar" ? "كلمة المرور" : "Password"}
-            </label>
-            <div className="relative">
-              <span className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          {/* Password Input matching Figma node 116:1005 */}
+          <div className="flex flex-col gap-1.5 w-full">
+            <label className="text-[12px] font-medium text-[#41474F]">Password</label>
+            <div className="bg-[#C0CAE3]/10 border border-[#DDE7FF] rounded-[8px] h-[56px] relative flex items-center px-4 focus-within:border-[#078BDE] transition-colors w-full">
+              <div className="pr-3 flex items-center justify-center shrink-0">
+                <div className="w-5 h-5 relative opacity-70">
+                  <Image
+                    src="/assets/auth/icon-lock.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                    unoptimized
+                    className="w-full h-full object-contain"
                   />
-                </svg>
-              </span>
+                </div>
+              </div>
+
               <input
-                id="login-password"
                 type={showPassword ? "text" : "password"}
-                placeholder="*** *** **"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
-                  if (error) setError(undefined);
+                  if (error) setError(null);
                 }}
-                disabled={isSubmitting}
-                className="w-full h-11 sm:h-12 bg-white border border-slate-200 rounded-xl ps-9 pe-10 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#0080DF] focus:ring-1 focus:ring-[#0080DF]"
+                placeholder="*** *** **"
+                className="flex-1 bg-transparent border-none outline-none text-[15px] text-[#040A17] placeholder:text-[#8B8B8B] font-normal min-w-0 pr-2"
               />
+
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute end-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-1"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="w-6 h-6 relative shrink-0 opacity-70 hover:opacity-100 cursor-pointer"
               >
-                {showPassword ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
-                    />
-                  </svg>
-                )}
+                <Image
+                  src="/assets/auth/icon-eye-closed.svg"
+                  alt="toggle password"
+                  width={24}
+                  height={24}
+                  unoptimized
+                  className="w-full h-full object-contain"
+                />
               </button>
             </div>
           </div>
 
-          <Button
+          {error && (
+            <p className="text-xs text-rose-500 font-medium -mt-1">{error}</p>
+          )}
+
+          {/* Next / Sign In Button matching Figma node 116:1017 */}
+          <button
             type="submit"
-            variant="primary"
-            size="lg"
-            className="w-full h-12 text-sm mt-2 rounded-xl bg-[#0080DF] hover:bg-[#0073C8]"
-            isLoading={isSubmitting}
-            rightIcon={
-              <span className={language === "ar" ? "rotate-180" : ""}>→</span>
-            }
+            disabled={isLoading}
+            className="mt-2 h-[56px] rounded-[12px] bg-[#078BDE] hover:bg-[#0070B8] active:scale-[0.99] text-white font-medium text-[14px] flex items-center justify-center gap-2 cursor-pointer transition-all w-full shadow-sm disabled:opacity-70"
           >
-            {language === "ar" ? "التالي" : "Next"}
-          </Button>
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+            ) : (
+              <>
+                <span>Next</span>
+                <div className="w-[18px] h-[18px] relative rotate-90">
+                  <Image
+                    src="/assets/auth/icon-arrow-next.svg"
+                    alt=""
+                    width={18}
+                    height={18}
+                    unoptimized
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </>
+            )}
+          </button>
         </form>
 
-        {/* Footer Link - Matching 4-login.jpg */}
-        <div className="text-center pt-2 text-xs sm:text-sm text-slate-500">
-          <span>
-            {language === "ar"
-              ? "ليس لديك حساب بعد؟ "
-              : "Don't have an account yet? "}
-          </span>
-          <Link
-            href={`/auth/register?role=${role}&lang=${language}`}
-            className="text-[#0080DF] hover:underline font-semibold"
-          >
-            {language === "ar" ? "إنشاء حساب" : "Sign Up"}
-          </Link>
+        {/* Bottom Link matching Figma node 116:1021 */}
+        <div className="pt-8 w-full">
+          <p className="text-[14px] text-[#41474F] text-center">
+            Don’t have an account?{" "}
+            <Link
+              href="/auth/role"
+              className="font-bold text-[#078BDE] hover:text-[#0060A8] transition-colors ml-1"
+            >
+              Create Account
+            </Link>
+          </p>
         </div>
-      </motion.div>
+      </div>
     </AuthCardShell>
   );
 }

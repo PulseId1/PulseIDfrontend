@@ -1,61 +1,92 @@
-# PulseID — Quality Assurance & Testing Strategy
+# PulseID — Quality Assurance, Integration & End-to-End Testing Strategy
 
-## 1. Quality Philosophy
+## 1. Quality Philosophy & Testing Hierarchy
 
-Healthcare software demands rigorous quality assurance. For PulseID, the testing strategy is structured progressively across the roadmap to ensure high confidence without premature tooling complexity during initial foundation phases.
+Healthcare applications handle sensitive, mission-critical personal and clinical data. In PulseID, testing is not treated as a post-implementation afterthought. Every capability is verified against static contracts, real backend API responses, and multi-step browser user journeys.
 
----
+```mermaid
+flowchart TD
+    E2E["1. End-to-End User Journeys (Playwright)<br/>Full multi-page workflows, browser state, authentic navigation"]
+    Integration["2. API Integration & Contract Tests<br/>Real Cloud Run Backend, Live DTO validation, HTTP status codes"]
+    Component["3. Component & Visual Fidelity Tests<br/>Headless browser render validation against Figma references"]
+    Static["4. Static Type Safety & Linting<br/>Strict TypeScript 5.9.3 & ESLint 9+ Core Web Vitals"]
 
-## 2. Confirmed Requirements (Phase 1 Baseline)
-
-1. **Static Type Safety:**
-   - Strict TypeScript validation (`pnpm run typecheck`) running `tsc --noEmit`.
-   - Zero tolerance for build-time type errors or implicit type coercion.
-2. **Linting & Code Integrity:**
-   - Next.js Core Web Vitals and TypeScript lint rules (`pnpm run lint`) via ESLint Flat Config (`eslint.config.mjs`).
-   - Automated detection of unescaped entities, broken hook rules, and accessibility antipatterns.
-3. **Production Build Verification:**
-   - Zero error production build (`pnpm run build`) ensuring all routes, metadata, and static assets bundle successfully.
-
----
-
-## 3. Proposed Testing Architecture (Roadmap)
-
-```
-                    ┌─────────────────────────┐
-                    │    End-to-End (E2E)     │  Playwright
-                    │  Critical User Journeys │  (Waitlist flow, Auth, e-Rx)
-                    ├─────────────────────────┤
-                    │   Integration / Visual  │  Testing Library + axe-core
-                    │  Component & A11y Tests │  (Forms, Modals, Sections)
-                    ├─────────────────────────┤
-                    │   Unit & Pure Logic     │  Vitest
-                    │ Utility & Schema Tests  │  (Calculators, Date, Formatters)
-                    ├─────────────────────────┤
-                    │   Static Type Checking  │  TypeScript (tsc --noEmit)
-                    │  Linting & Code Style   │  ESLint (eslint-config-next)
-                    └─────────────────────────┘
+    E2E --> Integration
+    Integration --> Component
+    Component --> Static
 ```
 
-### Proposed Testing Tooling for Phase 2 & Beyond
+---
 
-| Level | Recommended Tool | Scope | Trigger |
-| :--- | :--- | :--- | :--- |
-| **Type Check** | `tsc --noEmit` | Entire codebase | Pre-commit / CI |
-| **Linting** | ESLint 9+ | Code conventions & Next.js rules | Pre-commit / CI |
-| **Unit Testing** | Vitest | Helper functions, validation logic | On file change / CI |
-| **Component Testing** | React Testing Library | Interactive client leaf components | On PR / CI |
-| **End-to-End** | Playwright | Full browser journeys (desktop & mobile) | Staging / Pre-deploy |
-| **Accessibility** | axe-core / Lighthouse | WCAG 2.1 AA compliance audit | Pre-release |
+## 2. Test Layer Specifications
+
+### 2.1 Static Type Safety & Code Integrity
+- **TypeScript:** Strict typecheck executed via `pnpm run typecheck` (`tsc --noEmit`).
+  - Zero tolerance for `any` types on API boundaries.
+  - Mandatory synchronization between OpenAPI DTO definitions and frontend TypeScript interfaces.
+- **ESLint:** Code quality verified via `pnpm run lint` (`eslint-config-next 16.4.3`).
+  - Zero warnings, zero errors.
+  - Strict React 19 hook purity and hydration mismatch prevention.
+
+### 2.2 Live Backend API Integration Testing
+Testing against the real Cloud Run backend (`https://pulseid-api-566271518532.europe-west1.run.app`) verifies contract adherence without mock bias.
+
+#### Required Test Scenarios:
+1. **Authentication:**
+   - Patient Login with authentic phone/email credentials -> HTTP 200 with Bearer token.
+   - Doctor/User Login -> HTTP 200 with role metadata.
+   - Invalid password -> HTTP 400/401 with normalized error string.
+2. **Clinical Data Read/Write:**
+   - `GET /api/v1/BloodType/GetAll` -> Populates blood type dropdowns.
+   - `POST /api/v1/Patient/Update` -> Persists updated DOB and emergency contacts.
+   - `POST /api/v1/AllergyMenu/GetAll` -> Returns filtered list for authenticated patient ID.
+   - `POST /api/v1/CurrentMedications/GetAll` -> Retrieves active prescriptions.
+3. **Network Resilience & Edge Cases:**
+   - Handling network failure or timeout gracefully with user-facing retry actions.
+   - Intercepting HTTP 401 and redirecting to `/auth/login?expired=true`.
+   - Handling HTTP 403 Forbidden when accessing another role's records.
 
 ---
 
-## 4. Open Questions
+## 3. End-to-End (E2E) Journey Test Scenarios (Playwright)
 
-1. **Test Runner Selection for React 19:**
-   - Confirm whether Vitest is preferred over Jest for Phase 2 component testing.
-2. **Coverage Thresholds:**
-   - Establish formal code coverage requirements (e.g., 85%+ branch coverage for medical modules in Phase 3–6 vs smoke testing for Phase 2 landing page).
-3. **Continuous Integration Pipeline:**
-   - Which CI provider will run automated test gates (GitHub Actions, GitLab CI, Vercel Checks)?
+```
+e2e/
+├── auth.spec.ts                           # Registration, Login, Role Routing
+├── patient-portal.spec.ts                 # Full Patient Lifecycle & Profile Guard
+├── doctor-workflow.spec.ts                # Patient Lookup & e-Rx
+├── rbac-guard.spec.ts                     # Cross-role access protection
+└── fixtures/
+    ├── test-accounts.ts                   # Pre-seeded test credentials
+    └── test-patient-data.ts               # Sample clinical records
+```
 
+### Scenario Matrix
+
+| ID | Scenario | Given | When | Then | Classification |
+|---|---|---|---|---|---|
+| `TC-AUTH-01` | Patient Registration & Login | Unauthenticated visitor | Selects Patient, completes phone, OTP simulation, personal info, logs in | Arrives at `/patient` with active session and patient navbar | Real API |
+| `TC-AUTH-02` | Invalid Credentials Handling | Login page | Enters non-existent username or bad password | Displays localized error banner without navigation | Real API |
+| `TC-AUTH-03` | Session Restoration | Logged-in user | Closes browser tab and reopens `/patient` | Remains authenticated without re-login | Real Browser |
+| `TC-AUTH-04` | Logout & Token Clearing | Authenticated user | Clicks "Log Out" in navbar menu | Clears token from storage and cookies; navigates to `/` | Real Browser |
+| `TC-PAT-01` | First-Time Profile Guard | New user with uncompleted profile | Clicks "View my profile" or visits `/patient/profile` | Automatically redirected to `/patient/profile/edit?first_time=true` | Real Workflow |
+| `TC-PAT-02` | Profile Completion Unlock | User on `/patient/profile/edit` | Enters DOB, Blood type, saves profile | Sets completion flag, redirects to `/patient/profile`, unlocks all features | Real API |
+| `TC-PAT-03` | Medical Records Exploration | Authenticated patient | Navigates to `/patient/records` | Loads Prescriptions, Lab Results, Diagnoses tabs | Real API |
+| `TC-DOC-01` | Doctor Clinical Patient Search | Authenticated Doctor | Enters patient National ID in `/doctor/patients` | Retrieves verified patient chart with active medications | Real API |
+| `TC-DOC-02` | Doctor e-Prescription Issuance | Doctor viewing patient | Adds medication dosage and instructions, clicks submit | Persists drug to patient's `CurrentMedications` record | Real API |
+| `TC-PHR-01` | Pharmacist Intake & Safety Check | Authenticated Pharmacist | Scans prescription for patient with penicillin allergy | System raises active allergy conflict alert before dispense | Real Workflow |
+| `TC-RBAC-01`| Cross-Role Access Prevention | Authenticated Patient | Attempts direct URL navigation to `/doctor` | Blocked and redirected to `/patient` or `/auth/login` | Security Guard |
+| `TC-RBAC-02`| Unauthenticated Route Guard | Unauthenticated user | Visits `/patient/profile` or `/doctor` | Blocked and redirected to `/auth/login?role=...` | Security Guard |
+
+---
+
+## 4. Test Data Management & Safety
+
+1. **Non-Destructive Operations:** E2E test runs MUST never execute destructive batch deletions (`DeleteList`) against the shared Cloud Run instance.
+2. **Deterministic Seed Accounts:**
+   - **Patient:** `01000000100000` / `Password123!` (Ahmed Hassan, `PID-8924-EGY`)
+   - **Doctor:** `dr.sherif@pulseid.eg` / `DoctorPass123!` (Dr. Sherif Mansour)
+   - **Pharmacist:** `pharmacy@cairocare.eg` / `PharmPass123!` (Cairo Care Pharmacy)
+3. **Mock vs. Real Backend Distinction:**
+   - Automated CI smoke tests use mocked fixtures to prevent external network flakiness.
+   - Pre-deployment staging suites execute directly against the live backend API.

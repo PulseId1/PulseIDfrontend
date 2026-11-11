@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PulseLogo } from "@/components/ui/logo";
 
@@ -97,6 +98,74 @@ export function LandingFooter() {
           <p className="text-[11px] text-slate-400 mt-3">
             We respect your privacy. Unsubscribe at any time.
           </p>
+        </div>
+
+        {/* Item 4: Social Media Icon Row (Facebook, TikTok, Instagram, LinkedIn) matching Figma */}
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6">
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-blue-400 hover:bg-blue-500/20 text-slate-300 hover:text-white flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <Image
+              src="/assets/figma/icons/social-facebook.svg"
+              alt=""
+              width={16}
+              height={16}
+              unoptimized
+              className="size-4"
+            />
+          </a>
+          <a
+            href="https://tiktok.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="TikTok"
+            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-blue-400 hover:bg-blue-500/20 text-slate-300 hover:text-white flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <Image
+              src="/assets/figma/icons/social-tiktok.svg"
+              alt=""
+              width={16}
+              height={16}
+              unoptimized
+              className="size-4"
+            />
+          </a>
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-blue-400 hover:bg-blue-500/20 text-slate-300 hover:text-white flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <Image
+              src="/assets/figma/icons/social-instagram.svg"
+              alt=""
+              width={16}
+              height={16}
+              unoptimized
+              className="size-4"
+            />
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-blue-400 hover:bg-blue-500/20 text-slate-300 hover:text-white flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <Image
+              src="/assets/figma/icons/social-linkedin.svg"
+              alt=""
+              width={16}
+              height={16}
+              unoptimized
+              className="size-4"
+            />
+          </a>
         </div>
       </div>
     </footer>
