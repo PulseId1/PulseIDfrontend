@@ -102,8 +102,10 @@ function DoctorAccessRequestsContent() {
     setFormError(null);
 
     const targetId = nationalIdInput.trim();
+    const demoMatch = DemoService.findAccountByIdentifier(targetId);
     const resolvedPatientName =
-      targetId === "29804120108924"
+      demoMatch?.fullName ||
+      (targetId === "29804120108924"
         ? "Sara Mahmoud Ibrahim"
         : targetId === "28809140102345"
         ? "Ahmed Hassan"
@@ -111,7 +113,7 @@ function DoctorAccessRequestsContent() {
         ? "Mariam Adel"
         : targetId === "27911220104321"
         ? "Omar Farouk"
-        : `Patient (${targetId.slice(-4)})`;
+        : `Patient (${targetId.slice(-4)})`);
 
     const newReq: DoctorAccessRequest = {
       id: `req-${Date.now()}`,

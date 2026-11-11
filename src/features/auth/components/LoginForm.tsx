@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCardShell } from "./AuthCardShell";
 import { useAuth, UserRole } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 import { User, Stethoscope, Sparkles } from "lucide-react";
 
 export function LoginForm() {
@@ -15,6 +16,7 @@ export function LoginForm() {
   const justRegistered = searchParams.get("registered") === "true";
   const { login, loginDemo } = useAuth();
 
+  const [authTarget, setAuthTarget] = useState<"demo" | "live">("demo");
   const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
   const [phone, setPhone] = useState(() => searchParams.get("phone") || "");
   const [email, setEmail] = useState(() => searchParams.get("email") || "");
@@ -44,6 +46,28 @@ export function LoginForm() {
     setIsLoading(true);
     setError(null);
 
+    if (authTarget === "demo") {
+      // Offline Demo Sandbox credentials verification
+      setTimeout(() => {
+        setIsLoading(false);
+        const result = DemoService.authenticateDemo(identifier, password);
+        if (result.success && result.account) {
+          loginDemo(result.account.role as "patient" | "doctor", result.account);
+          if (result.account.role === "doctor") {
+            router.push("/doctor");
+          } else if (result.account.role === "pharmacist") {
+            router.push("/pharmacist");
+          } else {
+            router.push("/patient");
+          }
+        } else {
+          setError(result.error || "Authentication failed in demo environment.");
+        }
+      }, 300);
+      return;
+    }
+
+    // Live Cloud Run API
     try {
       const result = await login({
         userName: identifier,
@@ -54,7 +78,6 @@ export function LoginForm() {
       setIsLoading(false);
 
       if (result.success) {
-        // Route according to verified backend role; do not trust client query param alone
         if (result.role === "doctor") {
           router.push("/doctor");
         } else if (result.role === "pharmacist") {
@@ -77,13 +100,51 @@ export function LoginForm() {
     <AuthCardShell heroImage="/assets/auth/auth-login-hero.png">
       <div className="w-full flex flex-col items-start min-w-0" data-node-id="116:960">
         {/* Header Block matching Figma node 116:962 */}
-        <div className="pb-6 w-full">
+        <div className="pb-4 w-full">
           <h1 className="text-[28px] sm:text-[30px] font-bold leading-tight text-[#02307D] font-heading">
             Welcome Back
           </h1>
           <p className="mt-2 text-[14px] sm:text-[15px] text-[#41474F] font-normal leading-normal">
             Sign in to access your healthcare identity and stay connected.
           </p>
+        </div>
+
+        {/* Environment Target Toggle */}
+        <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 w-full mb-5">
+          <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            Environment:
+          </span>
+          <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
+            <button
+              type="button"
+              onClick={() => {
+                setAuthTarget("demo");
+                setError(null);
+              }}
+              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                authTarget === "demo"
+                  ? "bg-[#078BDE] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Demo Sandbox
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthTarget("live");
+                setError(null);
+              }}
+              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                authTarget === "live"
+                  ? "bg-[#02307D] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Live Cloud Run API
+            </button>
+          </div>
         </div>
 
         {/* Just registered confirmation notification */}

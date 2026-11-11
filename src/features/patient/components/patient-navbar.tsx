@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 
 const emptySubscribe = () => () => {};
 
@@ -29,12 +30,33 @@ export function PatientNavbar({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { logout, userId, isDemo } = useAuth();
 
+  const activeDemoAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
   const displayName =
     patientName ||
-    (isDemo ? "Sara Mahmoud Ibrahim" : userId ? `Patient (${userId})` : "Patient Account");
+    (isDemo && activeDemoAccount?.fullName
+      ? activeDemoAccount.fullName
+      : isDemo
+      ? "Sara Mahmoud Ibrahim"
+      : userId
+      ? `Patient (${userId})`
+      : "Patient Account");
   const displayId =
     patientId ||
-    (isDemo ? "PID-EG-2980412" : userId ? `PID-${userId}` : "PulseID Identity");
+    (isDemo && activeDemoAccount
+      ? `PID-EG-${activeDemoAccount.nationalId.slice(-6)}`
+      : isDemo
+      ? "PID-EG-2980412"
+      : userId
+      ? `PID-${userId}`
+      : "PulseID Identity");
+
+  const initials =
+    displayName
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("") || "PT";
 
   const isProfileCompleted = useSyncExternalStore(
     emptySubscribe,
@@ -180,13 +202,13 @@ export function PatientNavbar({
                 className="bg-[#0079C3] rounded-[12px] size-[28px] shrink-0 flex items-center justify-center text-white font-heading font-bold text-[12px] leading-[16px]"
                 data-node-id="280:92"
               >
-                AH
+                {initials}
               </div>
               <span
                 className="text-white text-[13px] font-medium leading-[16px] whitespace-nowrap"
                 data-node-id="280:95"
               >
-                {patientName}
+                {displayName}
               </span>
               <div className="w-[7px] h-[4.3px] relative shrink-0" data-node-id="280:96">
                 <Image

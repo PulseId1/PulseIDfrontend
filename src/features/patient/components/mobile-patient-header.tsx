@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 import {
   Menu,
   X,
@@ -36,11 +37,23 @@ export function MobilePatientHeader({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const activeDemoAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
   const displayName =
     patientName ||
-    (isDemo ? "Sara Mahmoud Ibrahim" : userId ? `Patient (${userId})` : "Patient Account");
+    (isDemo && activeDemoAccount?.fullName
+      ? activeDemoAccount.fullName
+      : isDemo
+      ? "Sara Mahmoud Ibrahim"
+      : userId
+      ? `Patient (${userId})`
+      : "Patient Account");
   const displayBloodType =
-    bloodType || (isDemo ? "A+ (Positive)" : "O+ (Positive)");
+    bloodType ||
+    (activeDemoAccount?.bloodType
+      ? `${activeDemoAccount.bloodType} (Positive)`
+      : isDemo
+      ? "A+ (Positive)"
+      : "O+ (Positive)");
   const initials =
     displayName
       .split(" ")

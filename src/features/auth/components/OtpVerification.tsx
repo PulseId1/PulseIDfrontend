@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCardShell } from "./AuthCardShell";
+import { DemoService } from "@/lib/demo/demo-service";
 
 const OTP_LENGTH = 4;
 const INITIAL_COUNTDOWN = 50;
@@ -99,18 +100,23 @@ export function OtpVerification() {
       return;
     }
 
-    setIsVerifying(true);
-    // Note: SMS verification is unsupported by backend API v1 (BACKEND_UNSUPPORTED).
-    // This step permits workflow navigation without claiming live verification.
-    setIsVerifying(false);
-
-    if (mode === "login") {
-      router.push(`/auth/login?phone=${encodeURIComponent(phoneParam)}&role=${role}`);
-    } else {
-      router.push(
-        `/auth/register/info?phone=${encodeURIComponent(phoneParam)}&role=${role}`
-      );
+    if (!DemoService.verifySimulatedOtp(code)) {
+      setError("Invalid OTP code. Please enter 4 numeric digits.");
+      return;
     }
+
+    setIsVerifying(true);
+    setTimeout(() => {
+      setIsVerifying(false);
+
+      if (mode === "login") {
+        router.push(`/auth/login?phone=${encodeURIComponent(phoneParam)}&role=${role}`);
+      } else {
+        router.push(
+          `/auth/register/info?phone=${encodeURIComponent(phoneParam)}&role=${role}`
+        );
+      }
+    }, 300);
   };
 
   return (
@@ -140,7 +146,7 @@ export function OtpVerification() {
         <div className="w-full mb-6 p-3 rounded-lg bg-amber-50/80 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2">
           <span className="font-bold text-amber-600 mt-0.5">ℹ</span>
           <span>
-            <strong>Prototype Notice:</strong> SMS OTP Gateway dispatch is not implemented in backend API v1 (classified as BACKEND_UNSUPPORTED). Enter any 4 digits to continue the prototype registration flow.
+            <strong>Simulated Verification:</strong> SMS OTP Gateway is not provided by backend API v1 (<code className="font-mono bg-amber-100 px-1 rounded text-[11px]">BACKEND_UNSUPPORTED</code>). Enter demo OTP <strong className="font-mono text-[#02307D]">{DemoService.DEMO_OTP}</strong> (or any 4 digits) to proceed.
           </span>
         </div>
 

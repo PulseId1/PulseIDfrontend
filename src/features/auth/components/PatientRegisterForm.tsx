@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthService } from "@/lib/api/auth-service";
+import { DemoService } from "@/lib/demo/demo-service";
+import { DemoAccount } from "@/lib/demo/demo-data";
+import { useAuth } from "@/lib/auth/auth-context";
 import { StateCitySelector } from "./StateCitySelector";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight, UserCheck, LogIn, Sparkles } from "lucide-react";
 
 interface PatientRegisterFormProps {
   initialPhone?: string;
@@ -13,7 +16,9 @@ interface PatientRegisterFormProps {
 
 export function PatientRegisterForm({ initialPhone = "" }: PatientRegisterFormProps) {
   const router = useRouter();
+  const { loginDemo } = useAuth();
 
+  const [authTarget, setAuthTarget] = useState<"demo" | "live">("demo");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState(initialPhone);
@@ -32,19 +37,20 @@ export function PatientRegisterForm({ initialPhone = "" }: PatientRegisterFormPr
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [registeredAccount, setRegisteredAccount] = useState<DemoAccount | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
     if (!fullName.trim()) {
-      newErrors.fullName = "Please enter your full name.";
+      newErrors.fullName = "Please enter your full legal name.";
     }
     if (!email.trim() || !email.includes("@")) {
       newErrors.email = "Please enter a valid email address.";
     }
-    if (!phone.trim() || phone.trim().length < 8) {
-      newErrors.phone = "Please enter a valid mobile number.";
+    if (!phone.trim() || !DemoService.isEgyptianMobile(phone.trim())) {
+      newErrors.phone = "Please enter a valid 11-digit Egyptian mobile number (010, 011, 012, or 015).";
     }
     if (!password.trim() || password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
@@ -64,16 +70,46 @@ export function PatientRegisterForm({ initialPhone = "" }: PatientRegisterFormPr
     setIsSubmitting(true);
     setErrors({});
 
-    try {
-      const fullAddressString = [
-        address.trim(),
-        cityName.trim(),
-        stateName.trim(),
-        "Egypt",
-      ]
-        .filter(Boolean)
-        .join(", ");
+    const fullAddressString = [
+      address.trim(),
+      cityName.trim(),
+      stateName.trim(),
+      "Egypt",
+    ]
+      .filter(Boolean)
+      .join(", ");
 
+    if (authTarget === "demo") {
+      // Offline Demo Sandbox registration
+      setTimeout(() => {
+        setIsSubmitting(false);
+        const result = DemoService.registerDemoPatient({
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          password,
+          nationalId: nationalId.trim(),
+          birthDate,
+          gender,
+          address: fullAddressString,
+          state: stateName,
+          city: cityName,
+        });
+
+        if (result.success && result.account) {
+          setRegisteredAccount(result.account);
+          setIsSuccess(true);
+        } else {
+          setErrors({
+            form: result.error || "Demo patient registration failed. Please review the details.",
+          });
+        }
+      }, 400);
+      return;
+    }
+
+    // Live Cloud Run API registration
+    try {
       const result = await AuthService.registerPatient({
         fullName: fullName.trim(),
         email: email.trim(),
@@ -100,7 +136,7 @@ export function PatientRegisterForm({ initialPhone = "" }: PatientRegisterFormPr
         }, 900);
       } else {
         setErrors({
-          form: result.error || "Patient registration failed. Please review the details.",
+          form: result.error || "Patient registration failed on live backend.",
         });
       }
     } catch (err) {
@@ -115,24 +151,114 @@ export function PatientRegisterForm({ initialPhone = "" }: PatientRegisterFormPr
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
-      {/* Success Notification */}
-      {isSuccess && (
-        <div className="w-full p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3">
-          <span className="text-xl font-bold">✓</span>
-          <div>
-            <p className="font-bold">Patient account registered successfully!</p>
-            <p className="text-xs text-emerald-700">Redirecting to sign in...</p>
+    <div className="w-full">
+      {/* Environment Target Toggle */}
+      <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 mb-5">
+        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          Environment:
+        </span>
+        <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
+          <button
+            type="button"
+            onClick={() => setAuthTarget("demo")}
+            className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              authTarget === "demo"
+                ? "bg-[#078BDE] text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Demo Sandbox
+          </button>
+          <button
+            type="button"
+            onClick={() => setAuthTarget("live")}
+            className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              authTarget === "live"
+                ? "bg-[#02307D] text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Live Cloud Run API
+          </button>
+        </div>
+      </div>
+
+      {/* Success Confirmation Modal / Card */}
+      {isSuccess ? (
+        <div className="w-full p-6 rounded-2xl bg-white border border-[#D0DEFF] shadow-md flex flex-col gap-5 animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xl shrink-0">
+              <UserCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-[18px] text-[#02307D]">
+                Registration Complete!
+              </h3>
+              <p className="text-xs text-slate-600">
+                Your patient identity has been created and saved in demo storage.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Patient Name:</span>
+              <span className="font-bold text-slate-800">{registeredAccount?.fullName || fullName}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">National ID:</span>
+              <span className="font-mono font-semibold text-slate-800">{registeredAccount?.nationalId || nationalId}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Mobile Number:</span>
+              <span className="font-mono font-semibold text-slate-800">{registeredAccount?.phone || phone}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Demo Patient ID:</span>
+              <span className="font-mono font-bold text-[#078BDE]">{registeredAccount?.id || "PT-DEMO"}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                router.push(
+                  `/auth/login?registered=true&phone=${encodeURIComponent(phone.trim())}&email=${encodeURIComponent(email.trim())}&role=patient`
+                );
+              }}
+              className="flex-1 h-[48px] rounded-xl border border-[#078BDE] text-[#078BDE] hover:bg-sky-50 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Log In With Your Account</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (registeredAccount) {
+                  loginDemo("patient", registeredAccount);
+                } else {
+                  loginDemo("patient");
+                }
+                router.push("/patient");
+              }}
+              className="flex-1 h-[48px] rounded-xl bg-[#078BDE] hover:bg-[#0070B8] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all"
+            >
+              <span>Launch Patient Portal</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
-      )}
-
-      {/* Form Error Banner */}
-      {errors.form && (
-        <div className="w-full p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
-          {errors.form}
-        </div>
-      )}
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+          {/* Form Error Banner */}
+          {errors.form && (
+            <div className="w-full p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+              {errors.form}
+            </div>
+          )}
 
       {/* Full Name */}
       <div className="flex flex-col gap-1.5 w-full">
@@ -346,5 +472,7 @@ export function PatientRegisterForm({ initialPhone = "" }: PatientRegisterFormPr
         )}
       </button>
     </form>
+    )}
+  </div>
   );
 }

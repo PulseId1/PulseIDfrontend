@@ -12,6 +12,7 @@
 
 import { apiClient, AUTH_USER_ID_KEY, TokenStorage, ApiError } from "./client";
 import { ReferenceService } from "./reference-service";
+import { DemoService } from "@/lib/demo/demo-service";
 import {
   UserAddUpdateDTO,
   UIPatientProfile,
@@ -38,6 +39,11 @@ export class PatientService {
     patientId?: string,
     options?: { allowDemoPreview?: boolean }
   ): Promise<UIPatientProfile> {
+    // 1. Isolated Demo Session: If demo session is active, read from DemoService
+    if (typeof window !== "undefined" && localStorage.getItem("pulseid_demo_session")) {
+      return DemoService.getPatientProfile(patientId);
+    }
+
     const token = TokenStorage.get();
     const id =
       patientId ||
@@ -76,12 +82,18 @@ export class PatientService {
    * Endpoint: POST /api/v1/Patient/Update
    *
    * Operational rules:
+   * - In demo mode, delegates directly to DemoService.
    * - Rejects synthetic prototype demo profiles (e.g. PID-8924-EGY or National ID 29801011234567).
    * - Filters out frontend-only presentation properties before sending.
    */
   static async updatePatientProfile(
     profile: UIPatientProfile | UserAddUpdateDTO
   ): Promise<UIPatientProfile> {
+    // 1. Isolated Demo Session: If demo session is active, update in DemoService
+    if (typeof window !== "undefined" && localStorage.getItem("pulseid_demo_session")) {
+      return DemoService.updatePatientProfile(profile as Partial<UIPatientProfile>);
+    }
+
     // Safety Guard: Prevent submitting synthetic prototype demo data to real backend
     const syntheticIds = ["DEMO-PID-8924", "PID-8924-EGY", "PID-8924"];
     const syntheticNationalIds = ["29203150101234", "29801011234567"];
@@ -201,10 +213,16 @@ export class PatientService {
    * Prototype Access Requests (BACKEND_UNSUPPORTED in API v1)
    */
   static getDemoAccessRequests(): AccessRequestItem[] {
+    if (typeof window !== "undefined" && localStorage.getItem("pulseid_demo_session")) {
+      return DemoService.getAccessRequests();
+    }
     return DEMO_ACCESS_REQUESTS;
   }
 
   static getAccessRequests(): AccessRequestItem[] {
+    if (typeof window !== "undefined" && localStorage.getItem("pulseid_demo_session")) {
+      return DemoService.getAccessRequests();
+    }
     return DEMO_ACCESS_REQUESTS;
   }
 
@@ -212,6 +230,9 @@ export class PatientService {
     id: string,
     status: "approved" | "rejected" | "revoked"
   ): AccessRequestItem[] {
+    if (typeof window !== "undefined" && localStorage.getItem("pulseid_demo_session")) {
+      return DemoService.respondToAccessRequest(id, status === "approved" ? "approve" : "reject");
+    }
     return DEMO_ACCESS_REQUESTS.map((req) =>
       req.id === id ? { ...req, status } : req
     );
@@ -221,8 +242,12 @@ export class PatientService {
    * Prototype Medical Records (BACKEND_UNSUPPORTED in API v1)
    */
   static getDemoMedicalRecords(category?: string): MedicalRecordItem[] {
-    if (!category || category === "all") return DEMO_MEDICAL_RECORDS;
-    return DEMO_MEDICAL_RECORDS.filter((r) => r.category === category);
+    let records = DEMO_MEDICAL_RECORDS;
+    if (typeof window !== "undefined" && localStorage.getItem("pulseid_demo_session")) {
+      records = DemoService.getMedicalRecords();
+    }
+    if (!category || category === "all") return records;
+    return records.filter((r) => r.category === category);
   }
 
   static getMedicalRecords(category?: string): MedicalRecordItem[] {

@@ -51,6 +51,99 @@ export interface DemoDoctorProfile {
   criticalReviewsCount: number;
 }
 
+export interface DemoAccount {
+  id: string;
+  role: "patient" | "doctor" | "pharmacist";
+  typeId: 1 | 2 | 3;
+  fullName: string;
+  fullNameAr?: string;
+  email: string;
+  phone: string;
+  nationalId: string;
+  password: string;
+  userName: string;
+  gender: "male" | "female";
+  birthDate: string;
+  createdAt: string;
+  address?: string;
+  state?: string;
+  city?: string;
+  // Patient specific
+  bloodType?: string;
+  bloodTypeId?: number;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelation?: string;
+  initialCondition?: string;
+  // Doctor specific
+  license?: string;
+  specialty?: string;
+  hospitalAffiliation?: string;
+  title?: string;
+  clinicAddress?: string;
+  medicalLicenseName?: string;
+  medicalLicenseSize?: number;
+  professionalIdName?: string;
+  professionalIdSize?: number;
+  verificationStatus?: "verified" | "pending";
+}
+
+/**
+ * Predefined Demonstration Accounts
+ * Includes default Egyptian fixtures for Sara Mahmoud Ibrahim (Patient)
+ * and Dr. Tarek Al-Husseini (Doctor), alongside accounts dynamically
+ * registered during the user session.
+ */
+export const INITIAL_DEMO_ACCOUNTS: DemoAccount[] = [
+  {
+    id: "PT-DEMO-2026-01",
+    role: "patient",
+    typeId: 1,
+    fullName: "Sara Mahmoud Ibrahim",
+    fullNameAr: "سارة محمود إبراهيم",
+    email: "sara.mahmoud@pulseid-demo.eg",
+    phone: "01098765432",
+    userName: "sara.mahmoud",
+    nationalId: "29804120108924",
+    password: "Password123!",
+    gender: "female",
+    birthDate: "1998-04-12",
+    createdAt: "2026-11-01T00:00:00.000Z",
+    address: "5th Settlement, New Cairo, Egypt",
+    state: "Cairo",
+    city: "New Cairo",
+    bloodType: "A+",
+    bloodTypeId: 1,
+    emergencyContactName: "Mahmoud Ibrahim",
+    emergencyContactPhone: "01001234567",
+    emergencyContactRelation: "Father",
+    initialCondition: "Bronchial Asthma",
+  },
+  {
+    id: "DOC-DEMO-8842",
+    role: "doctor",
+    typeId: 2,
+    fullName: "Dr. Tarek Al-Husseini",
+    fullNameAr: "د. طارق الحسيني",
+    email: "dr.tarek.husseini@pulseid-demo.eg",
+    phone: "01223456789",
+    userName: "dr.tarek",
+    nationalId: "28405160109988",
+    password: "Password123!",
+    gender: "male",
+    birthDate: "1984-05-16",
+    createdAt: "2026-11-01T00:00:00.000Z",
+    address: "Suite 402, Elite Medical Tower, Road 90, New Cairo, Egypt",
+    state: "Cairo",
+    city: "New Cairo",
+    license: "EG-MED-491028",
+    specialty: "Pulmonology, Allergy & Critical Care Medicine",
+    hospitalAffiliation: "Kasr Al Ainy University Hospitals & New Cairo Specialized Hospital",
+    title: "MD, FCCP — Senior Consultant Pulmonologist",
+    clinicAddress: "Suite 402, Elite Medical Tower, Road 90, New Cairo, Egypt",
+  },
+];
+
 /**
  * Primary Fictional Demo Patient: Sara Mahmoud Ibrahim
  * Realistic Egyptian patient profile with chronic asthma, penicillin allergy,

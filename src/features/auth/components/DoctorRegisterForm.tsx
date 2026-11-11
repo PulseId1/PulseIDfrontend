@@ -4,8 +4,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthService } from "@/lib/api/auth-service";
+import { DemoService } from "@/lib/demo/demo-service";
+import { DemoAccount } from "@/lib/demo/demo-data";
+import { useAuth } from "@/lib/auth/auth-context";
 import { StateCitySelector } from "./StateCitySelector";
-import { Loader2, Upload, FileCheck } from "lucide-react";
+import { Loader2, Upload, FileCheck, X, Sparkles, UserCheck, ArrowRight, LogIn } from "lucide-react";
 
 interface DoctorRegisterFormProps {
   initialPhone?: string;
@@ -13,7 +16,9 @@ interface DoctorRegisterFormProps {
 
 export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProps) {
   const router = useRouter();
+  const { loginDemo } = useAuth();
 
+  const [authTarget, setAuthTarget] = useState<"demo" | "live">("demo");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState(initialPhone);
@@ -22,6 +27,8 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
   const [nationalId, setNationalId] = useState("");
   const [birthDate, setBirthDate] = useState("1985-04-12");
   const [gender, setGender] = useState<"male" | "female">("male");
+  const [specialty, setSpecialty] = useState("Pulmonology & Respiratory Medicine");
+  const [hospitalAffiliation, setHospitalAffiliation] = useState("Kasr Al Ainy University Hospitals");
   const [address, setAddress] = useState("");
   const [stateName, setStateName] = useState("");
   const [cityName, setCityName] = useState("");
@@ -37,19 +44,45 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [registeredAccount, setRegisteredAccount] = useState<DemoAccount | null>(null);
+
+  const handleFileValidation = (file: File | null, field: "licenseDoc" | "syndicateDoc"): boolean => {
+    if (!file) return true;
+    const allowed = ["application/pdf", "image/png", "image/jpeg", "image/jpg"];
+    if (!allowed.includes(file.type)) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "Allowed file types: PDF, PNG, JPG.",
+      }));
+      return false;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: "File size exceeds 10MB limit.",
+      }));
+      return false;
+    }
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
     if (!fullName.trim()) {
-      newErrors.fullName = "Please enter your doctor full name.";
+      newErrors.fullName = "Please enter your doctor full legal name.";
     }
     if (!email.trim() || !email.includes("@")) {
       newErrors.email = "Please enter a valid professional email address.";
     }
-    if (!phone.trim() || phone.trim().length < 8) {
-      newErrors.phone = "Please enter a valid mobile number.";
+    if (!phone.trim() || !DemoService.isEgyptianMobile(phone.trim())) {
+      newErrors.phone = "Please enter a valid 11-digit Egyptian mobile number (010, 011, 012, or 015).";
     }
     if (!password.trim() || password.length < 6) {
       newErrors.password = "Password must be at least 6 characters.";
@@ -72,16 +105,54 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
     setIsSubmitting(true);
     setErrors({});
 
-    try {
-      const fullAddressString = [
-        address.trim(),
-        cityName.trim(),
-        stateName.trim(),
-        "Egypt",
-      ]
-        .filter(Boolean)
-        .join(", ");
+    const fullAddressString = [
+      address.trim(),
+      cityName.trim(),
+      stateName.trim(),
+      "Egypt",
+    ]
+      .filter(Boolean)
+      .join(", ");
 
+    if (authTarget === "demo") {
+      // Offline Demo Sandbox registration
+      setTimeout(() => {
+        setIsSubmitting(false);
+        const result = DemoService.registerDemoDoctor({
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          password,
+          nationalId: nationalId.trim(),
+          birthDate,
+          gender,
+          license: license.trim(),
+          specialty,
+          hospitalAffiliation,
+          clinicAddress: fullAddressString,
+          address: fullAddressString,
+          state: stateName,
+          city: cityName,
+          medicalLicenseName: medicalLicenseFile?.name,
+          medicalLicenseSize: medicalLicenseFile?.size,
+          professionalIdName: professionalIdFile?.name,
+          professionalIdSize: professionalIdFile?.size,
+        });
+
+        if (result.success && result.account) {
+          setRegisteredAccount(result.account);
+          setIsSuccess(true);
+        } else {
+          setErrors({
+            form: result.error || "Doctor registration failed in demo storage.",
+          });
+        }
+      }, 400);
+      return;
+    }
+
+    // Live Cloud Run API registration
+    try {
       const result = await AuthService.registerDoctor({
         nameEn: fullName.trim(),
         nameAr: fullName.trim(),
@@ -127,24 +198,122 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
-      {/* Success Notification */}
-      {isSuccess && (
-        <div className="w-full p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3">
-          <span className="text-xl font-bold">✓</span>
-          <div>
-            <p className="font-bold">Doctor account registered successfully!</p>
-            <p className="text-xs text-emerald-700">Redirecting to clinician sign in...</p>
+    <div className="w-full">
+      {/* Environment Target Toggle */}
+      <div className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 mb-5">
+        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          Environment:
+        </span>
+        <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200">
+          <button
+            type="button"
+            onClick={() => setAuthTarget("demo")}
+            className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              authTarget === "demo"
+                ? "bg-[#078BDE] text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Demo Sandbox
+          </button>
+          <button
+            type="button"
+            onClick={() => setAuthTarget("live")}
+            className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+              authTarget === "live"
+                ? "bg-[#02307D] text-white shadow-xs"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            Live Cloud Run API
+          </button>
+        </div>
+      </div>
+
+      {/* Success Confirmation Modal / Card */}
+      {isSuccess ? (
+        <div className="w-full p-6 rounded-2xl bg-white border border-[#D0DEFF] shadow-md flex flex-col gap-5 animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-[#02307D] flex items-center justify-center font-bold text-xl shrink-0">
+              <UserCheck className="w-6 h-6 text-[#078BDE]" />
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-[18px] text-[#02307D]">
+                Doctor Credentials Verified!
+              </h3>
+              <p className="text-xs text-slate-600">
+                Your clinician profile and license have been verified under Egyptian Medical Syndicate demo protocols.
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Clinician Name:</span>
+              <span className="font-bold text-slate-800">{registeredAccount?.fullName || fullName}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Syndicate License:</span>
+              <span className="font-mono font-bold text-indigo-700">{registeredAccount?.license || license}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Specialty:</span>
+              <span className="font-semibold text-slate-800">{registeredAccount?.specialty || specialty}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Hospital Affiliation:</span>
+              <span className="text-slate-700">{registeredAccount?.hospitalAffiliation || hospitalAffiliation}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">National ID:</span>
+              <span className="font-mono font-semibold text-slate-800">{registeredAccount?.nationalId || nationalId}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-slate-500">Demo Doctor ID:</span>
+              <span className="font-mono font-bold text-[#078BDE]">{registeredAccount?.id || "DOC-DEMO"}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                router.push(
+                  `/auth/login?registered=true&phone=${encodeURIComponent(phone.trim())}&email=${encodeURIComponent(email.trim())}&role=doctor`
+                );
+              }}
+              className="flex-1 h-[48px] rounded-xl border border-[#078BDE] text-[#078BDE] hover:bg-sky-50 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Log In With Doctor Credentials</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (registeredAccount) {
+                  loginDemo("doctor", registeredAccount);
+                } else {
+                  loginDemo("doctor");
+                }
+                router.push("/doctor");
+              }}
+              className="flex-1 h-[48px] rounded-xl bg-[#02307D] hover:bg-[#03449E] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all"
+            >
+              <span>Enter Doctor Portal</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
-      )}
-
-      {/* Form Error Banner */}
-      {errors.form && (
-        <div className="w-full p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
-          {errors.form}
-        </div>
-      )}
+      ) : (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+          {/* Form Error Banner */}
+          {errors.form && (
+            <div className="w-full p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+              {errors.form}
+            </div>
+          )}
 
       {/* Full Name */}
       <div className="flex flex-col gap-1.5 w-full">
@@ -309,6 +478,44 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
         </div>
       </div>
 
+      {/* Specialty & Hospital Affiliation */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+        <div className="flex flex-col gap-1.5 w-full">
+          <label htmlFor="doc-specialty" className="text-[12px] font-medium text-[#41474F] block">
+            Clinical Specialty
+          </label>
+          <select
+            id="doc-specialty"
+            value={specialty}
+            onChange={(e) => setSpecialty(e.target.value)}
+            className="w-full h-[46px] px-3.5 bg-white border border-[#E1E6ED] rounded-xl text-[14px] text-slate-800 focus:outline-none focus:border-[#078BDE] focus:ring-1 focus:ring-[#078BDE] transition-colors"
+          >
+            <option value="Pulmonology & Respiratory Medicine">Pulmonology & Respiratory Medicine</option>
+            <option value="Cardiology & Cardiovascular Medicine">Cardiology & Cardiovascular Medicine</option>
+            <option value="Internal Medicine">Internal Medicine</option>
+            <option value="General Surgery">General Surgery</option>
+            <option value="Pediatrics & Child Health">Pediatrics & Child Health</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Orthopedic Surgery">Orthopedic Surgery</option>
+            <option value="Dermatology">Dermatology</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5 w-full">
+          <label htmlFor="doc-affiliation" className="text-[12px] font-medium text-[#41474F] block">
+            Primary Hospital Affiliation
+          </label>
+          <input
+            id="doc-affiliation"
+            type="text"
+            placeholder="e.g. Kasr Al Ainy University Hospitals"
+            value={hospitalAffiliation}
+            onChange={(e) => setHospitalAffiliation(e.target.value)}
+            className="w-full h-[46px] px-3.5 bg-white border border-[#E1E6ED] rounded-xl text-[14px] text-slate-800 placeholder:text-[#A0AEC0] focus:outline-none focus:border-[#078BDE] focus:ring-1 focus:ring-[#078BDE] transition-colors"
+          />
+        </div>
+      </div>
+
       {/* Dynamic API Reference Data: State & City */}
       <StateCitySelector
         onStateChange={(id, name) => {
@@ -341,14 +548,25 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
         {/* Medical License Document */}
         <div className="flex flex-col gap-1.5 w-full">
-          <label className="text-[12px] font-medium text-[#41474F] block">
-            Practice License Document (PDF / Image)
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="text-[12px] font-medium text-[#41474F] block">
+              Practice License Document (PDF / Image)
+            </label>
+            {medicalLicenseFile && (
+              <button
+                type="button"
+                onClick={() => setMedicalLicenseFile(null)}
+                className="text-[11px] text-red-600 hover:underline flex items-center gap-0.5 cursor-pointer"
+              >
+                <X className="w-3 h-3" /> Remove
+              </button>
+            )}
+          </div>
           <label className="flex flex-col items-center justify-center h-[76px] px-3 border border-dashed border-[#CBD5E1] rounded-xl bg-slate-50 hover:bg-slate-100/70 transition-colors cursor-pointer">
             {medicalLicenseFile ? (
               <div className="flex items-center gap-2 text-emerald-700 text-xs truncate max-w-full">
                 <FileCheck className="w-4 h-4 shrink-0" />
-                <span className="truncate">{medicalLicenseFile.name}</span>
+                <span className="truncate">{medicalLicenseFile.name} ({(medicalLicenseFile.size / 1024).toFixed(0)} KB)</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-1 text-slate-500 text-xs">
@@ -359,22 +577,39 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
             <input
               type="file"
               accept=".pdf,.png,.jpg,.jpeg"
-              onChange={(e) => setMedicalLicenseFile(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                if (handleFileValidation(file, "licenseDoc")) {
+                  setMedicalLicenseFile(file);
+                }
+              }}
               className="hidden"
             />
           </label>
+          {errors.licenseDoc && <p className="text-[11px] text-red-600">{errors.licenseDoc}</p>}
         </div>
 
         {/* Syndicate ID Document */}
         <div className="flex flex-col gap-1.5 w-full">
-          <label className="text-[12px] font-medium text-[#41474F] block">
-            Syndicate Card Photo (PDF / Image)
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="text-[12px] font-medium text-[#41474F] block">
+              Syndicate Card Photo (PDF / Image)
+            </label>
+            {professionalIdFile && (
+              <button
+                type="button"
+                onClick={() => setProfessionalIdFile(null)}
+                className="text-[11px] text-red-600 hover:underline flex items-center gap-0.5 cursor-pointer"
+              >
+                <X className="w-3 h-3" /> Remove
+              </button>
+            )}
+          </div>
           <label className="flex flex-col items-center justify-center h-[76px] px-3 border border-dashed border-[#CBD5E1] rounded-xl bg-slate-50 hover:bg-slate-100/70 transition-colors cursor-pointer">
             {professionalIdFile ? (
               <div className="flex items-center gap-2 text-emerald-700 text-xs truncate max-w-full">
                 <FileCheck className="w-4 h-4 shrink-0" />
-                <span className="truncate">{professionalIdFile.name}</span>
+                <span className="truncate">{professionalIdFile.name} ({(professionalIdFile.size / 1024).toFixed(0)} KB)</span>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-1 text-slate-500 text-xs">
@@ -385,10 +620,16 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
             <input
               type="file"
               accept=".pdf,.png,.jpg,.jpeg"
-              onChange={(e) => setProfessionalIdFile(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null;
+                if (handleFileValidation(file, "syndicateDoc")) {
+                  setProfessionalIdFile(file);
+                }
+              }}
               className="hidden"
             />
           </label>
+          {errors.syndicateDoc && <p className="text-[11px] text-red-600">{errors.syndicateDoc}</p>}
         </div>
       </div>
 
@@ -431,5 +672,7 @@ export function DoctorRegisterForm({ initialPhone = "" }: DoctorRegisterFormProp
         )}
       </button>
     </form>
+    )}
+  </div>
   );
 }

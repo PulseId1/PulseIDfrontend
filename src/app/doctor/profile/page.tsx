@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DoctorNavbar, DoctorFooter } from "@/features/doctor";
 import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 import {
   ShieldCheck,
   Building,
@@ -23,25 +24,68 @@ export default function DoctorProfilePage() {
   const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // In demo mode, reflect Dr. Tarek Al-Husseini's pulmonology credentials
-  const doctorName = isDemo ? "Dr. Tarek Al-Husseini, MD, FCCP" : "Dr. Ahmed Mahmoud Hassan, MD, FESC";
-  const doctorInitials = isDemo ? "TH" : "AH";
-  const doctorTitle = isDemo
-    ? "Consultant Pulmonologist & Respiratory Specialist • Kasr Al Ainy University Hospitals"
-    : "Consultant Interventional Cardiologist • Kasr Al Ainy University Hospitals";
-  const legalName = isDemo ? "Tarek Al-Husseini" : "Ahmed Mahmoud Hassan";
-  const degree = isDemo ? "MBBCh, MSc, MD (Pulmonology)" : "MBBCh, MSc, MD (Cardiology)";
+  const activeDocAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
+  const isCustomDoctor = activeDocAccount?.role === "doctor" && activeDocAccount.id !== "DOC-DEMO-8842";
+
+  // In demo mode, reflect active doctor credentials or fallback to Dr. Tarek
+  const doctorName =
+    isDemo && isCustomDoctor && activeDocAccount?.fullName
+      ? `${activeDocAccount.fullName}, MD`
+      : isDemo
+      ? "Dr. Tarek Al-Husseini, MD, FCCP"
+      : "Dr. Ahmed Mahmoud Hassan, MD, FESC";
+
+  const doctorInitials =
+    doctorName
+      .replace(/^Dr\.\s*/i, "")
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("") || "MD";
+
+  const doctorTitle =
+    isDemo && isCustomDoctor && activeDocAccount?.title
+      ? activeDocAccount.title
+      : isDemo
+      ? "Consultant Pulmonologist & Respiratory Specialist • Kasr Al Ainy University Hospitals"
+      : "Consultant Interventional Cardiologist • Kasr Al Ainy University Hospitals";
+
+  const legalName =
+    isDemo && isCustomDoctor && activeDocAccount?.fullName
+      ? activeDocAccount.fullName.replace(/^Dr\.\s*/i, "")
+      : isDemo
+      ? "Tarek Al-Husseini"
+      : "Ahmed Mahmoud Hassan";
+
+  const specialty =
+    isDemo && isCustomDoctor && activeDocAccount?.specialty
+      ? activeDocAccount.specialty
+      : isDemo
+      ? "Pulmonary & Respiratory Medicine"
+      : "Cardiovascular Medicine";
+
+  const clinicAddress =
+    isDemo && isCustomDoctor && activeDocAccount?.clinicAddress
+      ? activeDocAccount.clinicAddress
+      : isDemo
+      ? "Medical Park Premier, North 90th St, New Cairo, Egypt"
+      : "Building 44, North 90th Street, New Cairo, Egypt";
+
+  const email =
+    isDemo && isCustomDoctor && activeDocAccount?.email
+      ? activeDocAccount.email
+      : isDemo
+      ? "dr.tarek.husseini@pulseid-demo.eg"
+      : "dr.ahassan@kasralainy.edu.eg";
+
+  const degree = isDemo ? "MBBCh, MSc, MD" : "MBBCh, MSc, MD (Cardiology)";
   const fellowship = isDemo
-    ? "Fellow of the American College of Chest Physicians (FCCP)"
+    ? "Egyptian Medical Syndicate Registered Practitioner"
     : "Fellow of the European Society of Cardiology (FESC)";
-  const specialty = isDemo ? "Pulmonary & Respiratory Medicine" : "Cardiovascular Medicine";
   const subspecialty = isDemo
-    ? "Severe Asthma, Airway Diseases & Spirometry"
+    ? specialty
     : "Coronary Angioplasty & Echocardiography";
-  const clinicAddress = isDemo
-    ? "Medical Park Premier, North 90th St, New Cairo, Egypt"
-    : "Building 44, North 90th Street, New Cairo, Egypt";
-  const email = isDemo ? "dr.tarek.husseini@pulseid-demo.eg" : "dr.ahassan@kasralainy.edu.eg";
 
   const handleDeleteAccount = () => {
     if (confirmText.toLowerCase() !== "delete") return;

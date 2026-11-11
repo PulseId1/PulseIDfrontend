@@ -10,6 +10,8 @@ import React, {
 } from "react";
 import { TokenStorage, AUTH_ROLE_KEY, AUTH_USER_ID_KEY } from "@/lib/api/client";
 import { AuthService, LoginCredentials, RoleType } from "@/lib/api/auth-service";
+import { DemoService } from "@/lib/demo/demo-service";
+import { DemoAccount, INITIAL_DEMO_ACCOUNTS } from "@/lib/demo/demo-data";
 
 export type UserRole = RoleType;
 
@@ -45,7 +47,7 @@ export interface AuthState {
 
 export interface AuthContextValue extends AuthState {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; role?: UserRole; error?: string }>;
-  loginDemo: (role: "patient" | "doctor") => void;
+  loginDemo: (role: "patient" | "doctor", account?: DemoAccount) => void;
   logout: () => void;
   clearError: () => void;
   setVerified: (verified: boolean) => void;
@@ -88,7 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (demoSessionStr) {
           try {
             const demo = JSON.parse(demoSessionStr);
-            if (demo && demo.active && (demo.role === "patient" || demo.role === "doctor")) {
+            if (demo && demo.active && (demo.role === "patient" || demo.role === "doctor" || demo.role === "pharmacist")) {
               setToken(null);
               setUserRole(demo.role);
               setUserId(demo.userId);
@@ -98,6 +100,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setIsDemo(true);
               setStatus("authenticated-verified");
               setIsLoading(false);
+              if (demo.userId) {
+                const found = DemoService.getAccounts().find((a) => a.id === demo.userId);
+                if (found) {
+                  DemoService.setActiveAccount(found);
+                }
+              }
               return;
             }
           } catch {}
@@ -158,25 +166,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * Explicit Demo Login Action
    * Activates an isolated demo session without sending credentials or tokens to the backend.
    */
-  const loginDemo = useCallback((role: "patient" | "doctor") => {
+  const loginDemo = useCallback((role: "patient" | "doctor", account?: DemoAccount) => {
     // Purge any real token so sessions are never mixed
     TokenStorage.clear();
-    const demoUserId = role === "patient" ? "PT-DEMO-2026-01" : "DOC-DEMO-8842";
+    const targetAccount =
+      account ||
+      (role === "patient" ? INITIAL_DEMO_ACCOUNTS[0] : INITIAL_DEMO_ACCOUNTS[1]);
+    const demoUserId = targetAccount.id;
+    const demoRole = targetAccount.role;
     const demoSession = {
       active: true,
-      role,
+      role: demoRole,
       userId: demoUserId,
-      name: role === "patient" ? "Sara Mahmoud Ibrahim" : "Dr. Tarek Al-Husseini",
+      name: targetAccount.fullName,
       enteredAt: new Date().toISOString(),
     };
     try {
       localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoSession));
       localStorage.setItem("pulseid_patient_profile_completed", "true");
+      DemoService.setActiveAccount(targetAccount);
     } catch {}
 
     setToken(null);
     setUserId(demoUserId);
-    setUserRole(role);
+    setUserRole(demoRole as UserRole);
     setIsAuthenticated(true);
     setIsTokenVerified(true);
     setAuthMode("demo");
@@ -264,6 +277,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     TokenStorage.clear();
     try {
       localStorage.removeItem(DEMO_SESSION_KEY);
+      localStorage.removeItem("pulseid_demo_active_account_id");
     } catch {}
     setToken(null);
     setUserId(null);

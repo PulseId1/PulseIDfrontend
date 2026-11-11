@@ -81,6 +81,19 @@ export default function PharmacistDashboardPage() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
+        {/* Prototype & Specification Notice */}
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="text-xs sm:text-sm space-y-1">
+            <p className="font-bold text-amber-900">
+              Pharmacist Portal Prototype • Production Specification In Development
+            </p>
+            <p className="text-amber-800 leading-relaxed">
+              This dispensary dashboard demonstrates the planned interaction interface for licensed pharmacists. Unlike the Patient (Figma node <code>353:11437</code>) and Doctor (node <code>353:11434</code>) portals which follow verified Figma designs, dedicated Pharmacist workflows are undergoing design finalization and will be integrated in Phase 5.
+            </p>
+          </div>
+        </div>
+
         {/* Verification Status Banner */}
         {!isTokenVerified && (
           <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex items-start gap-3">

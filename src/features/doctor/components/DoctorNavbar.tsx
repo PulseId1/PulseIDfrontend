@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 import {
   Home,
   Search,
@@ -35,17 +36,32 @@ export function DoctorNavbar() {
     { label: "Doctor Profile", href: "/doctor/profile", icon: User },
   ];
 
-  const doctorDisplayName = isDemo
-    ? "Dr. Tarek Al-Husseini"
-    : userId
-    ? `Dr. Practitioner (${userId})`
-    : "Dr. Clinician";
-  const doctorInitials = isDemo ? "TH" : userId ? "DR" : "MD";
-  const doctorSubtitle = isDemo
-    ? "Consultant Pulmonologist"
-    : userId
-    ? `ID: ${userId}`
-    : "Clinician";
+  const activeDocAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
+  const isDoctorRole = activeDocAccount?.role === "doctor";
+  const doctorDisplayName =
+    isDemo && isDoctorRole && activeDocAccount?.fullName
+      ? activeDocAccount.fullName
+      : isDemo
+      ? "Dr. Tarek Al-Husseini"
+      : userId
+      ? `Dr. Practitioner (${userId})`
+      : "Dr. Clinician";
+  const doctorSubtitle =
+    isDemo && isDoctorRole && activeDocAccount?.specialty
+      ? activeDocAccount.specialty
+      : isDemo
+      ? "Consultant Pulmonologist"
+      : userId
+      ? `ID: ${userId}`
+      : "Clinician";
+  const doctorInitials =
+    doctorDisplayName
+      .replace(/^Dr\.\s*/i, "")
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("") || "DR";
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">

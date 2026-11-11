@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCardShell } from "./AuthCardShell";
+import { DemoService } from "@/lib/demo/demo-service";
 
 export function RegisterEntryForm() {
   const router = useRouter();
@@ -17,26 +18,55 @@ export function RegisterEntryForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone || phone.trim().length < 8) {
-      setError("Please enter a valid phone number.");
+    const cleanPhone = phone.trim();
+
+    if (!cleanPhone) {
+      setError("Please enter your mobile phone number.");
+      return;
+    }
+
+    if (!DemoService.isEgyptianMobile(cleanPhone)) {
+      setError("Please enter a valid 11-digit Egyptian mobile number (010, 011, 012, or 015).");
+      return;
+    }
+
+    if (DemoService.isPhoneRegistered(cleanPhone)) {
+      setError("This phone number is already registered in demo storage. Please sign in or use another number.");
       return;
     }
 
     setIsLoading(true);
     if (typeof window !== "undefined") {
-      localStorage.setItem("pulseid_register_phone", phone);
+      localStorage.setItem("pulseid_register_phone", cleanPhone);
       localStorage.setItem("pulseid_register_role", role);
     }
 
     setTimeout(() => {
       setIsLoading(false);
-      router.push(`/auth/verify?mode=register&phone=${encodeURIComponent(phone)}&role=${role}`);
+      router.push(`/auth/verify?mode=register&phone=${encodeURIComponent(cleanPhone)}&role=${role}`);
     }, 350);
   };
+
+  const roleLabel =
+    role === "doctor"
+      ? "Doctor / Clinician"
+      : role === "pharmacist"
+      ? "Pharmacist"
+      : "Patient";
 
   return (
     <AuthCardShell heroImage="/assets/auth/auth-phone-hero.png">
       <div className="w-full flex flex-col items-start min-w-0" data-node-id="116:907">
+        {/* Role Pill Indicator */}
+        <div className="flex items-center justify-between w-full mb-3">
+          <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-[#02307D] border border-blue-200">
+            {roleLabel} Registration
+          </span>
+          <Link href="/auth/role" className="text-xs text-[#078BDE] hover:underline font-medium">
+            Change Account Type
+          </Link>
+        </div>
+
         {/* Heading Block matching Figma node 116:908 */}
         <div className="pb-8 w-full">
           <h1 className="text-[28px] sm:text-[30px] font-bold leading-tight font-heading">
@@ -44,7 +74,7 @@ export function RegisterEntryForm() {
             <span className="text-[#078BDE]">Pulse ID</span>
           </h1>
           <p className="mt-2 text-[15px] sm:text-[16px] text-[#41474F] font-normal leading-normal">
-            Please enter your details to sign in.
+            Enter your mobile number to begin {role} registration.
           </p>
         </div>
 

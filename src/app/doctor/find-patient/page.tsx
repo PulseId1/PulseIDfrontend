@@ -4,6 +4,8 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { DoctorNavbar, DoctorFooter } from "@/features/doctor";
+import { DemoService } from "@/lib/demo/demo-service";
+import { DemoAccount } from "@/lib/demo/demo-data";
 import {
   Search,
   User,
@@ -148,9 +150,68 @@ function DoctorFindPatientContent() {
   const initialId = searchParams.get("id") || "";
 
   const [searchId, setSearchId] = useState(initialId);
-  const [searchedPatient, setSearchedPatient] = useState<MockPatientDirectoryEntry | null>(
-    initialId && KNOWN_PATIENTS[initialId] ? KNOWN_PATIENTS[initialId] : null
-  );
+  const [registeredPatients] = useState<DemoAccount[]>(() => {
+    if (typeof window === "undefined") return [];
+    return DemoService.getAccounts().filter(
+      (a) => a.role === "patient" && a.id !== "pt-sara-01"
+    );
+  });
+
+  const resolvePatientEntry = (cleanId: string): MockPatientDirectoryEntry | null => {
+    // 1. Check predefined hardcoded fixtures
+    if (KNOWN_PATIENTS[cleanId]) {
+      return KNOWN_PATIENTS[cleanId];
+    }
+
+    // 2. Check demo accounts & profiles
+    const account = DemoService.findAccountByIdentifier(cleanId);
+    if (account && account.role === "patient") {
+      const profile = DemoService.getPatientProfile(account.id);
+      const emergency = profile.emergencyContacts?.[0];
+      return {
+        nationalId: account.nationalId,
+        fullName: account.fullName,
+        age: DemoService.calculateAge(profile.birthDate || account.birthDate),
+        dob: profile.birthDate || account.birthDate || "01 Jan 1995",
+        bloodType: account.bloodType ? `${account.bloodType} (Positive)` : "O+ (Positive)",
+        city: `${account.address || "Cairo"}, Egypt`,
+        emergencyContact: {
+          name: emergency?.fullName || account.emergencyContactName || "Next of Kin",
+          relationship: emergency?.relationship || account.emergencyContactRelation || "Family",
+          phone: emergency?.phone || account.emergencyContactPhone || account.phone,
+        },
+        hasAccess: true,
+        chronicConditions:
+          profile.chronicDiseases && profile.chronicDiseases.length > 0
+            ? profile.chronicDiseases.map((c) => c.name || "").filter(Boolean)
+            : account.initialCondition
+            ? [account.initialCondition]
+            : ["None recorded"],
+        allergies:
+          profile.allergyMenu && profile.allergyMenu.length > 0
+            ? profile.allergyMenu.map((a) => a.name || "").filter(Boolean)
+            : ["None recorded"],
+        medications:
+          profile.currentMedications && profile.currentMedications.length > 0
+            ? profile.currentMedications
+                .map((m) => (m.dosage ? `${m.name} (${m.dosage})` : m.name || ""))
+                .filter(Boolean)
+            : ["None recorded"],
+        recentVitals: {
+          bp: "120 / 80 mmHg",
+          heartRate: "72 bpm",
+          glucose: "95 mg/dL",
+        },
+      };
+    }
+
+    return null;
+  };
+
+  const [searchedPatient, setSearchedPatient] = useState<MockPatientDirectoryEntry | null>(() => {
+    if (!initialId) return null;
+    return resolvePatientEntry(initialId);
+  });
   const [hasSearched, setHasSearched] = useState(Boolean(initialId));
 
   const handleSearch = (e: React.FormEvent) => {
@@ -159,16 +220,12 @@ function DoctorFindPatientContent() {
     if (!cleanId) return;
 
     setHasSearched(true);
-    if (KNOWN_PATIENTS[cleanId]) {
-      setSearchedPatient(KNOWN_PATIENTS[cleanId]);
-    } else {
-      setSearchedPatient(null);
-    }
+    setSearchedPatient(resolvePatientEntry(cleanId));
   };
 
   const handleQuickChipClick = (id: string) => {
     setSearchId(id);
-    setSearchedPatient(KNOWN_PATIENTS[id] || null);
+    setSearchedPatient(resolvePatientEntry(id));
     setHasSearched(true);
   };
 
@@ -226,6 +283,16 @@ function DoctorFindPatientContent() {
           {/* Quick Demo ID Suggestion Chips */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="text-xs text-slate-400 font-sans">Quick Demo Patients:</span>
+            {registeredPatients.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => handleQuickChipClick(p.nationalId)}
+                className="px-2.5 py-1 rounded-lg bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100 text-xs font-mono font-bold transition-colors cursor-pointer"
+              >
+                {p.fullName} ({p.nationalId}) • Registered
+              </button>
+            ))}
             <button
               type="button"
               onClick={() => handleQuickChipClick("29804120108924")}
