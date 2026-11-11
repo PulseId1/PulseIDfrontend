@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DoctorNavbar, DoctorFooter } from "@/features/doctor";
 import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 import {
   Users,
   Search,
@@ -82,9 +83,36 @@ const TODAY_APPOINTMENTS: ClinicalAppointment[] = [
 
 export default function DoctorDashboardPage() {
   const router = useRouter();
-  const { isTokenVerified } = useAuth();
+  const { isTokenVerified, isDemo } = useAuth();
+  const [appointments, setAppointments] = useState<ClinicalAppointment[]>(TODAY_APPOINTMENTS);
   const [quickSearchId, setQuickSearchId] = useState("");
   const [searchError, setSearchError] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (isDemo) {
+      const timer = setTimeout(() => {
+        setAppointments(DemoService.getAppointments());
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isDemo]);
+
+  const handleToggleStatus = (aptId: string, currentStatus: ClinicalAppointment["status"]) => {
+    if (!isDemo) return;
+    const nextStatus: ClinicalAppointment["status"] =
+      currentStatus === "Scheduled"
+        ? "Checked In"
+        : currentStatus === "Checked In"
+        ? "In Progress"
+        : currentStatus === "In Progress"
+        ? "Completed"
+        : "Scheduled";
+    const updated = DemoService.updateAppointmentStatus(aptId, nextStatus);
+    setAppointments(updated);
+  };
+
+  const completedCount = appointments.filter((a) => a.status === "Completed").length;
+  const pendingCount = appointments.length - completedCount;
 
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,12 +210,12 @@ export default function DoctorDashboardPage() {
                   Patients Today
                 </span>
                 <span className="text-xs text-slate-500 font-sans">
-                  12 Completed • 6 Pending
+                  {completedCount} Completed • {pendingCount} Pending
                 </span>
               </div>
             </div>
             <span className="text-3xl font-extrabold text-[#02307D] font-mono">
-              18
+              {appointments.length}
             </span>
           </div>
 
@@ -359,7 +387,7 @@ export default function DoctorDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
-                {TODAY_APPOINTMENTS.map((apt) => (
+                {appointments.map((apt) => (
                   <tr key={apt.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-4 pl-2">
                       <div className="flex items-center gap-3">
@@ -392,8 +420,14 @@ export default function DoctorDashboardPage() {
                     </td>
 
                     <td className="py-4 px-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStatus(apt.id, apt.status)}
+                        disabled={!isDemo}
+                        title={isDemo ? "Click to cycle status in Demo Mode" : undefined}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold transition-all ${
+                          isDemo ? "cursor-pointer hover:ring-2 hover:ring-[#078BDE]/40" : "cursor-default"
+                        } ${
                           apt.status === "Checked In"
                             ? "bg-blue-50 text-blue-700 border border-blue-200"
                             : apt.status === "In Progress"
@@ -404,8 +438,11 @@ export default function DoctorDashboardPage() {
                         }`}
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                        {apt.status}
-                      </span>
+                        <span>{apt.status}</span>
+                        {isDemo && (
+                          <span className="text-[10px] opacity-60 ml-0.5">↻</span>
+                        )}
+                      </button>
                     </td>
 
                     <td className="py-4 pr-2 text-right whitespace-nowrap">

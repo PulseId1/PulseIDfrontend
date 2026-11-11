@@ -10,6 +10,8 @@ import {
 } from "@/features/patient";
 import { DEFAULT_MEDICAL_RECORDS } from "@/lib/api/patient-service";
 import { MedicalRecordItem } from "@/lib/api/patient-types";
+import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 
 type RecordCategory = "labs" | "radiology" | "history" | "diagnoses" | "reports";
 
@@ -80,13 +82,24 @@ const CATEGORIES: CategoryMeta[] = [
 ];
 
 export default function MedicalRecordsPage() {
+  const { isDemo } = useAuth();
   const [activeTab, setActiveTab] = useState<RecordCategory>("labs");
   const [dicomModalItem, setDicomModalItem] = useState<MedicalRecordItem | null>(null);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [shareToast, setShareToast] = useState(false);
   const [recordSearch, setRecordSearch] = useState("");
+  const [records, setRecords] = useState<MedicalRecordItem[]>(DEFAULT_MEDICAL_RECORDS);
 
-  const displayedRecords = DEFAULT_MEDICAL_RECORDS.filter((r) => {
+  React.useEffect(() => {
+    if (isDemo) {
+      const timer = setTimeout(() => {
+        setRecords(DemoService.getMedicalRecords());
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isDemo]);
+
+  const displayedRecords = records.filter((r) => {
     const matchesCat = r.category === activeTab;
     if (!recordSearch.trim()) return matchesCat;
     const q = recordSearch.toLowerCase();

@@ -6,13 +6,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCardShell } from "./AuthCardShell";
 import { useAuth, UserRole } from "@/lib/auth/auth-context";
+import { User, Stethoscope, Sparkles } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role = (searchParams.get("role") as UserRole) || "patient";
   const justRegistered = searchParams.get("registered") === "true";
-  const { login } = useAuth();
+  const { login, loginDemo } = useAuth();
 
   const [activeTab, setActiveTab] = useState<"phone" | "email">("phone");
   const [phone, setPhone] = useState(() => searchParams.get("phone") || "");
@@ -311,6 +312,81 @@ export function LoginForm() {
               Create Account
             </Link>
           </p>
+        </div>
+
+        {/* Option B: Explore Demo Mode */}
+        <div className="w-full mt-8 pt-6 border-t border-[#DDE7FF] flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                Explore in Demo Mode
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-500 font-medium">Zero backend dependencies</span>
+          </div>
+
+          <p className="text-[13px] text-[#41474F] leading-relaxed">
+            Demonstrate the verified Figma Patient and Doctor experiences using isolated offline healthcare fixtures. No backend authentication required.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 w-full">
+            {/* Option 1: Demo Patient Card */}
+            <button
+              type="button"
+              onClick={() => {
+                loginDemo("patient");
+                router.push("/patient");
+              }}
+              className="p-3.5 rounded-xl border border-[#D0DEFF] bg-[#F8FAFF] hover:bg-[#EFF5FF] hover:border-[#078BDE] text-left transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-2xs hover:shadow-sm"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-sky-100 text-[#02307D]">
+                    Patient Portal
+                  </span>
+                  <User className="w-4 h-4 text-[#078BDE] group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-sm font-bold text-[#02307D] font-heading">
+                  Sara Mahmoud Ibrahim
+                </h3>
+                <p className="text-[11px] text-[#41474F] mt-1 leading-snug">
+                  Asthma &amp; penicillin allergy, health rewards, lab records, emergency contacts.
+                </p>
+              </div>
+              <div className="text-[12px] font-bold text-[#078BDE] flex items-center gap-1 mt-1 group-hover:translate-x-0.5 transition-transform">
+                <span>Launch Patient Demo →</span>
+              </div>
+            </button>
+
+            {/* Option 2: Demo Doctor Card */}
+            <button
+              type="button"
+              onClick={() => {
+                loginDemo("doctor");
+                router.push("/doctor");
+              }}
+              className="p-3.5 rounded-xl border border-[#D0DEFF] bg-[#F8FAFF] hover:bg-[#EFF5FF] hover:border-[#078BDE] text-left transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-2xs hover:shadow-sm"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 text-[#02307D]">
+                    Doctor Portal
+                  </span>
+                  <Stethoscope className="w-4 h-4 text-[#078BDE] group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-sm font-bold text-[#02307D] font-heading">
+                  Dr. Tarek Al-Husseini
+                </h3>
+                <p className="text-[11px] text-[#41474F] mt-1 leading-snug">
+                  Pulmonology consultant, 6 scheduled consultations, directory search, permissions.
+                </p>
+              </div>
+              <div className="text-[12px] font-bold text-[#078BDE] flex items-center gap-1 mt-1 group-hover:translate-x-0.5 transition-transform">
+                <span>Launch Doctor Demo →</span>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </AuthCardShell>

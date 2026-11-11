@@ -42,6 +42,39 @@ interface MockPatientDirectoryEntry {
 }
 
 const KNOWN_PATIENTS: Record<string, MockPatientDirectoryEntry> = {
+  "29804120108924": {
+    nationalId: "29804120108924",
+    fullName: "Sara Mahmoud Ibrahim",
+    age: 28,
+    dob: "12 Apr 1998",
+    bloodType: "A+ (Positive)",
+    city: "New Cairo, Egypt",
+    emergencyContact: {
+      name: "Mahmoud Ibrahim",
+      relationship: "Father",
+      phone: "+20 100 123 4567",
+    },
+    hasAccess: true,
+    chronicConditions: [
+      "Bronchial Asthma (Moderate persistent)",
+      "Seasonal Allergic Rhinitis (Dust & olive pollen)",
+    ],
+    allergies: [
+      "Penicillin / Amoxicillin (Severe - Anaphylaxis)",
+      "Aspirin & NSAIDs (Bronchospasm)",
+      "Tree Nuts & Hazelnuts (Oral allergy)",
+    ],
+    medications: [
+      "Symbicort Turbuhaler 160/4.5mcg (1 inhalation twice daily)",
+      "Ventolin Inhaler 100mcg (1-2 puffs PRN)",
+      "Claritin 10mg (Daily during flare-ups)",
+    ],
+    recentVitals: {
+      bp: "118 / 76 mmHg",
+      heartRate: "76 bpm",
+      glucose: "88 mg/dL (Fasting)",
+    },
+  },
   "28809140102345": {
     nationalId: "28809140102345",
     fullName: "Ahmed Hassan",
@@ -193,6 +226,13 @@ function DoctorFindPatientContent() {
           {/* Quick Demo ID Suggestion Chips */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <span className="text-xs text-slate-400 font-sans">Quick Demo Patients:</span>
+            <button
+              type="button"
+              onClick={() => handleQuickChipClick("29804120108924")}
+              className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 text-xs font-mono font-bold transition-colors cursor-pointer"
+            >
+              Sara Mahmoud (29804120108924) • Demo Patient
+            </button>
             <button
               type="button"
               onClick={() => handleQuickChipClick("28809140102345")}

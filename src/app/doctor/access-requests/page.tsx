@@ -4,6 +4,8 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { DoctorNavbar, DoctorFooter } from "@/features/doctor";
+import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 import {
   ShieldCheck,
   Clock,
@@ -75,10 +77,11 @@ const INITIAL_REQUESTS: DoctorAccessRequest[] = [
 function DoctorAccessRequestsContent() {
   const searchParams = useSearchParams();
   const prefilledId = searchParams.get("id") || "";
+  const { isDemo } = useAuth();
 
   const [requests, setRequests] = useState<DoctorAccessRequest[]>(INITIAL_REQUESTS);
   const [nationalIdInput, setNationalIdInput] = useState(prefilledId);
-  const [department, setDepartment] = useState("Cardiology");
+  const [department, setDepartment] = useState("Pulmonology");
   const [reason, setReason] = useState("");
   const [scope, setScope] = useState("Full Medical Records");
   const [duration, setDuration] = useState("7 Days");
@@ -98,10 +101,22 @@ function DoctorAccessRequestsContent() {
 
     setFormError(null);
 
+    const targetId = nationalIdInput.trim();
+    const resolvedPatientName =
+      targetId === "29804120108924"
+        ? "Sara Mahmoud Ibrahim"
+        : targetId === "28809140102345"
+        ? "Ahmed Hassan"
+        : targetId === "29204150109876"
+        ? "Mariam Adel"
+        : targetId === "27911220104321"
+        ? "Omar Farouk"
+        : `Patient (${targetId.slice(-4)})`;
+
     const newReq: DoctorAccessRequest = {
       id: `req-${Date.now()}`,
-      patientName: nationalIdInput.trim() === "28809140102345" ? "Ahmed Hassan" : `Patient (${nationalIdInput.slice(-4)})`,
-      nationalId: nationalIdInput.trim(),
+      patientName: resolvedPatientName,
+      nationalId: targetId,
       department,
       reason: reason.trim(),
       scope,
@@ -109,6 +124,10 @@ function DoctorAccessRequestsContent() {
       requestDate: "Today",
       status: "pending",
     };
+
+    if (isDemo) {
+      DemoService.createAccessRequest(targetId, reason.trim());
+    }
 
     setRequests([newReq, ...requests]);
     setSubmitSuccess(true);

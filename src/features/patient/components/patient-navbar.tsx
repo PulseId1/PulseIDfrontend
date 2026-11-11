@@ -27,10 +27,14 @@ export function PatientNavbar({
   const pathname = usePathname();
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { logout, userId } = useAuth();
+  const { logout, userId, isDemo } = useAuth();
 
-  const displayName = patientName || (userId ? `Patient (${userId})` : "Patient Account");
-  const displayId = patientId || (userId ? `PID-${userId}` : "PulseID Identity");
+  const displayName =
+    patientName ||
+    (isDemo ? "Sara Mahmoud Ibrahim" : userId ? `Patient (${userId})` : "Patient Account");
+  const displayId =
+    patientId ||
+    (isDemo ? "PID-EG-2980412" : userId ? `PID-${userId}` : "PulseID Identity");
 
   const isProfileCompleted = useSyncExternalStore(
     emptySubscribe,

@@ -32,13 +32,15 @@ export function MobilePatientHeader({
 }: MobilePatientHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { logout, userId } = useAuth();
+  const { logout, userId, isDemo } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const displayName =
-    patientName || (userId ? `Patient (${userId})` : "Patient Account");
-  const displayBloodType = bloodType || "O+ (Positive)";
+    patientName ||
+    (isDemo ? "Sara Mahmoud Ibrahim" : userId ? `Patient (${userId})` : "Patient Account");
+  const displayBloodType =
+    bloodType || (isDemo ? "A+ (Positive)" : "O+ (Positive)");
   const initials =
     displayName
       .split(" ")

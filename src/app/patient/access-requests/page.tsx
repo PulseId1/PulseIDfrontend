@@ -11,12 +11,26 @@ import {
 } from "@/features/patient";
 import { PatientService } from "@/lib/api/patient-service";
 import { AccessRequestItem } from "@/lib/api/patient-types";
+import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 
 export default function AccessRequestsPage() {
-  const [requests, setRequests] = useState<AccessRequestItem[]>(() => PatientService.getAccessRequests());
+  const { isDemo } = useAuth();
+  const [requests, setRequests] = useState<AccessRequestItem[]>(() =>
+    PatientService.getAccessRequests()
+  );
   const [selectedRequest, setSelectedRequest] = useState<AccessRequestItem | null>(null);
   const [modalType, setModalType] = useState<"approve" | "reject" | "revoke" | null>(null);
   const [actionNotice, setActionNotice] = useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (isDemo) {
+      const timer = setTimeout(() => {
+        setRequests(DemoService.getAccessRequests());
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isDemo]);
 
   const pendingList = requests.filter((r) => r.status === "pending");
   const activeList = requests.filter((r) => r.status === "approved");
@@ -34,6 +48,23 @@ export default function AccessRequestsPage() {
 
   const handleConfirmAction = () => {
     if (!selectedRequest || !modalType) return;
+
+    if (isDemo) {
+      const updated = DemoService.respondToAccessRequest(
+        selectedRequest.id,
+        modalType === "approve" ? "approve" : "reject"
+      );
+      setRequests(updated);
+      setActionNotice(
+        `Demo Mode: Request from ${selectedRequest.doctorName} marked as ${
+          modalType === "approve" ? "Approved" : "Rejected"
+        } in local demo fixtures.`
+      );
+      closeModal();
+      setTimeout(() => setActionNotice(null), 6000);
+      return;
+    }
+
     const newStatus = modalType === "approve" ? "approved" : modalType === "reject" ? "rejected" : "revoked";
     const updated = PatientService.updateAccessRequestStatus(selectedRequest.id, newStatus);
     setRequests(updated);

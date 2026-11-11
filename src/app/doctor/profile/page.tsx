@@ -18,10 +18,30 @@ import {
 
 export default function DoctorProfilePage() {
   const router = useRouter();
-  const { logout, userId } = useAuth();
+  const { logout, userId, isDemo } = useAuth();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // In demo mode, reflect Dr. Tarek Al-Husseini's pulmonology credentials
+  const doctorName = isDemo ? "Dr. Tarek Al-Husseini, MD, FCCP" : "Dr. Ahmed Mahmoud Hassan, MD, FESC";
+  const doctorInitials = isDemo ? "TH" : "AH";
+  const doctorTitle = isDemo
+    ? "Consultant Pulmonologist & Respiratory Specialist • Kasr Al Ainy University Hospitals"
+    : "Consultant Interventional Cardiologist • Kasr Al Ainy University Hospitals";
+  const legalName = isDemo ? "Tarek Al-Husseini" : "Ahmed Mahmoud Hassan";
+  const degree = isDemo ? "MBBCh, MSc, MD (Pulmonology)" : "MBBCh, MSc, MD (Cardiology)";
+  const fellowship = isDemo
+    ? "Fellow of the American College of Chest Physicians (FCCP)"
+    : "Fellow of the European Society of Cardiology (FESC)";
+  const specialty = isDemo ? "Pulmonary & Respiratory Medicine" : "Cardiovascular Medicine";
+  const subspecialty = isDemo
+    ? "Severe Asthma, Airway Diseases & Spirometry"
+    : "Coronary Angioplasty & Echocardiography";
+  const clinicAddress = isDemo
+    ? "Medical Park Premier, North 90th St, New Cairo, Egypt"
+    : "Building 44, North 90th Street, New Cairo, Egypt";
+  const email = isDemo ? "dr.tarek.husseini@pulseid-demo.eg" : "dr.ahassan@kasralainy.edu.eg";
 
   const handleDeleteAccount = () => {
     if (confirmText.toLowerCase() !== "delete") return;
@@ -62,13 +82,13 @@ export default function DoctorProfilePage() {
         {/* Hero Identity Banner matching Figma Node 353:11046 */}
         <div className="bg-gradient-to-r from-[#02307D] via-[#03449E] to-[#078BDE] rounded-[24px] p-6 sm:p-8 text-white shadow-md relative overflow-hidden flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white text-[#02307D] font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-lg shrink-0">
-            AH
+            {doctorInitials}
           </div>
 
           <div className="flex-1 text-center sm:text-left space-y-2">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
               <h2 className="text-xl sm:text-2xl font-bold font-heading text-white">
-                Dr. Ahmed Mahmoud Hassan, MD, FESC
+                {doctorName}
               </h2>
               <span className="px-3 py-0.5 rounded-full bg-white/20 text-sky-100 text-xs font-bold border border-white/30 backdrop-blur-xs inline-flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-sky-300" />
@@ -77,7 +97,7 @@ export default function DoctorProfilePage() {
             </div>
 
             <p className="text-sm text-sky-100 font-sans">
-              Consultant Interventional Cardiologist • Kasr Al Ainy University Hospitals
+              {doctorTitle}
             </p>
 
             <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-slate-200 font-mono">
@@ -85,7 +105,7 @@ export default function DoctorProfilePage() {
               <span>•</span>
               <span>License Status: Active (Expires Dec 2028)</span>
               <span>•</span>
-              <span>User ID: {userId || "doc-user-501"}</span>
+              <span>User ID: {userId || "DOC-DEMO-8842"}</span>
             </div>
           </div>
         </div>
@@ -112,7 +132,7 @@ export default function DoctorProfilePage() {
               <div className="divide-y divide-slate-100 mt-4 text-xs sm:text-sm">
                 <div className="py-3 flex justify-between">
                   <span className="text-slate-500 font-sans">Full Legal Name</span>
-                  <span className="font-bold text-[#02307D] font-heading">Ahmed Mahmoud Hassan</span>
+                  <span className="font-bold text-[#02307D] font-heading">{legalName}</span>
                 </div>
                 <div className="py-3 flex justify-between">
                   <span className="text-slate-500 font-sans">Egyptian Syndicate ID</span>
@@ -120,19 +140,19 @@ export default function DoctorProfilePage() {
                 </div>
                 <div className="py-3 flex justify-between">
                   <span className="text-slate-500 font-sans">Medical Degree</span>
-                  <span className="font-bold text-[#02307D]">MBBCh, MSc, MD (Cardiology)</span>
+                  <span className="font-bold text-[#02307D]">{degree}</span>
                 </div>
                 <div className="py-3 flex justify-between">
                   <span className="text-slate-500 font-sans">Fellowship</span>
-                  <span className="font-bold text-[#02307D]">Fellow of the European Society of Cardiology (FESC)</span>
+                  <span className="font-bold text-[#02307D]">{fellowship}</span>
                 </div>
                 <div className="py-3 flex justify-between">
                   <span className="text-slate-500 font-sans">Primary Specialty</span>
-                  <span className="font-bold text-[#078BDE]">Cardiovascular Medicine</span>
+                  <span className="font-bold text-[#078BDE]">{specialty}</span>
                 </div>
                 <div className="py-3 flex justify-between">
                   <span className="text-slate-500 font-sans">Sub-specialty</span>
-                  <span className="font-bold text-slate-800">Coronary Angioplasty &amp; Echocardiography</span>
+                  <span className="font-bold text-slate-800">{subspecialty}</span>
                 </div>
               </div>
             </div>
@@ -167,17 +187,19 @@ export default function DoctorProfilePage() {
                     Kasr Al Ainy University Hospital, Cairo University
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Department of Cardiovascular Medicine • Inpatient &amp; Cath Lab
+                    {isDemo
+                      ? "Department of Pulmonology & Respiratory Medicine • Inpatient & Bronchoscopy Suite"
+                      : "Department of Cardiovascular Medicine • Inpatient & Cath Lab"}
                   </p>
                 </div>
 
                 <div className="py-3">
                   <span className="text-slate-500 text-xs block mb-1">Private Practice Center</span>
                   <p className="font-bold text-[#02307D] leading-tight">
-                    Pulse Heart &amp; Vascular Clinic
+                    {isDemo ? "New Cairo Chest & Allergy Clinic" : "Pulse Heart & Vascular Clinic"}
                   </p>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Building 44, North 90th Street, New Cairo, Egypt
+                    {clinicAddress}
                   </p>
                 </div>
 
@@ -197,7 +219,7 @@ export default function DoctorProfilePage() {
 
                 <div className="py-3 flex justify-between items-center">
                   <span className="text-slate-500 text-xs">Professional Email</span>
-                  <span className="font-mono text-xs text-[#078BDE]">dr.ahassan@kasralainy.edu.eg</span>
+                  <span className="font-mono text-xs text-[#078BDE]">{email}</span>
                 </div>
               </div>
             </div>

@@ -12,9 +12,12 @@ import {
 } from "@/features/patient";
 import { PatientService, EMPTY_PATIENT_PROFILE } from "@/lib/api/patient-service";
 import { UIPatientProfile, EmergencyContactDTO } from "@/lib/api/patient-types";
+import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 
 export default function PatientProfilePage() {
   const router = useRouter();
+  const { isDemo } = useAuth();
   const [profile, setProfile] = useState<UIPatientProfile>(EMPTY_PATIENT_PROFILE);
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false);
   const [newContact, setNewContact] = useState<EmergencyContactDTO>({
@@ -31,6 +34,14 @@ export default function PatientProfilePage() {
         return;
       }
     }
+
+    if (isDemo) {
+      const timer = setTimeout(() => {
+        setProfile(DemoService.getPatientProfile());
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
     PatientService.getPatientProfile()
       .then(setProfile)
       .catch((err) => {
@@ -38,31 +49,45 @@ export default function PatientProfilePage() {
           router.replace("/auth/login?role=patient&expired=true");
         }
       });
-  }, [router]);
+  }, [router, isDemo]);
 
   const handleAddEmergencyContact = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newContact.fullName || !newContact.phone) return;
-    const updated = {
-      ...profile,
-      emergencyContacts: [
-        ...(profile.emergencyContacts || []),
-        { ...newContact, id: `ec-${Date.now()}` },
-      ],
-    };
-    setProfile(updated);
-    PatientService.updatePatientProfile(updated);
+
+    if (isDemo) {
+      const updated = DemoService.addEmergencyContact(newContact);
+      setProfile(updated);
+    } else {
+      const updated = {
+        ...profile,
+        emergencyContacts: [
+          ...(profile.emergencyContacts || []),
+          { ...newContact, id: `ec-${Date.now()}` },
+        ],
+      };
+      setProfile(updated);
+      PatientService.updatePatientProfile(updated);
+    }
+
     setIsAddContactModalOpen(false);
     setNewContact({ fullName: "", phone: "", relationship: "Father" });
   };
 
   const handleDeleteEmergencyContact = (id?: string) => {
-    const updated = {
-      ...profile,
-      emergencyContacts: (profile.emergencyContacts || []).filter((c) => c.id !== id),
-    };
-    setProfile(updated);
-    PatientService.updatePatientProfile(updated);
+    if (!id) return;
+
+    if (isDemo) {
+      const updated = DemoService.removeEmergencyContact(id);
+      setProfile(updated);
+    } else {
+      const updated = {
+        ...profile,
+        emergencyContacts: (profile.emergencyContacts || []).filter((c) => c.id !== id),
+      };
+      setProfile(updated);
+      PatientService.updatePatientProfile(updated);
+    }
   };
 
   return (

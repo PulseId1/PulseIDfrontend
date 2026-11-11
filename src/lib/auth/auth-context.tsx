@@ -28,6 +28,8 @@ export type AuthStatus =
   | "authenticated-verified"
   | "auth-error";
 
+export const DEMO_SESSION_KEY = "pulseid_demo_session";
+
 export interface AuthState {
   token: string | null;
   userId: string | null;
@@ -37,10 +39,13 @@ export interface AuthState {
   isLoading: boolean;
   status: AuthStatus;
   error: string | null;
+  authMode: "real" | "demo";
+  isDemo: boolean;
 }
 
 export interface AuthContextValue extends AuthState {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; role?: UserRole; error?: string }>;
+  loginDemo: (role: "patient" | "doctor") => void;
   logout: () => void;
   clearError: () => void;
   setVerified: (verified: boolean) => void;
@@ -64,18 +69,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [status, setStatus] = useState<AuthStatus>("initializing");
   const [error, setError] = useState<string | null>(null);
+  const [authMode, setAuthMode] = useState<"real" | "demo">("real");
+  const [isDemo, setIsDemo] = useState<boolean>(false);
 
   /**
    * Conservative Session Initialization
    * Reads from browser storage on client mount.
    *
    * Operational Rule:
-   * Stored token presence is NOT proof that the session is valid on the backend.
-   * When restored from storage, status is 'authenticated-unverified' and isTokenVerified remains false.
+   * - Restores isolated demo session if pulseid_demo_session is set.
+   * - Otherwise checks real backend token via TokenStorage.
    */
   useEffect(() => {
     const initTimer = setTimeout(() => {
       try {
+        // 1. Check for isolated demo session first
+        const demoSessionStr = localStorage.getItem(DEMO_SESSION_KEY);
+        if (demoSessionStr) {
+          try {
+            const demo = JSON.parse(demoSessionStr);
+            if (demo && demo.active && (demo.role === "patient" || demo.role === "doctor")) {
+              setToken(null);
+              setUserRole(demo.role);
+              setUserId(demo.userId);
+              setIsAuthenticated(true);
+              setIsTokenVerified(true);
+              setAuthMode("demo");
+              setIsDemo(true);
+              setStatus("authenticated-verified");
+              setIsLoading(false);
+              return;
+            }
+          } catch {}
+        }
+
+        // 2. Otherwise restore real session from storage
         const storedToken = TokenStorage.get();
         const storedRole = (localStorage.getItem(AUTH_ROLE_KEY) as UserRole) || null;
         const storedUserId = localStorage.getItem(AUTH_USER_ID_KEY) || null;
@@ -86,6 +114,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserId(storedUserId);
           setIsAuthenticated(true);
           setIsTokenVerified(false);
+          setAuthMode("real");
+          setIsDemo(false);
           setStatus("authenticated-unverified");
         } else {
           TokenStorage.clear();
@@ -94,12 +124,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserId(null);
           setIsAuthenticated(false);
           setIsTokenVerified(false);
+          setAuthMode("real");
+          setIsDemo(false);
           setStatus("unauthenticated");
         }
       } catch {
         setToken(null);
         setIsAuthenticated(false);
         setIsTokenVerified(false);
+        setAuthMode("real");
+        setIsDemo(false);
         setStatus("unauthenticated");
       } finally {
         setIsLoading(false);
@@ -121,7 +155,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   /**
-   * Login Action
+   * Explicit Demo Login Action
+   * Activates an isolated demo session without sending credentials or tokens to the backend.
+   */
+  const loginDemo = useCallback((role: "patient" | "doctor") => {
+    // Purge any real token so sessions are never mixed
+    TokenStorage.clear();
+    const demoUserId = role === "patient" ? "PT-DEMO-2026-01" : "DOC-DEMO-8842";
+    const demoSession = {
+      active: true,
+      role,
+      userId: demoUserId,
+      name: role === "patient" ? "Sara Mahmoud Ibrahim" : "Dr. Tarek Al-Husseini",
+      enteredAt: new Date().toISOString(),
+    };
+    try {
+      localStorage.setItem(DEMO_SESSION_KEY, JSON.stringify(demoSession));
+      localStorage.setItem("pulseid_patient_profile_completed", "true");
+    } catch {}
+
+    setToken(null);
+    setUserId(demoUserId);
+    setUserRole(role);
+    setIsAuthenticated(true);
+    setIsTokenVerified(true);
+    setAuthMode("demo");
+    setIsDemo(true);
+    setStatus("authenticated-verified");
+    setError(null);
+    setIsLoading(false);
+  }, []);
+
+  /**
+   * Real Login Action
    * All roles authenticate through the single centralized endpoint POST /api/v1/Users/Login.
    * Role is derived from backend response (typeId: 1 = patient, 2 = doctor, 3 = pharmacist).
    */
@@ -129,6 +195,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (credentials: LoginCredentials): Promise<{ success: boolean; role?: UserRole; error?: string }> => {
       setError(null);
       setIsLoading(true);
+
+      // Clear any prior demo session
+      try {
+        localStorage.removeItem(DEMO_SESSION_KEY);
+      } catch {}
+      setAuthMode("real");
+      setIsDemo(false);
 
       try {
         const response = await AuthService.login(credentials);
@@ -138,6 +211,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setToken(response.token);
           setIsAuthenticated(true);
           setIsTokenVerified(true);
+          setAuthMode("real");
+          setIsDemo(false);
           setStatus("authenticated-verified");
 
           // Extract role confirmed by backend
@@ -187,11 +262,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    */
   const logout = useCallback(() => {
     TokenStorage.clear();
+    try {
+      localStorage.removeItem(DEMO_SESSION_KEY);
+    } catch {}
     setToken(null);
     setUserId(null);
     setUserRole(null);
     setIsAuthenticated(false);
     setIsTokenVerified(false);
+    setAuthMode("real");
+    setIsDemo(false);
     setStatus("unauthenticated");
     setError(null);
   }, []);
@@ -210,7 +290,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       status,
       error,
+      authMode,
+      isDemo,
       login,
+      loginDemo,
       logout,
       clearError,
       setVerified,
@@ -225,7 +308,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       status,
       error,
+      authMode,
+      isDemo,
       login,
+      loginDemo,
       logout,
       clearError,
       setVerified,

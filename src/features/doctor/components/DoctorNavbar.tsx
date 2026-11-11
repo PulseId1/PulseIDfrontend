@@ -20,7 +20,7 @@ import {
 export function DoctorNavbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout, userId } = useAuth();
+  const { logout, userId, isDemo } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -35,8 +35,17 @@ export function DoctorNavbar() {
     { label: "Doctor Profile", href: "/doctor/profile", icon: User },
   ];
 
-  const doctorDisplayName = userId ? `Dr. Practitioner (${userId})` : "Dr. Clinician";
-  const doctorInitials = userId ? "DR" : "MD";
+  const doctorDisplayName = isDemo
+    ? "Dr. Tarek Al-Husseini"
+    : userId
+    ? `Dr. Practitioner (${userId})`
+    : "Dr. Clinician";
+  const doctorInitials = isDemo ? "TH" : userId ? "DR" : "MD";
+  const doctorSubtitle = isDemo
+    ? "Consultant Pulmonologist"
+    : userId
+    ? `ID: ${userId}`
+    : "Clinician";
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
@@ -111,7 +120,7 @@ export function DoctorNavbar() {
                 {doctorDisplayName}
               </p>
               <p className="text-[11px] text-slate-500 font-sans leading-none mt-0.5">
-                {userId ? `ID: ${userId}` : "Cardiologist"}
+                {doctorSubtitle}
               </p>
             </div>
           </Link>

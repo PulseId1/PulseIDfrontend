@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, UserRole, getDashboardPathForRole } from "@/lib/auth/auth-context";
+import { DemoModeBanner } from "@/components/demo/DemoModeBanner";
 
 interface RoleGuardProps {
   allowedRoles: UserRole[];
@@ -60,5 +61,10 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <DemoModeBanner />
+      {children}
+    </>
+  );
 }

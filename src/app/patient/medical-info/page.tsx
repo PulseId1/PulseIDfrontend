@@ -11,6 +11,8 @@ import {
 } from "@/features/patient";
 import { PatientService, EMPTY_PATIENT_PROFILE } from "@/lib/api/patient-service";
 import { UIPatientProfile } from "@/lib/api/patient-types";
+import { useAuth } from "@/lib/auth/auth-context";
+import { DemoService } from "@/lib/demo/demo-service";
 
 type HealthSubcategory = "chronic" | "labs" | "allergies" | "medications" | "surgeries";
 
@@ -24,6 +26,7 @@ interface SubcatMeta {
 
 export default function MedicalInfoPage() {
   const router = useRouter();
+  const { isDemo } = useAuth();
   const [activeTab, setActiveTab] = useState<HealthSubcategory>("chronic");
   const [profile, setProfile] = useState<UIPatientProfile>(EMPTY_PATIENT_PROFILE);
   const [shareToast, setShareToast] = useState(false);
@@ -34,6 +37,13 @@ export default function MedicalInfoPage() {
   const [newItemDetail, setNewItemDetail] = useState("");
 
   useEffect(() => {
+    if (isDemo) {
+      const timer = setTimeout(() => {
+        setProfile(DemoService.getPatientProfile());
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+
     PatientService.getPatientProfile()
       .then(setProfile)
       .catch((err) => {
@@ -41,7 +51,7 @@ export default function MedicalInfoPage() {
           router.replace("/auth/login?role=patient&expired=true");
         }
       });
-  }, [router]);
+  }, [router, isDemo]);
 
   const chronicList = profile.chronicDiseases || [];
   const allergyList = profile.allergyMenu || [];
@@ -116,35 +126,50 @@ export default function MedicalInfoPage() {
     if (!newItemName.trim()) return;
 
     if (activeModal === "chronic") {
-      const updated = {
-        ...profile,
-        chronicDiseases: [
-          ...(profile.chronicDiseases || []),
-          { id: Date.now(), name: newItemName.trim(), status: "Active Follow-up", date: "Recent", notes: newItemDetail },
-        ],
-      };
-      setProfile(updated);
-      PatientService.updatePatientProfile(updated);
+      if (isDemo) {
+        const updated = DemoService.addChronicCondition(newItemName.trim(), newItemDetail);
+        setProfile(updated);
+      } else {
+        const updated = {
+          ...profile,
+          chronicDiseases: [
+            ...(profile.chronicDiseases || []),
+            { id: Date.now(), name: newItemName.trim(), status: "Active Follow-up", date: "Recent", notes: newItemDetail },
+          ],
+        };
+        setProfile(updated);
+        PatientService.updatePatientProfile(updated);
+      }
     } else if (activeModal === "allergies") {
-      const updated = {
-        ...profile,
-        allergyMenu: [
-          ...(profile.allergyMenu || []),
-          { id: Date.now(), name: newItemName.trim(), severity: "Moderate" as const, reactionType: newItemDetail, date: "Recent" },
-        ],
-      };
-      setProfile(updated);
-      PatientService.updatePatientProfile(updated);
+      if (isDemo) {
+        const updated = DemoService.addAllergy(newItemName.trim(), "Moderate", newItemDetail);
+        setProfile(updated);
+      } else {
+        const updated = {
+          ...profile,
+          allergyMenu: [
+            ...(profile.allergyMenu || []),
+            { id: Date.now(), name: newItemName.trim(), severity: "Moderate" as const, reactionType: newItemDetail, date: "Recent" },
+          ],
+        };
+        setProfile(updated);
+        PatientService.updatePatientProfile(updated);
+      }
     } else if (activeModal === "medications") {
-      const updated = {
-        ...profile,
-        currentMedications: [
-          ...(profile.currentMedications || []),
-          { id: Date.now(), name: newItemName.trim(), dosage: newItemDetail || "Standard", status: "Active" as const, date: "Recent" },
-        ],
-      };
-      setProfile(updated);
-      PatientService.updatePatientProfile(updated);
+      if (isDemo) {
+        const updated = DemoService.addMedication(newItemName.trim(), newItemDetail || "Standard");
+        setProfile(updated);
+      } else {
+        const updated = {
+          ...profile,
+          currentMedications: [
+            ...(profile.currentMedications || []),
+            { id: Date.now(), name: newItemName.trim(), dosage: newItemDetail || "Standard", status: "Active" as const, date: "Recent" },
+          ],
+        };
+        setProfile(updated);
+        PatientService.updatePatientProfile(updated);
+      }
     } else if (activeModal === "surgeries") {
       const updated = {
         ...profile,
