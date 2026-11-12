@@ -16,7 +16,6 @@ export function Header({ role }: HeaderProps) {
   const router = useRouter();
   const { logout, userId, isDemo } = useAuth();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click
@@ -36,7 +35,6 @@ export function Header({ role }: HeaderProps) {
   };
 
   const isDoctor = role === "doctor" || pathname.startsWith("/doctor");
-  const isPatient = !isDoctor && (role === "patient" || pathname.startsWith("/patient"));
 
   const activeAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
   const displayName =
@@ -74,17 +72,11 @@ export function Header({ role }: HeaderProps) {
         { label: "My Patients", href: "/doctor/find-patient" },
         { label: "Access Requests", href: "/doctor/access-requests" },
       ]
-    : isPatient
-    ? [
+    : [
         { label: "Home", href: "/patient", exact: true },
         { label: "Medical Info", href: "/patient/medical-info" },
         { label: "Records", href: "/patient/records" },
         { label: "Access Requests", href: "/patient/access-requests" },
-      ]
-    : [
-        { label: "Home", href: "/", exact: true },
-        { label: "About Us", href: "/#about" },
-        { label: "Contact Us", href: "/#contact" },
       ];
 
   const profileHref = isDoctor ? "/doctor/profile" : "/patient/profile";
@@ -99,10 +91,10 @@ export function Header({ role }: HeaderProps) {
     >
       <div className="absolute bg-[rgba(255,255,255,0)] inset-0 pointer-events-none" data-node-id="353:10099" data-name="Header:shadow" />
       <div className="h-[80px] max-w-[1280px] w-full relative shrink-0" data-node-id="353:10100" data-name="Container">
-        <div className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex items-center justify-between max-w-[inherit] px-4 sm:px-[32px] relative size-full">
+        <div className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex items-center justify-between max-w-[inherit] px-[32px] relative size-full">
           {/* Brand Logo & Name matching Figma Node 353:10101 */}
-          <div className="content-stretch flex gap-[12px] items-center justify-center relative shrink-0 w-auto sm:w-[198px]" data-node-id="353:10101">
-            <Link href={isDoctor ? "/doctor" : isPatient ? "/patient" : "/"} className="flex items-center gap-[12px]">
+          <div className="content-stretch flex gap-[12px] items-center justify-center relative shrink-0 w-[198px]" data-node-id="353:10101">
+            <Link href={isDoctor ? "/doctor" : "/patient"} className="flex items-center gap-[12px]">
               <div className="h-[30px] relative shrink-0 w-[32px]" data-node-id="353:10102">
                 <Image
                   src="/assets/doctor/imgFrame1171276973.svg"
@@ -160,7 +152,7 @@ export function Header({ role }: HeaderProps) {
             <div className="relative rounded-[12px] shrink-0" data-node-id="353:10132" data-name="Link">
               <button
                 type="button"
-                className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex flex-col items-start px-[20px] py-[8px] relative size-full cursor-pointer hover:bg-white/5 rounded-[12px] transition-colors"
+                className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex flex-col items-start px-[20px] py-[8px] relative size-full cursor-pointer"
               >
                 <div className="break-words flex flex-col font-['Inter'] font-normal justify-center leading-[0] relative shrink-0 text-[#eaedf6] text-[14px] text-center w-[40px]">
                   <p className="leading-normal" dir="auto">عربي</p>
@@ -170,13 +162,13 @@ export function Header({ role }: HeaderProps) {
           </nav>
 
           {/* Right Actions matching Figma Node 353:10134 */}
-          <div className="content-stretch flex gap-[8px] sm:gap-[12px] items-center relative shrink-0" data-node-id="353:10134" data-name="Right Actions: Secondary 'Log In' & Primary 'Create Account">
+          <div className="content-stretch flex gap-[12px] items-center relative shrink-0" data-node-id="353:10134" data-name="Right Actions: Secondary 'Log In' & Primary 'Create Account">
             {/* User Quick Pill Container (Component 76 in Figma) */}
-            <div className="content-stretch flex flex-col gap-[22px] h-[40px] items-end relative shrink-0 w-auto sm:w-[201px]" data-node-id="353:10135" data-name="Component 76" ref={dropdownRef}>
+            <div className="content-stretch flex flex-col gap-[22px] h-[40px] items-end relative shrink-0 w-[201px]" data-node-id="353:10135" data-name="Component 76" ref={dropdownRef}>
               <button
                 type="button"
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex gap-2 sm:gap-[30px] items-center pb-[5px] pl-[5px] pr-[9px] pt-[7px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-white/10 transition-colors"
+                className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] border-solid content-stretch flex gap-[30px] items-center pb-[5px] pl-[5px] pr-[9px] pt-[7px] relative rounded-[12px] shrink-0 cursor-pointer hover:bg-white/10 transition-colors"
                 data-node-id="I353:10135;285:6404"
                 data-name="User Quick Pill"
               >
@@ -188,7 +180,7 @@ export function Header({ role }: HeaderProps) {
                   </div>
                 </div>
 
-                <div className="relative shrink-0 hidden sm:block" data-node-id="I353:10135;285:6407" data-name="Container">
+                <div className="relative shrink-0" data-node-id="I353:10135;285:6407" data-name="Container">
                   <div className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex flex-col items-start relative size-full">
                     <div className="break-words flex flex-col font-['Inter'] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[13px] text-white whitespace-nowrap">
                       <p className="leading-[16px]">{pillShortName}</p>
@@ -354,7 +346,7 @@ export function Header({ role }: HeaderProps) {
 
             {/* Search Button matching Figma Node 353:10136 */}
             <Link
-              href={isDoctor ? "/doctor/find-patient" : isPatient ? "/patient/records" : "/auth/login"}
+              href={isDoctor ? "/doctor/find-patient" : "/patient/records"}
               className="bg-[#eaedf6] border border-[#d0deff] border-solid content-stretch cursor-pointer flex flex-col items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px] hover:bg-white transition-colors"
               data-node-id="353:10136"
               data-name="Button - Toggle navigation drawer"
@@ -389,58 +381,10 @@ export function Header({ role }: HeaderProps) {
                 />
               </div>
             </button>
-
-            {/* Mobile Navigation Toggle (on screens < 768px) */}
-            <button
-              type="button"
-              onClick={() => setMobileNavOpen(!mobileNavOpen)}
-              className="md:hidden size-[40px] rounded-[12px] bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#078bde] flex items-center justify-center text-white shrink-0 cursor-pointer hover:bg-white/10 transition-colors"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileNavOpen ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
           </div>
         </div>
-
-        {/* Mobile Navigation Drawer */}
-        {mobileNavOpen && (
-          <nav className="md:hidden w-full bg-[#011a4b] border-t border-sky-500/20 px-6 py-4 flex flex-col gap-2 animate-in slide-in-from-top-2 duration-150">
-            {navItems.map((item) => {
-              const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setMobileNavOpen(false)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-[#078bde] text-white"
-                      : "text-[#eaedf6] hover:bg-white/10"
-                  }`}
-                >
-                  {isActive && <div className="size-1.5 rounded-full bg-white shrink-0" />}
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-            <button
-              type="button"
-              className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-medium text-[#eaedf6] hover:bg-white/10 transition-colors text-left"
-            >
-              <span>اللغة</span>
-              <span className="text-[#078bde] font-bold">عربي</span>
-            </button>
-          </nav>
-        )}
       </div>
     </header>
   );
 }
+
