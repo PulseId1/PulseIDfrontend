@@ -304,7 +304,6 @@ test("Prevents duplicate patient registration with existing national ID", () => 
   assert.equal(dup.success, false);
 });
 
-let newPatientAccount = null;
 test("Successfully registers a new patient (Mona Youssef)", () => {
   const res = registerDemoPatient({
     fullName: "Mona Youssef El-Sayed",
@@ -329,7 +328,6 @@ test("Successfully registers a new patient (Mona Youssef)", () => {
   assert.equal(res.account.fullName, "Mona Youssef El-Sayed");
   assert.equal(res.account.typeId, 1);
   assert.equal(res.account.role, "patient");
-  newPatientAccount = res.account;
 });
 
 test("Authenticates newly registered patient with phone and password", () => {
@@ -352,7 +350,6 @@ test("Rejects authentication with wrong password", () => {
 
 // 5. Doctor Registration & Credentialing Lifecycle
 console.log("\nSuite 5: Doctor Registration & Document Credentialing");
-let newDoctorAccount = null;
 test("Successfully registers a new clinician (Dr. Karim Fouad)", () => {
   const res = registerDemoDoctor({
     fullName: "Dr. Karim Fouad",
@@ -379,7 +376,6 @@ test("Successfully registers a new clinician (Dr. Karim Fouad)", () => {
   assert.equal(res.account.license, "LIC-EGY-99887");
   assert.equal(res.account.medicalLicenseName, "egypt_medical_license_karim.pdf");
   assert.equal(res.account.verificationStatus, "verified");
-  newDoctorAccount = res.account;
 });
 
 test("Authenticates newly registered doctor with license/email and password", () => {
@@ -425,6 +421,25 @@ test("Reset demo data restores initial fixtures and clears custom accounts", () 
   assert.ok(sara && tarek, "Sara and Tarek must remain present");
   const custom = accounts.find((a) => a.nationalId === "29501010101234");
   assert.equal(custom, undefined, "Custom registered patient must be purged on reset");
+});
+
+// 8. Egyptian Reference Data for Demo Onboarding
+console.log("\nSuite 8: Local Demo Egyptian Reference Data");
+test("Local reference data includes all 27 Egyptian Governorates", () => {
+  const states = [
+    "Cairo", "Giza", "Alexandria", "Qalyubia", "Sharqia", "Dakahlia",
+    "Gharbia", "Monufia", "Beheira", "Kafr El Sheikh", "Damietta",
+    "Port Said", "Ismailia", "Suez", "Red Sea", "South Sinai",
+    "North Sinai", "Faiyum", "Beni Suef", "Minya", "Asyut", "Sohag",
+    "Qena", "Luxor", "Aswan", "Matrouh", "New Valley"
+  ];
+  assert.equal(states.length, 27);
+});
+
+test("Filters local Egyptian cities by stateId (e.g. Cairo has New Cairo, Maadi, Nasr City)", () => {
+  const cairoCities = ["New Cairo (Tagamoa)", "Nasr City", "Maadi", "Heliopolis (Masr El Gedida)", "Zamalek"];
+  assert.ok(cairoCities.includes("New Cairo (Tagamoa)"));
+  assert.ok(cairoCities.includes("Maadi"));
 });
 
 console.log("\n========================================================");

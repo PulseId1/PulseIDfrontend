@@ -11,7 +11,13 @@
  * - NEVER submitted to the live backend database.
  */
 
-import { UIPatientProfile, MedicalRecordItem, AccessRequestItem } from "@/lib/api/types";
+import {
+  UIPatientProfile,
+  MedicalRecordItem,
+  AccessRequestItem,
+  StatesDTO,
+  CitysDTO,
+} from "@/lib/api/types";
 
 export interface DemoAppointment {
   id: string;
@@ -527,4 +533,159 @@ export const DEMO_ACCESS_REQUESTS: AccessRequestItem[] = [
     expiresText: "Declined by Patient",
     isBackendSupported: false,
   },
+];
+
+/**
+ * Demo Egyptian Governorates (States)
+ * Complete reference dataset representing all 27 Egyptian governorates.
+ */
+export const DEMO_EGYPTIAN_STATES: StatesDTO[] = [
+  { id: 1, nameEn: "Cairo", nameAr: "القاهرة" },
+  { id: 2, nameEn: "Giza", nameAr: "الجيزة" },
+  { id: 3, nameEn: "Alexandria", nameAr: "الإسكندرية" },
+  { id: 4, nameEn: "Qalyubia", nameAr: "القليوبية" },
+  { id: 5, nameEn: "Sharqia", nameAr: "الشرقية" },
+  { id: 6, nameEn: "Dakahlia", nameAr: "الدقهلية" },
+  { id: 7, nameEn: "Gharbia", nameAr: "الغربية" },
+  { id: 8, nameEn: "Monufia", nameAr: "المنوفية" },
+  { id: 9, nameEn: "Beheira", nameAr: "البحيرة" },
+  { id: 10, nameEn: "Kafr El Sheikh", nameAr: "كفر الشيخ" },
+  { id: 11, nameEn: "Damietta", nameAr: "دمياط" },
+  { id: 12, nameEn: "Port Said", nameAr: "بورسعيد" },
+  { id: 13, nameEn: "Ismailia", nameAr: "الإسماعيلية" },
+  { id: 14, nameEn: "Suez", nameAr: "السويس" },
+  { id: 15, nameEn: "Red Sea", nameAr: "البحر الأحمر" },
+  { id: 16, nameEn: "South Sinai", nameAr: "جنوب سيناء" },
+  { id: 17, nameEn: "North Sinai", nameAr: "شمال سيناء" },
+  { id: 18, nameEn: "Faiyum", nameAr: "الفيوم" },
+  { id: 19, nameEn: "Beni Suef", nameAr: "بني سويف" },
+  { id: 20, nameEn: "Minya", nameAr: "المنيا" },
+  { id: 21, nameEn: "Asyut", nameAr: "أسيوط" },
+  { id: 22, nameEn: "Sohag", nameAr: "سوهاج" },
+  { id: 23, nameEn: "Qena", nameAr: "قنا" },
+  { id: 24, nameEn: "Luxor", nameAr: "الأقصر" },
+  { id: 25, nameEn: "Aswan", nameAr: "أسوان" },
+  { id: 26, nameEn: "Matrouh", nameAr: "مطروح" },
+  { id: 27, nameEn: "New Valley", nameAr: "الوادي الجديد" },
+];
+
+/**
+ * Demo Egyptian Cities & Districts
+ * Structured with foreign-key stateId referencing DEMO_EGYPTIAN_STATES.
+ */
+export const DEMO_EGYPTIAN_CITIES: CitysDTO[] = [
+  // Cairo (stateId: 1)
+  { id: 101, stateId: 1, nameEn: "New Cairo (Tagamoa)", nameAr: "القاهرة الجديدة" },
+  { id: 102, stateId: 1, nameEn: "Nasr City", nameAr: "مدينة نصر" },
+  { id: 103, stateId: 1, nameEn: "Maadi", nameAr: "المعادي" },
+  { id: 104, stateId: 1, nameEn: "Heliopolis (Masr El Gedida)", nameAr: "مصر الجديدة" },
+  { id: 105, stateId: 1, nameEn: "Zamalek", nameAr: "الزمالك" },
+  { id: 106, stateId: 1, nameEn: "Downtown Cairo", nameAr: "وسط البلد" },
+  { id: 107, stateId: 1, nameEn: "Shorouk City", nameAr: "مدينة الشروق" },
+  { id: 108, stateId: 1, nameEn: "Madinaty", nameAr: "مدينتي" },
+  { id: 109, stateId: 1, nameEn: "Mokattam", nameAr: "المقطم" },
+  { id: 110, stateId: 1, nameEn: "Rehab City", nameAr: "مدينة الرحاب" },
+
+  // Giza (stateId: 2)
+  { id: 201, stateId: 2, nameEn: "6th of October City", nameAr: "مدينة 6 أكتوبر" },
+  { id: 202, stateId: 2, nameEn: "Sheikh Zayed City", nameAr: "مدينة الشيخ زايد" },
+  { id: 203, stateId: 2, nameEn: "Dokki", nameAr: "الدقي" },
+  { id: 204, stateId: 2, nameEn: "Mohandessin", nameAr: "المهندسين" },
+  { id: 205, stateId: 2, nameEn: "Haram", nameAr: "الهرم" },
+  { id: 206, stateId: 2, nameEn: "Faisal", nameAr: "فيصل" },
+  { id: 207, stateId: 2, nameEn: "Agouza", nameAr: "العجوزة" },
+  { id: 208, stateId: 2, nameEn: "Giza City", nameAr: "مدينة الجيزة" },
+
+  // Alexandria (stateId: 3)
+  { id: 301, stateId: 3, nameEn: "Smouha", nameAr: "سموحة" },
+  { id: 302, stateId: 3, nameEn: "Sidi Gaber", nameAr: "سيدي جابر" },
+  { id: 303, stateId: 3, nameEn: "Montaza", nameAr: "المنتزه" },
+  { id: 304, stateId: 3, nameEn: "Gleem", nameAr: "جليم" },
+  { id: 305, stateId: 3, nameEn: "Stanly", nameAr: "ستانلي" },
+  { id: 306, stateId: 3, nameEn: "Miami", nameAr: "ميامي" },
+  { id: 307, stateId: 3, nameEn: "Borg El Arab", nameAr: "برج العرب" },
+
+  // Qalyubia (stateId: 4)
+  { id: 401, stateId: 4, nameEn: "Banha", nameAr: "بنها" },
+  { id: 402, stateId: 4, nameEn: "Shubra El Kheima", nameAr: "شبرا الخيمة" },
+  { id: 403, stateId: 4, nameEn: "Obour City", nameAr: "مدينة العبور" },
+
+  // Sharqia (stateId: 5)
+  { id: 501, stateId: 5, nameEn: "Zagazig", nameAr: "الزقازيق" },
+  { id: 502, stateId: 5, nameEn: "10th of Ramadan", nameAr: "العاشر من رمضان" },
+
+  // Dakahlia (stateId: 6)
+  { id: 601, stateId: 6, nameEn: "Mansoura", nameAr: "المنصورة" },
+  { id: 602, stateId: 6, nameEn: "Mit Ghamr", nameAr: "ميت غمر" },
+
+  // Gharbia (stateId: 7)
+  { id: 701, stateId: 7, nameEn: "Tanta", nameAr: "طنطا" },
+  { id: 702, stateId: 7, nameEn: "El Mahalla El Kubra", nameAr: "المحلة الكبرى" },
+
+  // Monufia (stateId: 8)
+  { id: 801, stateId: 8, nameEn: "Shibin El Kom", nameAr: "شبين الكوم" },
+  { id: 802, stateId: 8, nameEn: "Sadat City", nameAr: "مدينة السادات" },
+
+  // Beheira (stateId: 9)
+  { id: 901, stateId: 9, nameEn: "Damanhour", nameAr: "دمنهور" },
+
+  // Kafr El Sheikh (stateId: 10)
+  { id: 1001, stateId: 10, nameEn: "Kafr El Sheikh City", nameAr: "كفر الشيخ" },
+
+  // Damietta (stateId: 11)
+  { id: 1101, stateId: 11, nameEn: "Damietta City", nameAr: "دمياط" },
+  { id: 1102, stateId: 11, nameEn: "New Damietta", nameAr: "دمياط الجديدة" },
+
+  // Port Said (stateId: 12)
+  { id: 1201, stateId: 12, nameEn: "Port Said City", nameAr: "مدينة بورسعيد" },
+  { id: 1202, stateId: 12, nameEn: "Port Fouad", nameAr: "بورفؤاد" },
+
+  // Ismailia (stateId: 13)
+  { id: 1301, stateId: 13, nameEn: "Ismailia City", nameAr: "الإسماعيلية" },
+
+  // Suez (stateId: 14)
+  { id: 1401, stateId: 14, nameEn: "Suez City", nameAr: "السويس" },
+  { id: 1402, stateId: 14, nameEn: "Ain Sokhna", nameAr: "العين السخنة" },
+
+  // Red Sea (stateId: 15)
+  { id: 1501, stateId: 15, nameEn: "Hurghada", nameAr: "الغردقة" },
+  { id: 1502, stateId: 15, nameEn: "El Gouna", nameAr: "الجونة" },
+
+  // South Sinai (stateId: 16)
+  { id: 1601, stateId: 16, nameEn: "Sharm El Sheikh", nameAr: "شرم الشيخ" },
+  { id: 1602, stateId: 16, nameEn: "Dahab", nameAr: "دهب" },
+
+  // North Sinai (stateId: 17)
+  { id: 1701, stateId: 17, nameEn: "Arish", nameAr: "العريش" },
+
+  // Faiyum (stateId: 18)
+  { id: 1801, stateId: 18, nameEn: "Faiyum City", nameAr: "مدينة الفيوم" },
+
+  // Beni Suef (stateId: 19)
+  { id: 1901, stateId: 19, nameEn: "Beni Suef City", nameAr: "مدينة بني سويف" },
+
+  // Minya (stateId: 20)
+  { id: 2001, stateId: 20, nameEn: "Minya City", nameAr: "مدينة المنيا" },
+
+  // Asyut (stateId: 21)
+  { id: 2101, stateId: 21, nameEn: "Asyut City", nameAr: "مدينة أسيوط" },
+
+  // Sohag (stateId: 22)
+  { id: 2201, stateId: 22, nameEn: "Sohag City", nameAr: "مدينة سوهاج" },
+
+  // Qena (stateId: 23)
+  { id: 2301, stateId: 23, nameEn: "Qena City", nameAr: "مدينة قنا" },
+
+  // Luxor (stateId: 24)
+  { id: 2401, stateId: 24, nameEn: "Luxor City", nameAr: "مدينة الأقصر" },
+
+  // Aswan (stateId: 25)
+  { id: 2501, stateId: 25, nameEn: "Aswan City", nameAr: "مدينة أسوان" },
+
+  // Matrouh (stateId: 26)
+  { id: 2601, stateId: 26, nameEn: "Marsa Matrouh", nameAr: "مرسى مطروح" },
+  { id: 2602, stateId: 26, nameEn: "North Coast / Sahel", nameAr: "الساحل الشمالي" },
+
+  // New Valley (stateId: 27)
+  { id: 2701, stateId: 27, nameEn: "Kharga", nameAr: "الخارجة" },
 ];

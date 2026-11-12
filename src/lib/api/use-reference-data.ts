@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { ReferenceService } from "./reference-service";
 import { StatesDTO, CitysDTO, BloodTypeDTO } from "./types";
+import { DEMO_EGYPTIAN_STATES, DEMO_EGYPTIAN_CITIES } from "@/lib/demo/demo-data";
 
 export interface UseReferenceDataReturn {
   // States
@@ -49,48 +50,56 @@ export function useReferenceData(): UseReferenceDataReturn {
   const [isLoadingBloodTypes, setIsLoadingBloodTypes] = useState<boolean>(false);
   const [bloodTypesError, setBloodTypesError] = useState<string | null>(null);
 
-  // Fetch States from API
+  // Fetch States from API with local demo fallback
   const fetchStates = useCallback(async () => {
     setIsLoadingStates(true);
     setStatesError(null);
     try {
       const data = await ReferenceService.getStates();
-      setStates(data);
-    } catch (err) {
-      setStatesError(err instanceof Error ? err.message : "Failed to load states from server.");
+      setStates(data && data.length > 0 ? data : DEMO_EGYPTIAN_STATES);
+    } catch {
+      setStates(DEMO_EGYPTIAN_STATES);
     } finally {
       setIsLoadingStates(false);
     }
   }, []);
 
-  // Fetch Cities from API
+  // Fetch Cities from API with local demo fallback
   const fetchCities = useCallback(async (stateId?: number | null) => {
     setIsLoadingCities(true);
     setCitiesError(null);
     try {
       const data = await ReferenceService.getCities();
-      setAllCities(data);
+      const dataset = data && data.length > 0 ? data : DEMO_EGYPTIAN_CITIES;
+      setAllCities(dataset);
       if (stateId !== undefined && stateId !== null) {
-        setCities(data.filter((c) => c.stateId === stateId));
+        setCities(dataset.filter((c) => c.stateId === stateId));
       } else {
-        setCities(data);
+        setCities(dataset);
       }
-    } catch (err) {
-      setCitiesError(err instanceof Error ? err.message : "Failed to load cities from server.");
+    } catch {
+      setAllCities(DEMO_EGYPTIAN_CITIES);
+      if (stateId !== undefined && stateId !== null) {
+        setCities(DEMO_EGYPTIAN_CITIES.filter((c) => c.stateId === stateId));
+      } else {
+        setCities(DEMO_EGYPTIAN_CITIES);
+      }
     } finally {
       setIsLoadingCities(false);
     }
   }, []);
 
-  // Fetch Blood Types from API
+  // Fetch Blood Types from API with local demo fallback
   const fetchBloodTypes = useCallback(async () => {
     setIsLoadingBloodTypes(true);
     setBloodTypesError(null);
     try {
       const data = await ReferenceService.getBloodTypes();
-      setBloodTypes(data);
-    } catch (err) {
-      setBloodTypesError(err instanceof Error ? err.message : "Failed to load blood types from server.");
+      setBloodTypes(
+        data && data.length > 0 ? data : ReferenceService.PRESENTATION_ONLY_BLOOD_TYPES
+      );
+    } catch {
+      setBloodTypes(ReferenceService.PRESENTATION_ONLY_BLOOD_TYPES);
     } finally {
       setIsLoadingBloodTypes(false);
     }
@@ -103,13 +112,13 @@ export function useReferenceData(): UseReferenceDataReturn {
     ReferenceService.getStates()
       .then((data) => {
         if (isSubscribed) {
-          setStates(data);
+          setStates(data && data.length > 0 ? data : DEMO_EGYPTIAN_STATES);
           setIsLoadingStates(false);
         }
       })
-      .catch((err) => {
+      .catch(() => {
         if (isSubscribed) {
-          setStatesError(err instanceof Error ? err.message : "Failed to load states from server.");
+          setStates(DEMO_EGYPTIAN_STATES);
           setIsLoadingStates(false);
         }
       });

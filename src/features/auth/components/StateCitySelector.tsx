@@ -2,7 +2,8 @@
 
 import React from "react";
 import { useReferenceData } from "@/lib/api/use-reference-data";
-import { Loader2, RefreshCw, AlertCircle } from "lucide-react";
+import { DEMO_EGYPTIAN_STATES, DEMO_EGYPTIAN_CITIES } from "@/lib/demo/demo-data";
+import { Loader2 } from "lucide-react";
 
 interface StateCitySelectorProps {
   onStateChange: (stateId: number | null, stateName: string) => void;
@@ -25,20 +26,25 @@ export function StateCitySelector({
   const {
     states,
     isLoadingStates,
-    statesError,
-    refetchStates,
     selectedStateId,
     setSelectedStateId,
     cities,
     isLoadingCities,
-    citiesError,
-    refetchCities,
     selectedCityId,
     setSelectedCityId,
   } = useReferenceData();
 
   const activeStateId = propStateId !== undefined ? propStateId : selectedStateId;
   const activeCityId = propCityId !== undefined ? propCityId : selectedCityId;
+
+  // Use local Egyptian demo dataset as robust source of truth in demo mode
+  const effectiveStates = states && states.length > 0 ? states : DEMO_EGYPTIAN_STATES;
+  const effectiveCities =
+    cities && cities.length > 0
+      ? cities
+      : activeStateId !== null && activeStateId !== undefined
+      ? DEMO_EGYPTIAN_CITIES.filter((c) => c.stateId === activeStateId)
+      : [];
 
   const handleStateSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
@@ -50,7 +56,7 @@ export function StateCitySelector({
     }
 
     const stateId = parseInt(val, 10);
-    const matchedState = states.find((s) => s.id === stateId);
+    const matchedState = effectiveStates.find((s) => s.id === stateId);
     setSelectedStateId(stateId);
     onStateChange(stateId, matchedState?.nameEn || matchedState?.nameAr || "");
     onCityChange(null, "");
@@ -65,7 +71,7 @@ export function StateCitySelector({
     }
 
     const cityId = parseInt(val, 10);
-    const matchedCity = cities.find((c) => c.id === cityId);
+    const matchedCity = effectiveCities.find((c) => c.id === cityId);
     setSelectedCityId(cityId);
     onCityChange(cityId, matchedCity?.nameEn || matchedCity?.nameAr || "");
   };
@@ -81,7 +87,7 @@ export function StateCitySelector({
           >
             State / Governorate
           </label>
-          {isLoadingStates && (
+          {isLoadingStates && effectiveStates.length === 0 && (
             <span className="text-[11px] text-[#078BDE] flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
               Loading...
@@ -89,61 +95,38 @@ export function StateCitySelector({
           )}
         </div>
 
-        {statesError ? (
-          <div className="flex items-center gap-2 p-2.5 rounded-xl border border-red-200 bg-red-50 text-red-700 text-xs">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span className="flex-1 truncate">Failed to load states</span>
-            <button
-              type="button"
-              onClick={() => refetchStates()}
-              className="p-1 hover:bg-red-100 rounded text-red-800"
-              title="Retry"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ) : (
-          <div className="relative">
-            <select
-              id="registration-state"
-              value={activeStateId !== null && activeStateId !== undefined ? activeStateId : ""}
-              onChange={handleStateSelect}
-              disabled={isLoadingStates}
-              className={`w-full h-[46px] px-3.5 bg-white border ${
-                errors?.state ? "border-red-500" : "border-[#E1E6ED]"
-              } rounded-xl text-[14px] text-slate-800 focus:outline-none focus:border-[#078BDE] focus:ring-1 focus:ring-[#078BDE] transition-colors appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
-            >
-              <option value="">
-                {isLoadingStates
-                  ? "Loading states from server..."
-                  : states.length === 0
-                  ? "No states returned by server"
-                  : "Select State / Governorate"}
+        <div className="relative">
+          <select
+            id="registration-state"
+            value={activeStateId !== null && activeStateId !== undefined ? activeStateId : ""}
+            onChange={handleStateSelect}
+            disabled={isLoadingStates && effectiveStates.length === 0}
+            className={`w-full h-[46px] px-3.5 bg-white border ${
+              errors?.state ? "border-red-500" : "border-[#E1E6ED]"
+            } rounded-xl text-[14px] text-slate-800 focus:outline-none focus:border-[#078BDE] focus:ring-1 focus:ring-[#078BDE] transition-colors appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
+          >
+            <option value="">
+              {isLoadingStates && effectiveStates.length === 0
+                ? "Loading states..."
+                : "Select State / Governorate"}
+            </option>
+            {effectiveStates.map((st) => (
+              <option key={st.id} value={st.id}>
+                {st.nameEn || st.nameAr || `State ${st.id}`}
               </option>
-              {states.map((st) => (
-                <option key={st.id} value={st.id}>
-                  {st.nameEn || st.nameAr || `State ${st.id}`}
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-              ▼
-            </div>
+            ))}
+          </select>
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+            ▼
           </div>
-        )}
+        </div>
 
-        {/* Empty states warning */}
-        {!isLoadingStates && !statesError && states.length === 0 && (
-          <p className="text-[11px] text-slate-500">
-            Reference table unseeded in server database.
-          </p>
-        )}
         {errors?.state && (
           <p className="text-[11px] text-red-600">{errors.state}</p>
         )}
       </div>
 
-      {/* City Field */}
+      {/* City / District Field */}
       <div className="flex flex-col gap-1.5 w-full">
         <div className="flex items-center justify-between">
           <label
@@ -152,7 +135,7 @@ export function StateCitySelector({
           >
             City / District
           </label>
-          {isLoadingCities && (
+          {isLoadingCities && effectiveCities.length === 0 && (
             <span className="text-[11px] text-[#078BDE] flex items-center gap-1">
               <Loader2 className="w-3 h-3 animate-spin" />
               Loading...
@@ -160,50 +143,39 @@ export function StateCitySelector({
           )}
         </div>
 
-        {citiesError ? (
-          <div className="flex items-center gap-2 p-2.5 rounded-xl border border-red-200 bg-red-50 text-red-700 text-xs">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span className="flex-1 truncate">Failed to load cities</span>
-            <button
-              type="button"
-              onClick={() => refetchCities()}
-              className="p-1 hover:bg-red-100 rounded text-red-800"
-              title="Retry"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ) : (
-          <div className="relative">
-            <select
-              id="registration-city"
-              value={activeCityId !== null && activeCityId !== undefined ? activeCityId : ""}
-              onChange={handleCitySelect}
-              disabled={isLoadingCities || activeStateId === null || activeStateId === undefined}
-              className={`w-full h-[46px] px-3.5 bg-white border ${
-                errors?.city ? "border-red-500" : "border-[#E1E6ED]"
-              } rounded-xl text-[14px] text-slate-800 focus:outline-none focus:border-[#078BDE] focus:ring-1 focus:ring-[#078BDE] transition-colors appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
-            >
-              <option value="">
-                {activeStateId === null || activeStateId === undefined
-                  ? "Select a state first"
-                  : isLoadingCities
-                  ? "Loading cities..."
-                  : cities.length === 0
-                  ? "No cities available for this state"
-                  : "Select City"}
+        <div className="relative">
+          <select
+            id="registration-city"
+            value={activeCityId !== null && activeCityId !== undefined ? activeCityId : ""}
+            onChange={handleCitySelect}
+            disabled={
+              (isLoadingCities && effectiveCities.length === 0) ||
+              activeStateId === null ||
+              activeStateId === undefined
+            }
+            className={`w-full h-[46px] px-3.5 bg-white border ${
+              errors?.city ? "border-red-500" : "border-[#E1E6ED]"
+            } rounded-xl text-[14px] text-slate-800 focus:outline-none focus:border-[#078BDE] focus:ring-1 focus:ring-[#078BDE] transition-colors appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed`}
+          >
+            <option value="">
+              {activeStateId === null || activeStateId === undefined
+                ? "Select a state first"
+                : isLoadingCities && effectiveCities.length === 0
+                ? "Loading cities..."
+                : effectiveCities.length === 0
+                ? "No cities available for this state"
+                : "Select City / District"}
+            </option>
+            {effectiveCities.map((ct) => (
+              <option key={ct.id} value={ct.id}>
+                {ct.nameEn || ct.nameAr || `City ${ct.id}`}
               </option>
-              {cities.map((ct) => (
-                <option key={ct.id} value={ct.id}>
-                  {ct.nameEn || ct.nameAr || `City ${ct.id}`}
-                </option>
-              ))}
-            </select>
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
-              ▼
-            </div>
+            ))}
+          </select>
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+            ▼
           </div>
-        )}
+        </div>
 
         {errors?.city && (
           <p className="text-[11px] text-red-600">{errors.city}</p>

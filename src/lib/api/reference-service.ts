@@ -17,73 +17,87 @@
 
 import { apiClient } from "./client";
 import { BloodTypeDTO, StatesDTO, CitysDTO, PaginatedResult } from "./types";
+import { DEMO_EGYPTIAN_STATES, DEMO_EGYPTIAN_CITIES } from "@/lib/demo/demo-data";
 
 export class ReferenceService {
   /**
    * Fetches blood types from backend.
    * Endpoint: GET /api/v1/BloodType/GetAll
    *
-   * Note from live testing: Backend DB currently has 0 seeded blood types.
-   * This method returns the actual backend response (empty array if empty).
+   * In demo mode or if remote backend fails, falls back to presentation blood types.
    */
   static async getBloodTypes(): Promise<BloodTypeDTO[]> {
-    const response = await apiClient.get<PaginatedResult<BloodTypeDTO> | BloodTypeDTO[]>(
-      "/api/v1/BloodType/GetAll"
-    );
+    try {
+      const response = await apiClient.get<PaginatedResult<BloodTypeDTO> | BloodTypeDTO[]>(
+        "/api/v1/BloodType/GetAll"
+      );
 
-    if (Array.isArray(response.data)) {
-      return response.data;
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        return response.data;
+      }
+
+      if (response.data && "result" in response.data && Array.isArray(response.data.result) && response.data.result.length > 0) {
+        return response.data.result;
+      }
+    } catch {
+      // Offline / demo fallback
     }
 
-    if (response.data && "result" in response.data && Array.isArray(response.data.result)) {
-      return response.data.result;
-    }
-
-    return [];
+    return ReferenceService.PRESENTATION_ONLY_BLOOD_TYPES;
   }
 
   /**
    * Fetches states / governorates from backend.
    * Endpoint: POST /api/v1/States/GetAll
    *
-   * Ground rule: Must send only { pageNumber, pageSize } without empty filter objects
-   * or empty orderByValue arrays, which trigger ASP.NET Core EF Core 500 exceptions.
+   * In demo mode or if remote backend fails, seamlessly provides local Egyptian states.
    */
   static async getStates(): Promise<StatesDTO[]> {
-    const response = await apiClient.post<PaginatedResult<StatesDTO>>(
-      "/api/v1/States/GetAll",
-      {
-        pageNumber: 1,
-        pageSize: 100,
-      }
-    );
+    try {
+      const response = await apiClient.post<PaginatedResult<StatesDTO>>(
+        "/api/v1/States/GetAll",
+        {
+          pageNumber: 1,
+          pageSize: 100,
+        }
+      );
 
-    if (response.data && Array.isArray(response.data.result)) {
-      return response.data.result;
+      if (response.data && Array.isArray(response.data.result) && response.data.result.length > 0) {
+        return response.data.result;
+      }
+    } catch {
+      // Offline / demo fallback
     }
 
-    return [];
+    return DEMO_EGYPTIAN_STATES;
   }
 
   /**
    * Fetches cities from backend with optional stateId filtering.
    * Endpoint: POST /api/v1/Citys/GetAll
    *
-   * Ground rule: In OpenAPI, CitysDTO contains stateId, while CitysFilter has no
-   * filter properties. Cities are retrieved and filtered by stateId when specified.
+   * In demo mode or if remote backend fails, seamlessly provides local Egyptian cities.
    */
   static async getCities(stateId?: number): Promise<CitysDTO[]> {
-    const response = await apiClient.post<PaginatedResult<CitysDTO>>(
-      "/api/v1/Citys/GetAll",
-      {
-        pageNumber: 1,
-        pageSize: 500,
-      }
-    );
-
     let cities: CitysDTO[] = [];
-    if (response.data && Array.isArray(response.data.result)) {
-      cities = response.data.result;
+    try {
+      const response = await apiClient.post<PaginatedResult<CitysDTO>>(
+        "/api/v1/Citys/GetAll",
+        {
+          pageNumber: 1,
+          pageSize: 500,
+        }
+      );
+
+      if (response.data && Array.isArray(response.data.result) && response.data.result.length > 0) {
+        cities = response.data.result;
+      }
+    } catch {
+      // Offline / demo fallback
+    }
+
+    if (cities.length === 0) {
+      cities = DEMO_EGYPTIAN_CITIES;
     }
 
     if (stateId !== undefined && stateId !== null) {

@@ -16,6 +16,8 @@ import {
   MedicalRecordItem,
   AccessRequestItem,
   EmergencyContactDTO,
+  StatesDTO,
+  CitysDTO,
 } from "@/lib/api/types";
 import {
   INITIAL_DEMO_PATIENT,
@@ -24,6 +26,8 @@ import {
   DEMO_APPOINTMENTS,
   DEMO_MEDICAL_RECORDS,
   DEMO_ACCESS_REQUESTS,
+  DEMO_EGYPTIAN_STATES,
+  DEMO_EGYPTIAN_CITIES,
   DemoAppointment,
   DemoDoctorProfile,
   DemoAccount,
@@ -902,6 +906,23 @@ export class DemoService {
       } catch {}
     }
     return updated;
+  }
+
+  /**
+   * Retrieves Egyptian Governorates (States) for demo onboarding.
+   */
+  static getStates(): StatesDTO[] {
+    return DEMO_EGYPTIAN_STATES;
+  }
+
+  /**
+   * Retrieves Egyptian Cities/Districts, optionally filtered by stateId.
+   */
+  static getCities(stateId?: number | null): CitysDTO[] {
+    if (stateId !== undefined && stateId !== null) {
+      return DEMO_EGYPTIAN_CITIES.filter((c) => c.stateId === stateId);
+    }
+    return DEMO_EGYPTIAN_CITIES;
   }
 
   // ==========================================================================
