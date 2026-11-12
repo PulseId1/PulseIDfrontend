@@ -149,155 +149,158 @@ function FindPatientContent() {
       <main className="flex-1 flex flex-col w-full">
         {/* 2. Page introduction matching Figma Node 353:10822 */}
         <div
-          className="bg-[#f3f9fe] content-stretch flex flex-col gap-[22px] items-start p-4 sm:p-[32px] relative shrink-0 w-full"
+          className="bg-[#f3f9fe] w-full shrink-0 border-b border-[#dde7ff]/40"
           data-node-id="353:10822"
           data-name="Page introduction"
         >
-          {/* Breadcrumb matching Figma Node 353:10823 */}
-          <div
-            className="content-stretch flex gap-[8px] items-center relative shrink-0"
-            data-node-id="353:10823"
-            data-name="Breadcrumb"
-          >
-            <div className="relative shrink-0 size-[15px]" data-node-id="353:10824" data-name="house">
-              <Image
-                src="/assets/doctor/find-patient/imgHouse.svg"
-                alt="Home icon"
-                width={15}
-                height={15}
-                className="block size-full object-contain"
-              />
+          <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-[32px] py-[32px] flex flex-col gap-[22px] items-start">
+            {/* Breadcrumb matching Figma Node 353:10823 */}
+            <div
+              className="content-stretch flex gap-[8px] items-center relative shrink-0"
+              data-node-id="353:10823"
+              data-name="Breadcrumb"
+            >
+              <div className="relative shrink-0 size-[15px]" data-node-id="353:10824" data-name="house">
+                <Image
+                  src="/assets/doctor/find-patient/imgHouse.svg"
+                  alt="Home icon"
+                  width={15}
+                  height={15}
+                  className="block size-full object-contain"
+                />
+              </div>
+              <Link
+                href="/doctor"
+                className="font-['Inter'] font-normal text-[13px] text-[#078bde] hover:underline whitespace-nowrap"
+                data-node-id="353:10826"
+              >
+                Home
+              </Link>
+              <div className="relative shrink-0 size-[12px]" data-node-id="353:10827" data-name="chevron-right">
+                <Image
+                  src="/assets/doctor/find-patient/imgChevronRight.svg"
+                  alt="Chevron right"
+                  width={12}
+                  height={12}
+                  className="block size-full object-contain"
+                />
+              </div>
+              <p className="font-['Inter'] font-normal text-[#64748b] text-[13px] whitespace-nowrap" data-node-id="353:10829">
+                Find Patient
+              </p>
             </div>
-            <Link
-              href="/doctor"
-              className="font-['Inter'] font-normal text-[13px] text-[#078bde] hover:underline whitespace-nowrap"
-              data-node-id="353:10826"
+
+            {/* Page title matching Figma Node 353:10830 */}
+            <div
+              className="break-words content-stretch flex flex-col gap-[8px] items-start relative shrink-0 w-full"
+              data-node-id="353:10830"
+              data-name="Page title"
             >
-              Home
-            </Link>
-            <div className="relative shrink-0 size-[12px]" data-node-id="353:10827" data-name="chevron-right">
-              <Image
-                src="/assets/doctor/find-patient/imgChevronRight.svg"
-                alt="Chevron right"
-                width={12}
-                height={12}
-                className="block size-full object-contain"
-              />
+              <p className="font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[13px] w-full" data-node-id="353:10831">
+                Welcome back, {doctorDisplayName}
+              </p>
+              <h1 className="font-['Inter'] font-bold leading-[1.25] text-[32px] sm:text-[36px] text-[#02307d] tracking-[-0.4px] w-full" data-node-id="353:10832">
+                Find Patient
+              </h1>
+              <p className="font-['Inter'] font-normal leading-[1.5] text-[15px] sm:text-[16px] text-[#41474f] w-full" data-node-id="353:10833">
+                Find the right patient and securely view their medical profile.
+              </p>
             </div>
-            <p className="font-['Inter'] font-normal text-[#64748b] text-[13px] whitespace-nowrap" data-node-id="353:10829">
-              Find Patient
-            </p>
-          </div>
 
-          {/* Page title matching Figma Node 353:10830 */}
-          <div
-            className="break-words content-stretch flex flex-col gap-[8px] items-start relative shrink-0 w-full"
-            data-node-id="353:10830"
-            data-name="Page title"
-          >
-            <p className="font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[13px] w-full" data-node-id="353:10831">
-              Welcome back, {doctorDisplayName}
-            </p>
-            <h1 className="font-['Inter'] font-bold leading-[1.25] text-[32px] sm:text-[36px] text-[#02307d] tracking-[-0.4px] w-full" data-node-id="353:10832">
-              Find Patient
-            </h1>
-            <p className="font-['Inter'] font-normal leading-[1.5] text-[15px] sm:text-[16px] text-[#41474f] w-full" data-node-id="353:10833">
-              Find the right patient and securely view their medical profile.
-            </p>
-          </div>
-
-          {/* Clinical quick actions matching Figma Node 353:10834 */}
-          <div
-            className="content-stretch flex flex-col sm:flex-row gap-[16px] items-start relative shrink-0 w-full"
-            data-node-id="353:10834"
-            data-name="Clinical quick actions"
-          >
-            {/* Action 1: Find Patient (Active) */}
-            <Link
-              href="/doctor/find-patient"
-              className="bg-white border-[1.5px] border-[#078bde] border-solid content-stretch flex flex-1 flex-col gap-[8px] items-start justify-center p-[16px] relative rounded-[12px] w-full sm:w-auto shadow-xs"
-              data-node-id="353:10835"
-              data-name="Destination"
+            {/* Clinical quick actions matching Figma Node 353:10834 */}
+            <div
+              className="content-stretch flex flex-col sm:flex-row gap-[16px] items-start relative shrink-0 w-full"
+              data-node-id="353:10834"
+              data-name="Clinical quick actions"
             >
-              <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-node-id="353:10836" data-name="Destination title">
-                <div className="relative shrink-0 size-[22px]" data-node-id="353:10837" data-name="Icon">
-                  <Image
-                    src="/assets/doctor/find-patient/imgIcon.svg"
-                    alt="Find Patient icon"
-                    width={22}
-                    height={22}
-                    className="block size-full object-contain"
-                  />
+              {/* Action 1: Find Patient (Active) */}
+              <Link
+                href="/doctor/find-patient"
+                className="bg-white border-[1.5px] border-[#078bde] border-solid content-stretch flex flex-1 flex-col gap-[8px] items-start justify-center p-[16px] relative rounded-[12px] w-full sm:w-auto shadow-xs"
+                data-node-id="353:10835"
+                data-name="Destination"
+              >
+                <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-node-id="353:10836" data-name="Destination title">
+                  <div className="relative shrink-0 size-[22px]" data-node-id="353:10837" data-name="Icon">
+                    <Image
+                      src="/assets/doctor/find-patient/imgIcon.svg"
+                      alt="Find Patient icon"
+                      width={22}
+                      height={22}
+                      className="block size-full object-contain"
+                    />
+                  </div>
+                  <p className="break-words flex-1 font-['Inter'] font-semibold leading-[1.4] text-[15px] text-[#078bde]" data-node-id="353:10838">
+                    Find Patient
+                  </p>
                 </div>
-                <p className="break-words flex-1 font-['Inter'] font-semibold leading-[1.4] text-[15px] text-[#078bde]" data-node-id="353:10838">
-                  Find Patient
+                <p className="break-words font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[12px] w-full" data-node-id="353:10839">
+                  Secure patient lookup
                 </p>
-              </div>
-              <p className="break-words font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[12px] w-full" data-node-id="353:10839">
-                Secure patient lookup
-              </p>
-            </Link>
+              </Link>
 
-            {/* Action 2: Access Requests */}
-            <Link
-              href="/doctor/access-requests"
-              className="bg-[rgba(192,202,227,0.1)] border border-[#dde7ff] border-solid content-stretch flex flex-1 flex-col gap-[8px] items-start justify-center p-[16px] relative rounded-[12px] w-full sm:w-auto hover:bg-sky-50/50 transition-colors"
-              data-node-id="353:10840"
-              data-name="Destination"
-            >
-              <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-node-id="353:10841" data-name="Destination title">
-                <div className="relative shrink-0 size-[22px]" data-node-id="353:10842" data-name="Icon">
-                  <Image
-                    src="/assets/doctor/find-patient/imgIcon1.svg"
-                    alt="Access Requests icon"
-                    width={22}
-                    height={22}
-                    className="block size-full object-contain"
-                  />
+              {/* Action 2: Access Requests */}
+              <Link
+                href="/doctor/access-requests"
+                className="bg-[rgba(192,202,227,0.1)] border border-[#dde7ff] border-solid content-stretch flex flex-1 flex-col gap-[8px] items-start justify-center p-[16px] relative rounded-[12px] w-full sm:w-auto hover:bg-sky-50/50 transition-colors"
+                data-node-id="353:10840"
+                data-name="Destination"
+              >
+                <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-node-id="353:10841" data-name="Destination title">
+                  <div className="relative shrink-0 size-[22px]" data-node-id="353:10842" data-name="Icon">
+                    <Image
+                      src="/assets/doctor/find-patient/imgIcon1.svg"
+                      alt="Access Requests icon"
+                      width={22}
+                      height={22}
+                      className="block size-full object-contain"
+                    />
+                  </div>
+                  <p className="break-words flex-1 font-['Inter'] font-semibold leading-[1.4] text-[15px] text-[#02307d]" data-node-id="353:10843">
+                    Access Requests
+                  </p>
                 </div>
-                <p className="break-words flex-1 font-['Inter'] font-semibold leading-[1.4] text-[15px] text-[#02307d]" data-node-id="353:10843">
-                  Access Requests
+                <p className="break-words font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[12px] w-full" data-node-id="353:10844">
+                  5 incoming requests
                 </p>
-              </div>
-              <p className="break-words font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[12px] w-full" data-node-id="353:10844">
-                5 incoming requests
-              </p>
-            </Link>
+              </Link>
 
-            {/* Action 3: My Patients */}
-            <Link
-              href="/doctor/find-patient"
-              className="bg-[rgba(192,202,227,0.1)] border border-[#dde7ff] border-solid content-stretch flex flex-1 flex-col gap-[8px] items-start justify-center p-[16px] relative rounded-[12px] w-full sm:w-auto hover:bg-sky-50/50 transition-colors"
-              data-node-id="353:10845"
-              data-name="Destination"
-            >
-              <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-node-id="353:10846" data-name="Destination title">
-                <div className="relative shrink-0 size-[22px]" data-node-id="353:10847" data-name="Patient directory icon">
-                  <Image
-                    src="/assets/doctor/find-patient/imgGroup.svg"
-                    alt="My Patients icon"
-                    width={22}
-                    height={22}
-                    className="block size-full object-contain"
-                  />
+              {/* Action 3: My Patients */}
+              <Link
+                href="/doctor/find-patient"
+                className="bg-[rgba(192,202,227,0.1)] border border-[#dde7ff] border-solid content-stretch flex flex-1 flex-col gap-[8px] items-start justify-center p-[16px] relative rounded-[12px] w-full sm:w-auto hover:bg-sky-50/50 transition-colors"
+                data-node-id="353:10845"
+                data-name="Destination"
+              >
+                <div className="content-stretch flex gap-[10px] items-center relative shrink-0 w-full" data-node-id="353:10846" data-name="Destination title">
+                  <div className="relative shrink-0 size-[22px]" data-node-id="353:10847" data-name="Patient directory icon">
+                    <Image
+                      src="/assets/doctor/find-patient/imgGroup.svg"
+                      alt="My Patients icon"
+                      width={22}
+                      height={22}
+                      className="block size-full object-contain"
+                    />
+                  </div>
+                  <p className="break-words flex-1 font-['Inter'] font-semibold leading-[1.4] text-[15px] text-[#02307d]" data-node-id="353:10853">
+                    My Patients
+                  </p>
                 </div>
-                <p className="break-words flex-1 font-['Inter'] font-semibold leading-[1.4] text-[15px] text-[#02307d]" data-node-id="353:10853">
-                  My Patients
+                <p className="break-words font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[12px] w-full" data-node-id="353:10854">
+                  148 patients in your care
                 </p>
-              </div>
-              <p className="break-words font-['Inter'] font-normal leading-[1.5] text-[#64748b] text-[12px] w-full" data-node-id="353:10854">
-                148 patients in your care
-              </p>
-            </Link>
+              </Link>
+            </div>
           </div>
         </div>
 
         {/* 3. Patient lookup container matching Figma Node 353:10855 */}
         <div
-          className="content-stretch flex flex-col gap-[28px] items-start pb-[48px] pt-[32px] px-4 sm:px-[32px] relative shrink-0 w-full max-w-[1280px] mx-auto"
+          className="w-full bg-white shrink-0"
           data-node-id="353:10855"
           data-name="Patient lookup"
         >
+          <div className="content-stretch flex flex-col gap-[28px] items-start pb-[48px] pt-[32px] px-4 sm:px-[32px] relative w-full max-w-[1280px] mx-auto">
           {/* Search panel matching Figma Node 353:10856 */}
           <div
             className="border border-[#dde7ff] border-solid content-stretch flex flex-col gap-[20px] items-start p-6 sm:p-[28px] relative rounded-[16px] shadow-[0px_2px_4px_0px_rgba(2,48,125,0.03)] shrink-0 w-full bg-white"
@@ -638,7 +641,8 @@ function FindPatientContent() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
+    </main>
 
       {/* 5. Medical Profile Modal for Patient with Access */}
       {selectedPatientModal && (
