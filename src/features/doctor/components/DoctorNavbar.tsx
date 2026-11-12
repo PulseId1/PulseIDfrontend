@@ -1,21 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
 import { DemoService } from "@/lib/demo/demo-service";
 import {
-  Home,
   Search,
-  ShieldCheck,
-  User,
-  LogOut,
   Bell,
   Menu,
   X,
-  Stethoscope,
+  ChevronDown,
+  User,
+  ShieldCheck,
+  LogOut,
+  Users,
 } from "lucide-react";
 
 export function DoctorNavbar() {
@@ -23,18 +23,24 @@ export function DoctorNavbar() {
   const router = useRouter();
   const { logout, userId, isDemo } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
     router.replace("/auth/login?role=doctor");
   };
-
-  const navLinks = [
-    { label: "Dashboard", href: "/doctor", icon: Home },
-    { label: "Find Patient", href: "/doctor/find-patient", icon: Search },
-    { label: "Access Requests", href: "/doctor/access-requests", icon: ShieldCheck },
-    { label: "Doctor Profile", href: "/doctor/profile", icon: User },
-  ];
 
   const activeDocAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
   const isDoctorRole = activeDocAccount?.role === "doctor";
@@ -42,18 +48,11 @@ export function DoctorNavbar() {
     isDemo && isDoctorRole && activeDocAccount?.fullName
       ? activeDocAccount.fullName
       : isDemo
-      ? "Dr. Tarek Al-Husseini"
+      ? "Dr. Mohamed"
       : userId
       ? `Dr. Practitioner (${userId})`
       : "Dr. Clinician";
-  const doctorSubtitle =
-    isDemo && isDoctorRole && activeDocAccount?.specialty
-      ? activeDocAccount.specialty
-      : isDemo
-      ? "Consultant Pulmonologist"
-      : userId
-      ? `ID: ${userId}`
-      : "Clinician";
+
   const doctorInitials =
     doctorDisplayName
       .replace(/^Dr\.\s*/i, "")
@@ -63,160 +62,258 @@ export function DoctorNavbar() {
       .slice(0, 2)
       .join("") || "DR";
 
+  const isHomeActive = pathname === "/doctor";
+  const isPatientsActive = pathname.startsWith("/doctor/find-patient");
+  const isRequestsActive = pathname.startsWith("/doctor/access-requests");
+
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+    <header
+      className="sticky top-0 z-50 bg-[#02307D] border-b border-[#03449E]/40 text-white shadow-md"
+      data-node-id="353:10098"
+      data-name="Header"
+    >
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        {/* Brand & Portal Badge matching Figma Node 353:10098 */}
+        {/* Left: Centered PulseID Logo Lockup matching Figma Node 353:10121 */}
         <div className="flex items-center gap-3">
-          <Link href="/doctor" className="flex items-center gap-2.5">
-            <Image
-              src="/assets/pulseid-logo.svg"
-              alt="PulseID Logo"
-              width={120}
-              height={32}
-              priority
-              className="h-8 w-auto"
-            />
+          <Link href="/doctor" className="flex items-center gap-2.5 group">
+            <div className="bg-white/10 border border-white/20 rounded-[8px] size-10 flex items-center justify-center p-1 shadow-xs group-hover:bg-white/15 transition-colors">
+              <Image
+                src="/assets/figma/landing/pulseid-logo.svg"
+                alt="PulseID Logo"
+                width={26}
+                height={26}
+                className="w-6 h-6 brightness-0 invert"
+              />
+            </div>
+            <span className="font-extrabold text-xl tracking-tight text-white font-heading">
+              PULSEID
+            </span>
           </Link>
-          <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-[#02307D] border border-blue-200 text-[11px] font-bold">
-            <Stethoscope className="w-3.5 h-3.5 text-[#078BDE]" />
-            Doctor Portal
-          </span>
         </div>
 
-        {/* Center Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 lg:gap-2">
-          {navLinks.map((item) => {
-            const isActive =
-              item.href === "/doctor"
-                ? pathname === "/doctor"
-                : pathname.startsWith(item.href);
-
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`px-3.5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
-                  isActive
-                    ? "bg-[#EAF2FF] text-[#02307D] shadow-2xs font-bold"
-                    : "text-slate-600 hover:text-[#02307D] hover:bg-slate-50"
-                }`}
-              >
-                <item.icon
-                  className={`w-4 h-4 ${
-                    isActive ? "text-[#078BDE]" : "text-slate-400"
-                  }`}
-                />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Right Doctor Actions */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition-colors relative cursor-pointer"
-            aria-label="Notifications"
-          >
-            <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#078BDE]" />
-          </button>
-
+        {/* Center: Desktop Nav Pills matching Figma Node 353:10124 */}
+        <nav
+          className="hidden md:flex items-center bg-[rgba(192,202,227,0.1)] border border-[rgba(192,202,227,0.1)] rounded-[12px] p-[6px] gap-1"
+          data-node-id="353:10124"
+          data-name="Center Nav Links: Home (Active) & About"
+        >
+          {/* Home Tab */}
           <Link
-            href="/doctor/profile"
-            className="hidden sm:flex items-center gap-2.5 pl-2 pr-3 py-1.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition-all"
+            href="/doctor"
+            className={`px-4 py-1.5 rounded-[10px] text-sm font-semibold transition-all flex items-center gap-2 ${
+              isHomeActive
+                ? "bg-[#078BDE] text-white shadow-xs font-bold"
+                : "text-[#EAEDF6] hover:text-white hover:bg-white/5"
+            }`}
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#02307D] to-[#078BDE] text-white font-bold flex items-center justify-center text-xs shadow-xs">
-              {doctorInitials}
-            </div>
-            <div className="text-left hidden lg:block">
-              <p className="text-xs font-bold text-[#02307D] leading-tight">
-                {doctorDisplayName}
-              </p>
-              <p className="text-[11px] text-slate-500 font-sans leading-none mt-0.5">
-                {doctorSubtitle}
-              </p>
-            </div>
+            {isHomeActive && (
+              <span className="size-1.5 rounded-full bg-white shrink-0" />
+            )}
+            <span>Home</span>
           </Link>
 
+          {/* My Patients Tab */}
+          <Link
+            href="/doctor/find-patient"
+            className={`px-4 py-1.5 rounded-[10px] text-sm font-semibold transition-all flex items-center gap-2 ${
+              isPatientsActive
+                ? "bg-[#078BDE] text-white shadow-xs font-bold"
+                : "text-[#EAEDF6] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            {isPatientsActive && (
+              <span className="size-1.5 rounded-full bg-white shrink-0" />
+            )}
+            <span>My Patients</span>
+          </Link>
+
+          {/* Access Requests Tab */}
+          <Link
+            href="/doctor/access-requests"
+            className={`px-4 py-1.5 rounded-[10px] text-sm font-semibold transition-all flex items-center gap-2 ${
+              isRequestsActive
+                ? "bg-[#078BDE] text-white shadow-xs font-bold"
+                : "text-[#EAEDF6] hover:text-white hover:bg-white/5"
+            }`}
+          >
+            {isRequestsActive && (
+              <span className="size-1.5 rounded-full bg-white shrink-0" />
+            )}
+            <span>Access Requests</span>
+          </Link>
+
+          {/* Language Toggle */}
           <button
             type="button"
-            onClick={handleLogout}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 rounded-xl transition-colors cursor-pointer"
+            className="px-3 py-1.5 rounded-[10px] text-sm font-medium text-[#EAEDF6] hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+            title="Switch Language"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
+            عربي
+          </button>
+        </nav>
+
+        {/* Right Actions matching Figma Node 353:10134 */}
+        <div className="flex items-center gap-3">
+          {/* Search Toggle Button */}
+          <Link
+            href="/doctor/find-patient"
+            className="size-10 rounded-[12px] bg-[rgba(234,237,246,0.1)] border border-[#D0DEFF]/30 text-white flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer"
+            title="Find Patient"
+            data-node-id="353:10136"
+          >
+            <Search className="w-4 h-4 text-[#EAEDF6]" />
+          </Link>
+
+          {/* Notifications Bell */}
+          <button
+            type="button"
+            className="size-10 rounded-[12px] bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#078BDE] text-white flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer relative"
+            title="Notifications"
+            data-node-id="353:10137"
+          >
+            <Bell className="w-4 h-4 text-[#EAEDF6]" />
+            <span className="absolute top-2.5 right-2.5 size-1.5 rounded-full bg-[#078BDE] ring-2 ring-[#02307D]" />
           </button>
 
-          {/* Mobile Hamburger Button */}
+          {/* User Quick Pill matching Figma Node I353:10135;285:6404 */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              className="bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.12)] hover:bg-white/10 transition-colors rounded-[12px] pl-1.5 pr-2.5 py-1.5 flex items-center gap-2 text-left cursor-pointer"
+              data-node-id="I353:10135;285:6404"
+            >
+              <div className="size-7 rounded-[8px] bg-[#0079C3] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs font-mono">
+                {doctorInitials}
+              </div>
+              <span className="text-xs sm:text-sm font-semibold text-[#EAEDF6] max-w-[110px] truncate">
+                {doctorDisplayName}
+              </span>
+              <ChevronDown
+                className={`w-3.5 h-3.5 text-[#EAEDF6]/70 transition-transform ${
+                  userDropdownOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            {/* Dropdown Menu */}
+            {userDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 text-slate-900 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="px-4 py-2 border-b border-slate-100">
+                  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    Clinician Profile
+                  </p>
+                  <p className="text-sm font-bold text-[#02307D] truncate mt-0.5">
+                    {doctorDisplayName}
+                  </p>
+                  <p className="text-[11px] text-[#078BDE] font-medium">
+                    Egyptian Medical Syndicate Verified
+                  </p>
+                </div>
+
+                <div className="py-1">
+                  <Link
+                    href="/doctor/profile"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#02307D] transition-colors"
+                  >
+                    <User className="w-4 h-4 text-[#078BDE]" />
+                    <span>My profile</span>
+                  </Link>
+                  <Link
+                    href="/doctor/find-patient"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#02307D] transition-colors"
+                  >
+                    <Users className="w-4 h-4 text-[#078BDE]" />
+                    <span>My Patients</span>
+                  </Link>
+                  <Link
+                    href="/doctor/access-requests"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-[#02307D] transition-colors"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-[#078BDE]" />
+                    <span>Access Requests</span>
+                  </Link>
+                </div>
+
+                <div className="border-t border-slate-100 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile menu hamburger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-slate-100 text-slate-700"
-            aria-label="Toggle mobile menu"
+            className="md:hidden p-2 rounded-xl text-white hover:bg-white/10 transition-colors"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Dropdown Navigation */}
+      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1 shadow-lg animate-in slide-in-from-top duration-200">
-          <div className="p-3 bg-blue-50/70 rounded-xl mb-2 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-[#02307D] text-white font-bold text-xs flex items-center justify-center">
-                {doctorInitials}
-              </div>
-              <div>
-                <p className="text-xs font-bold text-[#02307D]">{doctorDisplayName}</p>
-                <p className="text-[10px] text-slate-500">Cardiology Specialist</p>
-              </div>
-            </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-[#02307D]">
-              Verified
-            </span>
-          </div>
-
-          {navLinks.map((item) => {
-            const isActive =
-              item.href === "/doctor"
-                ? pathname === "/doctor"
-                : pathname.startsWith(item.href);
-
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 p-2.5 rounded-xl text-sm font-semibold transition-colors ${
-                  isActive
-                    ? "bg-[#EAF2FF] text-[#02307D] font-bold"
-                    : "text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                <item.icon
-                  className={`w-4 h-4 ${
-                    isActive ? "text-[#078BDE]" : "text-slate-400"
-                  }`}
-                />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-
-          <div className="pt-2 border-t border-slate-100 mt-2">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-rose-50 text-rose-700 text-xs font-semibold cursor-pointer"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
+        <div className="md:hidden bg-[#011B47] border-t border-white/10 px-4 pt-3 pb-6 flex flex-col gap-2">
+          <Link
+            href="/doctor"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 ${
+              isHomeActive ? "bg-[#078BDE] text-white" : "text-[#EAEDF6] hover:bg-white/10"
+            }`}
+          >
+            Home
+          </Link>
+          <Link
+            href="/doctor/find-patient"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 ${
+              isPatientsActive ? "bg-[#078BDE] text-white" : "text-[#EAEDF6] hover:bg-white/10"
+            }`}
+          >
+            My Patients
+          </Link>
+          <Link
+            href="/doctor/access-requests"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 ${
+              isRequestsActive ? "bg-[#078BDE] text-white" : "text-[#EAEDF6] hover:bg-white/10"
+            }`}
+          >
+            Access Requests
+          </Link>
+          <Link
+            href="/doctor/profile"
+            onClick={() => setMobileMenuOpen(false)}
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#EAEDF6] hover:bg-white/10"
+          >
+            Doctor Profile
+          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              handleLogout();
+            }}
+            className="mt-2 text-left px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-300 hover:bg-rose-900/30 flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Sign Out</span>
+          </button>
         </div>
       )}
     </header>
