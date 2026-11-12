@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { PulseLogo } from "@/components/ui/logo";
 import { APP_NAME } from "@/lib/constants";
+import { Footer } from "@/components/common";
 
 export const metadata = {
   title: "Privacy Policy | PulseID",
@@ -123,10 +124,8 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="w-full border-t border-white/10 bg-[#021845] py-8 px-6 text-center text-xs text-slate-400">
-        <p>© 2026 {APP_NAME} Healthcare Platform. All rights reserved.</p>
-      </footer>
+      {/* Footer matching Figma Node 353:10025 */}
+      <Footer />
     </div>
   );
 }

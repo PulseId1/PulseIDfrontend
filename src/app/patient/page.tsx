@@ -6,7 +6,6 @@ import {
   HealthRewardBanner,
   RecentMedicalActivity,
   PatientFooter,
-  MobilePatientHeader,
   MobileBottomNav,
 } from "@/features/patient";
 
@@ -23,13 +22,8 @@ export default function PatientHomePage() {
       data-node-id="299:4931"
       data-name="Home Patient ff"
     >
-      {/* 1. Desktop Sticky Navigation Bar matching Figma Node 299:5257 */}
-      <div className="hidden lg:block sticky top-0 z-50">
-        <PatientNavbar />
-      </div>
-
-      {/* 2. Mobile Patient Greeting & Search Header */}
-      <MobilePatientHeader />
+      {/* 1. Unified Navigation Header matching Figma Node 353:10098 */}
+      <PatientNavbar />
 
       <main className="flex-1 flex flex-col">
         {/* 3. Hero Section matching Figma Node 299:4932 */}
