@@ -1,25 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import {
+  HeroBackgroundSlider,
+  DEFAULT_PATIENT_HERO_SLIDES,
+} from "@/components/common";
 
 export function PatientHero() {
   const router = useRouter();
-  const [activeSlide, setActiveSlide] = useState(0);
-  const slides = [
-    "/assets/patient-home/hero-slide-1.png",
-    "/assets/patient-home/hero-slide-2.png",
-    "/assets/patient-home/hero-slide-3.png",
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
 
   const handleProfileClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -39,30 +30,11 @@ export function PatientHero() {
       data-node-id="299:4932"
     >
       {/* Background Slideshow with Exact Figma Gradients matching Component 2 (Node 288:561) */}
-      <div className="absolute inset-0 size-full overflow-hidden" data-node-id="288:561">
-        {slides.map((slideSrc, idx) => (
-          <div
-            key={slideSrc}
-            className={`absolute inset-0 size-full transition-opacity duration-1000 ${
-              idx === activeSlide ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <Image
-              src={slideSrc}
-              alt=""
-              fill
-              priority={idx === 0}
-              unoptimized
-              className="object-cover object-center size-full"
-            />
-            {/* Linear gradient matching Figma Node 288:564 */}
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-[rgba(1,9,30,0.95)] via-[rgba(1,9,30,0.75)] to-[rgba(1,9,30,0)] size-full pointer-events-none"
-              data-node-id="288:564"
-            />
-          </div>
-        ))}
-      </div>
+      <HeroBackgroundSlider
+        slides={DEFAULT_PATIENT_HERO_SLIDES}
+        intervalMs={6000}
+        dataNodeId="288:561"
+      />
 
       {/* Hero Content Container matching Figma Node 299:4934 */}
       <div className="relative z-10 max-w-[1280px] h-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">

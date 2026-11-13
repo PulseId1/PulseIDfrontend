@@ -1,56 +1,50 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  HeroBackgroundSlider,
+  DEFAULT_LANDING_HERO_SLIDES,
+} from "@/components/common";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-[668px] bg-[#01091E] overflow-hidden pt-14 sm:pt-16 lg:pt-[72px] pb-16 sm:pb-20 flex items-center">
       {/* 
         Background Visual Hierarchy from Figma (Frame 1171277861):
-        Layer 1: Doctor Visual (hero-image.svg) positioned object-top so the 81px navbar is slightly above the glasses
+        Layer 1: Doctor Visual slideshow rotating through authentic clinical visuals
         Layer 2: Official Figma Hero Gradient SVG (hero-gradient.svg)
         Layer 3: Exact linear gradient overlay ensuring text contrast across all resolutions
         Layer 4: Bottom fade into Section 2
       */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
-        {/* Layer 1: Doctor & Biometric Holographic Interface */}
-        <Image
-          src="/landing/hero-image.svg"
-          alt="Surgeon with biometric medical holographic interface"
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="object-cover object-top lg:object-[center_top] w-full h-full"
-        />
+      <HeroBackgroundSlider
+        slides={DEFAULT_LANDING_HERO_SLIDES}
+        intervalMs={6000}
+        showBottomFade={true}
+        overlayGradient={
+          <>
+            {/* Layer 2: Official Figma Hero Gradient SVG */}
+            <Image
+              src="/landing/hero-gradient.svg"
+              alt=""
+              fill
+              priority
+              unoptimized
+              aria-hidden="true"
+              className="object-cover object-top w-full h-full"
+            />
 
-        {/* Layer 2: Official Figma Hero Gradient SVG */}
-        <Image
-          src="/landing/hero-gradient.svg"
-          alt=""
-          fill
-          priority
-          unoptimized
-          aria-hidden="true"
-          className="object-cover object-top w-full h-full"
-        />
-
-        {/* Layer 3: Contrast preservation linear gradient matching Figma stops (0.95 left -> 0.75 center -> 0 right) */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(90deg, rgba(1, 9, 30, 0.95) 0%, rgba(1, 9, 30, 0.85) 35%, rgba(1, 9, 30, 0.70) 55%, rgba(1, 9, 30, 0) 100%)",
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Layer 4: Soft bottom fade transition into Section 2 */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#01091E] to-transparent pointer-events-none"
-          aria-hidden="true"
-        />
-      </div>
+            {/* Layer 3: Contrast preservation linear gradient matching Figma stops (0.95 left -> 0.75 center -> 0 right) */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(1, 9, 30, 0.95) 0%, rgba(1, 9, 30, 0.85) 35%, rgba(1, 9, 30, 0.70) 55%, rgba(1, 9, 30, 0) 100%)",
+              }}
+              aria-hidden="true"
+            />
+          </>
+        }
+      />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full">
         {/* 

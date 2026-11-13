@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { DoctorNavbar, DoctorFooter } from "@/features/doctor";
+import { HeroBackgroundSlider, DEFAULT_DOCTOR_HERO_SLIDES } from "@/components/common";
 import { useAuth } from "@/lib/auth/auth-context";
 import { DemoService } from "@/lib/demo/demo-service";
 
@@ -169,23 +170,11 @@ export default function HomeHomeDoctor() {
         data-node-id="353:10000"
       >
         {/* Background Slides matching Figma Node 322:1291 */}
-        <div className="absolute inset-0 pointer-events-none" data-node-id="322:1291">
-          <div className="absolute inset-0 overflow-hidden">
-            <Image
-              src="/assets/doctor/imgFrame1171277916.png"
-              alt="Clinical Physician Hero"
-              fill
-              priority
-              className="object-cover object-center"
-            />
-            {/* Exact Figma Gradient overlay: rgba(1,9,30,0.95) to rgba(1,9,30,0) via rgba(1,9,30,0.75) */}
-            <div
-              className="-translate-x-1/2 -translate-y-1/2 absolute bg-gradient-to-r from-[rgba(1,9,30,0.95)] h-[667px] left-1/2 to-[rgba(1,9,30,0)] top-1/2 via-1/2 via-[rgba(1,9,30,0.75)] w-full"
-              data-node-id="322:1294"
-              data-name="Gradient"
-            />
-          </div>
-        </div>
+        <HeroBackgroundSlider
+          slides={DEFAULT_DOCTOR_HERO_SLIDES}
+          intervalMs={6000}
+          dataNodeId="322:1291"
+        />
 
         {/* Hero Content Container matching Figma Node 353:10002 */}
         <div

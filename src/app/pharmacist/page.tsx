@@ -6,6 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth/auth-context";
 import {
+  HeroBackgroundSlider,
+  DEFAULT_PHARMACIST_HERO_SLIDES,
+} from "@/components/common";
+import {
   Pill,
   CheckCircle,
   AlertTriangle,
@@ -106,7 +110,11 @@ export default function PharmacistDashboardPage() {
         )}
 
         {/* Hero Section & Prescription Verification */}
-        <section className="bg-gradient-to-r from-[#02307D] via-[#055B9E] to-[#078BDE] rounded-2xl p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
+        <section className="relative rounded-2xl p-6 sm:p-8 text-white shadow-md overflow-hidden bg-[#01091E]">
+          <HeroBackgroundSlider
+            slides={DEFAULT_PHARMACIST_HERO_SLIDES}
+            intervalMs={6000}
+          />
           <div className="relative z-10 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-xs font-medium mb-4 backdrop-blur-xs">
               <Pill className="w-3.5 h-3.5" />
