@@ -50,3 +50,24 @@ public/inspire
 public/refrence
 scratch/
 *.tsbuildinfo
+
+# Local agent configuration
+.agents/
+
+# Temporary local inspection, dump, and capture scripts
+scripts/analyze-*
+scripts/approve-*
+scripts/capture-*
+scripts/copy-*
+scripts/download-*
+scripts/dump-*
+scripts/find-*
+scripts/get-*
+scripts/inspect-*
+scripts/list-*
+scripts/parse-*
+scripts/update-*
+scripts/verify-*
+!scripts/verify-http-routes.mjs
+scripts/*.py
+scripts/*.xml
