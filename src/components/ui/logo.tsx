@@ -12,7 +12,7 @@ interface LogoProps {
 /**
  * PulseID Official Brand Mark
  *
- * Uses public/logo.svg (the pulse crest symbol) along with clean typographic wordmark.
+ * Uses public/favicon.svg (the pulse crest symbol) along with clean typographic wordmark.
  */
 export function PulseLogo({
   className = "",
@@ -40,7 +40,7 @@ export function PulseLogo({
     >
       <div className="relative shrink-0 transition-transform duration-300 hover:scale-105">
         <Image
-          src="/logo.svg"
+          src="/favicon.svg"
           alt="PulseID Logo"
           width={dimensions.width}
           height={dimensions.height}

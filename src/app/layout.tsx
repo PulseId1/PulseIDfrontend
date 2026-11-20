@@ -57,7 +57,12 @@ export const metadata: Metadata = {
     description: `${APP_SUBTITLE} Launching ${LAUNCH_DISPLAY_DATE}.`,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
   },
 };
 

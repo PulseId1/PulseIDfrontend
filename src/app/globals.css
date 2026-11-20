@@ -11,8 +11,9 @@
   --text-secondary: #9BAFC3;
   --border-subtle: #1C344D;
 
-  --font-sans: var(--font-inter);
-  --font-heading: var(--font-space-grotesk);
+  --font-sans: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --Inter-font-family: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Design Tokens from Figma (Verified Node 233:46 & 218:419) */
   --figma-primary: #078BDE;
@@ -66,7 +67,7 @@
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -78,7 +79,7 @@ html {
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
-  font-family: var(--font-inter), var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--Inter-font-family, var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   min-height: 100vh;
   overflow-x: hidden;
   text-rendering: optimizeLegibility;
@@ -86,17 +87,72 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle custom scrollbar */
+/* Explicit rule ensuring all dashboard and UI elements strictly use Inter font */
+main, [data-node-id], .font-heading, .font-sans, h1, h2, h3, h4, h5, h6, p, span, button, input, label, select, textarea {
+  font-family: var(--Inter-font-family, var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
+/* PulseID Global Theme Scrollbar (App Colors: #078bde & #f1f5f9) */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: #078bde #f1f5f9;
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 9px;
+  height: 9px;
 }
+
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: #f1f5f9;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
-  border-radius: 4px;
+  background: #078bde;
+  border-radius: 9999px;
+  border: 2px solid #f1f5f9;
+  transition: background 0.2s ease;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #2589FF88;
+  background: #02307d;
+}
+
+/* Specific sleek scrollbar utility */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #078bde #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #078bde;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #02307d;
+}
+
+@keyframes scanLaser {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    top: 96%;
+    opacity: 1;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.8;
+  }
 }

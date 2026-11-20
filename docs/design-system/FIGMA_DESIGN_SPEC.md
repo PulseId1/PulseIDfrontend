@@ -183,7 +183,7 @@ Extracted directly via `get_variable_defs`:
 | **Hero Gradient Overlay** | `/landing/hero-gradient.svg` | Node `233:92` layer |
 | **Challenges Central Mascot** | `/landing/sec2-mascot.svg` / `sec2.png` | Node `233:397` |
 | **Solutions Central Doctor** | `/landing/sec3-mascot.svg` / `solution.svg` | Node `233:600` |
-| **PulseID Primary Mark** | `/logo.svg` / `/logo-full.svg` | Node `233:50` |
+| **PulseID Primary Mark** | `/favicon.svg` / `/logo-full.svg` | Node `233:50` |
 | **Desktop Full Screenshot** | `brain/.../media_0.png` (step 99) | Node `233:46` |
 | **Mobile Full Screenshot** | `brain/.../media_0.png` (step 101) | Node `218:419` |
 

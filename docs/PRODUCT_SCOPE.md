@@ -20,7 +20,7 @@ Phase 1 deliverable is the **public launch landing page targeting 20 November 20
      - Announcement eyebrow: `A NEW ERA OF CONNECTED HEALTHCARE`.
      - Main headline: `Something meaningful is coming.`.
      - Short supporting sentence: `A more connected approach to personal healthcare information.`.
-     - **Interactive Mascot Face (`MascotFace`):** Smooth white capsule mascot looking directly down at the countdown timer, with pupils dynamically tracking mouse cursor position using spring physics (`useSpring`), random natural eye blinking, speech interaction, and integrated PulseID chin emblem (`public/logo.svg`).
+     - **Interactive Mascot Face (`MascotFace`):** Smooth white capsule mascot looking directly down at the countdown timer, with pupils dynamically tracking mouse cursor position using spring physics (`useSpring`), random natural eye blinking, speech interaction, and integrated PulseID chin emblem (`public/favicon.svg`).
      - **Dominant Countdown Timer:** Real-time ticking client component calculating delta to `2026-11-20T00:00:00+02:00` in `Africa/Cairo` (UTC+2) timezone, displaying Days, Hours, Minutes, Seconds with live `aria-live` accessibility and expired state handling.
      - Scroll invitation anchor: `Discover the team` pointing to `#team`.
    - **Section B — Meet the Team (ID Credential Badges):**

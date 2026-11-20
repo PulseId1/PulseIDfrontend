@@ -243,7 +243,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clean, unadorned white capsule face per user specification (removed chest/chin badge).
   - Random natural eye blink loop (every 2.5s–6s) and speech bubble interaction on click.
 - **Official Brand Mark Integration:**
-  - Integrated `public/logo.svg` as the official brand logo in the hero header.
+  - Integrated `public/favicon.svg` as the official brand logo in the hero header.
 - **Viewport Calibration & Countdown Visibility:**
   - Recalibrated vertical rhythm using `min-h-[100dvh]` with balanced typography and container padding.
   - Ensured the countdown timer, digits, labels, and launch date metadata are 100% visible immediately above the fold across all screen sizes (laptops with 650–700px height, 1080p desktop, and mobile viewports) without requiring any scrolling.
