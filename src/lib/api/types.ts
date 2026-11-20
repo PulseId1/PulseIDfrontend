@@ -225,6 +225,10 @@ export interface AccessRequestItem {
   status: "pending" | "approved" | "rejected" | "revoked";
   requestedDate: string;
   accessExpires?: string;
+  approvedDate?: string;
+  permissionLevel?: string;
+  decisionNote?: string;
+  statusFooter?: string;
   reasonForAccess: string;
   permissions: AccessRequestPermission[];
   viewOnly: boolean;
@@ -241,7 +245,7 @@ export interface MedicalRecordMetric {
 
 export interface MedicalRecordItem {
   id: string;
-  category: "history" | "labs" | "radiology" | "diagnoses" | "reports";
+  category: "history" | "labs" | "radiology" | "diagnoses" | "prescriptions" | "reports" | "otc";
   title: string;
   subtitle?: string;
   date: string;
@@ -278,6 +282,7 @@ export interface UIChronicDiseaseItem extends ChronicDiseasesDTO {
   triggers?: string[];
   emergencyProtocol?: string;
   notes?: string;
+  physician?: string;
 }
 
 export interface UICurrentMedicationItem extends CurrentMedicationsDTO {

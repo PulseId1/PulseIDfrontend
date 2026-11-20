@@ -47,7 +47,7 @@ export interface AuthState {
 
 export interface AuthContextValue extends AuthState {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; role?: UserRole; error?: string }>;
-  loginDemo: (role: "patient" | "doctor", account?: DemoAccount) => void;
+  loginDemo: (role: "patient" | "doctor" | "pharmacist", account?: DemoAccount) => void;
   logout: () => void;
   clearError: () => void;
   setVerified: (verified: boolean) => void;
@@ -166,12 +166,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * Explicit Demo Login Action
    * Activates an isolated demo session without sending credentials or tokens to the backend.
    */
-  const loginDemo = useCallback((role: "patient" | "doctor", account?: DemoAccount) => {
+  const loginDemo = useCallback((role: "patient" | "doctor" | "pharmacist", account?: DemoAccount) => {
     // Purge any real token so sessions are never mixed
     TokenStorage.clear();
     const targetAccount =
       account ||
-      (role === "patient" ? INITIAL_DEMO_ACCOUNTS[0] : INITIAL_DEMO_ACCOUNTS[1]);
+      (role === "patient"
+        ? INITIAL_DEMO_ACCOUNTS[0]
+        : role === "doctor"
+        ? INITIAL_DEMO_ACCOUNTS[1]
+        : INITIAL_DEMO_ACCOUNTS[2]);
     const demoUserId = targetAccount.id;
     const demoRole = targetAccount.role;
     const demoSession = {

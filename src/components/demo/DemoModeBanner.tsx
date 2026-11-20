@@ -14,11 +14,29 @@ export function DemoModeBanner() {
 
   if (!isDemo) return null;
 
-  const roleLabel = userRole === "doctor" ? "Doctor Experience" : "Patient Experience";
-  const userLabel = userRole === "doctor" ? "Dr. Tarek Al-Husseini" : "Sara Mahmoud Ibrahim";
+  const roleLabel =
+    userRole === "doctor"
+      ? "Doctor Experience"
+      : userRole === "pharmacist"
+      ? "Pharmacist Experience"
+      : "Patient Experience";
+  const userLabel =
+    userRole === "doctor"
+      ? "Dr. Tarek Al-Husseini"
+      : userRole === "pharmacist"
+      ? "Pharmacist Mohamed Ali"
+      : "Ahmed Hassan";
 
-  const handleSwitchRole = () => {
+  const handleSwitchRole = (targetRole?: "patient" | "doctor" | "pharmacist") => {
+    if (targetRole) {
+      loginDemo(targetRole);
+      router.push(`/${targetRole}`);
+      return;
+    }
     if (userRole === "doctor") {
+      loginDemo("pharmacist");
+      router.push("/pharmacist");
+    } else if (userRole === "pharmacist") {
       loginDemo("patient");
       router.push("/patient");
     } else {
@@ -84,12 +102,12 @@ export function DemoModeBanner() {
               {/* Switch Role Button */}
               <button
                 type="button"
-                onClick={handleSwitchRole}
+                onClick={() => handleSwitchRole()}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/15 hover:bg-white/25 text-white transition-colors border border-white/25 font-medium text-xs cursor-pointer"
-                title={`Switch to ${userRole === "doctor" ? "Patient" : "Doctor"} Demo`}
+                title={`Switch to ${userRole === "doctor" ? "Pharmacist" : userRole === "pharmacist" ? "Patient" : "Doctor"} Demo`}
               >
                 <ArrowRightLeft className="w-3.5 h-3.5" />
-                <span>Switch to {userRole === "doctor" ? "Patient" : "Doctor"}</span>
+                <span>Switch Role ({userRole === "doctor" ? "Pharmacist" : userRole === "pharmacist" ? "Patient" : "Doctor"})</span>
               </button>
 
               {/* Reset Demo Data Button */}

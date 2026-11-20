@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCardShell } from "./AuthCardShell";
 import { useAuth, UserRole } from "@/lib/auth/auth-context";
 import { DemoService } from "@/lib/demo/demo-service";
-import { User, Stethoscope, Sparkles } from "lucide-react";
+import { User, Stethoscope, Sparkles, Pill } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -52,7 +52,7 @@ export function LoginForm() {
         setIsLoading(false);
         const result = DemoService.authenticateDemo(identifier, password);
         if (result.success && result.account) {
-          loginDemo(result.account.role as "patient" | "doctor", result.account);
+          loginDemo(result.account.role as "patient" | "doctor" | "pharmacist", result.account);
           if (result.account.role === "doctor") {
             router.push("/doctor");
           } else if (result.account.role === "pharmacist") {
@@ -388,10 +388,10 @@ export function LoginForm() {
           </div>
 
           <p className="text-[13px] text-[#41474F] leading-relaxed">
-            Demonstrate the verified Figma Patient and Doctor experiences using isolated offline healthcare fixtures. No backend authentication required.
+            Demonstrate the verified Figma Patient, Doctor, and Pharmacist experiences using isolated offline healthcare fixtures. No backend authentication required.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-1 w-full">
             {/* Option 1: Demo Patient Card */}
             <button
               type="button"
@@ -409,10 +409,10 @@ export function LoginForm() {
                   <User className="w-4 h-4 text-[#078BDE] group-hover:scale-110 transition-transform" />
                 </div>
                 <h3 className="text-sm font-bold text-[#02307D] font-heading">
-                  Sara Mahmoud Ibrahim
+                  Ahmed Hassan
                 </h3>
                 <p className="text-[11px] text-[#41474F] mt-1 leading-snug">
-                  Asthma &amp; penicillin allergy, health rewards, lab records, emergency contacts.
+                  Mild Hypertension, health rewards, lab records, emergency contacts.
                 </p>
               </div>
               <div className="text-[12px] font-bold text-[#078BDE] flex items-center gap-1 mt-1 group-hover:translate-x-0.5 transition-transform">
@@ -445,6 +445,34 @@ export function LoginForm() {
               </div>
               <div className="text-[12px] font-bold text-[#078BDE] flex items-center gap-1 mt-1 group-hover:translate-x-0.5 transition-transform">
                 <span>Launch Doctor Demo →</span>
+              </div>
+            </button>
+
+            {/* Option 3: Demo Pharmacist Card */}
+            <button
+              type="button"
+              onClick={() => {
+                loginDemo("pharmacist");
+                router.push("/pharmacist");
+              }}
+              className="p-3.5 rounded-xl border border-[#D0DEFF] bg-[#F8FAFF] hover:bg-[#EFF5FF] hover:border-[#078BDE] text-left transition-all cursor-pointer group flex flex-col justify-between gap-3 shadow-2xs hover:shadow-sm"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900">
+                    Pharmacist Hub
+                  </span>
+                  <Pill className="w-4 h-4 text-emerald-600 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-sm font-bold text-[#02307D] font-heading">
+                  Pharmacist Mohamed Ali
+                </h3>
+                <p className="text-[11px] text-[#41474F] mt-1 leading-snug">
+                  Prescription verification, safety review, drug interactions, OTC dispensing.
+                </p>
+              </div>
+              <div className="text-[12px] font-bold text-emerald-600 flex items-center gap-1 mt-1 group-hover:translate-x-0.5 transition-transform">
+                <span>Launch Pharmacist Demo →</span>
               </div>
             </button>
           </div>
