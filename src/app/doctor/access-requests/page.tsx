@@ -256,10 +256,10 @@ function AccessRequestsContent() {
   return (
     <div
       className="bg-white content-stretch flex flex-col items-start relative size-full min-h-screen text-slate-900"
-      data-node-id="353:10441"
+      data-node-id="423:4635"
       data-name="Access Requests · Desktop"
     >
-      {/* 1. Website Header matching Figma Node 353:10442 / Node 353:10098 */}
+      {/* 1. Website Header matching Figma Node 423:4635 */}
       <DoctorNavbar />
 
       {/* Floating Notification Toast */}
@@ -270,10 +270,10 @@ function AccessRequestsContent() {
       )}
 
       <main className="w-full flex-1 flex flex-col">
-        {/* 2. Page introduction matching Figma Node 353:10487 */}
+        {/* 2. Page introduction matching Figma Node 423:4681 */}
         <div
           className="bg-[#f3f9fe] content-stretch flex flex-col items-start overflow-clip w-full border-b border-[#dde7ff]/40"
-          data-node-id="353:10487"
+          data-node-id="423:4681"
           data-name="Page introduction"
         >
           <div className="w-full max-w-[1280px] mx-auto p-[32px] flex flex-col gap-[22px] items-start">
@@ -379,17 +379,17 @@ function AccessRequestsContent() {
           </div>
         </div>
 
-        {/* 3. Patient permission requests matching Figma Node 353:10520 */}
+        {/* 3. Patient permission requests matching Figma Node 423:4714 */}
         <div
           className="content-stretch flex flex-col items-start overflow-clip relative shrink-0 w-full bg-white"
-          data-node-id="353:10520"
+          data-node-id="423:4714"
           data-name="Patient permission requests"
         >
           <div className="w-full max-w-[1280px] mx-auto pb-[48px] pt-[32px] px-[32px] flex flex-col gap-[24px] items-start">
-            {/* New access request card matching Figma Node 353:10521 */}
+            {/* New access request card matching Figma Node 423:4715 */}
             <div
               className="bg-white border border-[#dde7ff] border-solid content-stretch flex flex-col gap-[20px] items-start overflow-clip p-[24px] relative rounded-[16px] shadow-[0px_2px_4px_0px_rgba(2,48,125,0.03)] shrink-0 w-full"
-              data-node-id="353:10521"
+              data-node-id="423:4715"
               data-name="New access request"
             >
               {/* Form header matching Figma Node 353:10522 */}

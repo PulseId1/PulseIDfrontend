@@ -257,7 +257,7 @@ export default function HomeHomeDoctor() {
               >
                 <div className="pr-[8px]" data-node-id="353:10018">
                   <p className="font-['Inter'] font-semibold text-[12px] text-[rgba(255,255,255,0.7)] tracking-[1.2px] uppercase leading-[16px]">
-                    FOLLOW THE SUMMIT:
+                    FOLLOW PULSEID:
                   </p>
                 </div>
 
@@ -957,7 +957,7 @@ export default function HomeHomeDoctor() {
                     </div>
                   </div>
                   <Link
-                    href="/doctor/find-patient?id=29804120108924"
+                    href="/doctor/patient/PID-8924-EGY"
                     className="bg-[#078bde] text-white px-4 py-2 rounded-[12px] text-sm font-semibold hover:bg-[#0677BF]"
                   >
                     Open Patient Chart
@@ -990,23 +990,23 @@ export default function HomeHomeDoctor() {
           </div>
         </section>
 
-        {/* Section D: My Patients matching Figma Node 353:10337 */}
+        {/* Section D: My Patients matching Figma Node 423:4531 */}
         <section
           className="flex flex-col gap-[16px] w-full"
-          data-node-id="353:10337"
+          data-node-id="423:4531"
           data-name="MyPatientsSection"
         >
-          <div className="flex items-center justify-between w-full" data-node-id="353:10338">
-            <div className="flex flex-col gap-[2px]" data-node-id="353:10339">
+          <div className="flex items-center justify-between w-full" data-node-id="423:4532">
+            <div className="flex flex-col gap-[2px]" data-node-id="423:4533">
               <h2
                 className="font-['Inter'] font-bold text-[24px] text-[#02307d] tracking-[-0.6px] leading-[32px] whitespace-nowrap"
-                data-node-id="353:10340"
+                data-node-id="423:4535"
               >
                 My Patients
               </h2>
               <p
                 className="font-['Inter'] font-normal text-[14px] text-[#475569] leading-[20px] whitespace-nowrap"
-                data-node-id="353:10342"
+                data-node-id="423:4537"
               >
                 Patients recently treated or consulted with active clinical synchronization.
               </p>
@@ -1015,12 +1015,12 @@ export default function HomeHomeDoctor() {
             <Link
               href="/doctor/find-patient"
               className="flex gap-[4px] items-center text-[#078bde] hover:underline"
-              data-node-id="353:10344"
+              data-node-id="423:4538"
             >
-              <span className="font-['Inter'] font-semibold text-[14px] leading-[20px] whitespace-nowrap">
+              <span className="font-['Inter'] font-semibold text-[14px] leading-[20px] whitespace-nowrap" data-node-id="423:4539">
                 See All Patients
               </span>
-              <div className="size-[16px] relative shrink-0">
+              <div className="size-[16px] relative shrink-0" data-node-id="423:4540">
                 <Image
                   src="/assets/doctor/imgSvg7.svg"
                   alt="Arrow"
@@ -1032,17 +1032,17 @@ export default function HomeHomeDoctor() {
             </Link>
           </div>
 
-          {/* 4 Patient Cards Grid matching Figma Node 353:10348 */}
+          {/* 4 Patient Cards Grid matching Figma Node 423:4542 */}
           <div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] w-full"
-            data-node-id="353:10348"
+            data-node-id="423:4542"
             data-name="4 Patient Cards in a Responsive Desktop Grid matching reference"
           >
             {RECENT_PATIENTS.map((p, index) => (
               <div
                 key={p.id}
                 className="bg-white border border-[rgba(226,232,240,0.8)] rounded-[16px] p-[21px] flex flex-col justify-between drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:shadow-md transition-shadow"
-                data-node-id={index === 0 ? "353:10349" : index === 1 ? "353:10372" : index === 2 ? "353:10395" : "353:10418"}
+                data-node-id={index === 0 ? "423:4543" : index === 1 ? "423:4566" : index === 2 ? "423:4589" : "423:4612"}
               >
                 <div className="flex flex-col gap-[16px] w-full">
                   <div className="flex items-center justify-between w-full">
@@ -1053,6 +1053,7 @@ export default function HomeHomeDoctor() {
                           alt="Category Icon"
                           width={20}
                           height={20}
+                          unoptimized
                           className="w-full h-full object-contain"
                         />
                       </div>
@@ -1089,7 +1090,7 @@ export default function HomeHomeDoctor() {
                 <div className="pt-[20px] w-full">
                   <div className="border-t border-[#f1f5f9] pt-[13px] w-full">
                     <Link
-                      href={`/doctor/find-patient?id=${p.nationalId}`}
+                      href="/doctor/patient/PID-8924-EGY"
                       className="flex items-center justify-between text-[#078bde] hover:underline w-full"
                     >
                       <span className="font-['Inter'] font-semibold text-[12px] leading-[16px] whitespace-nowrap">

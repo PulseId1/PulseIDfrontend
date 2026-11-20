@@ -133,10 +133,10 @@ function FindPatientContent() {
   return (
     <div
       className="bg-white min-h-screen flex flex-col text-slate-900 selection:bg-[#078BDE]/30 selection:text-[#078BDE]"
-      data-node-id="353:10776"
+      data-node-id="423:4970"
       data-name="Find Patient · Desktop"
     >
-      {/* 1. Website Header matching Figma Node 353:10777 */}
+      {/* 1. Website Header matching Figma Node 423:4970 */}
       <DoctorNavbar />
 
       {/* Floating Notification Toast */}
@@ -147,10 +147,10 @@ function FindPatientContent() {
       )}
 
       <main className="flex-1 flex flex-col w-full">
-        {/* 2. Page introduction matching Figma Node 353:10822 */}
+        {/* 2. Page introduction matching Figma Node 423:5016 */}
         <div
           className="bg-[#f3f9fe] w-full shrink-0 border-b border-[#dde7ff]/40"
-          data-node-id="353:10822"
+          data-node-id="423:5016"
           data-name="Page introduction"
         >
           <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-[32px] py-[32px] flex flex-col gap-[22px] items-start">
@@ -294,17 +294,17 @@ function FindPatientContent() {
           </div>
         </div>
 
-        {/* 3. Patient lookup container matching Figma Node 353:10855 */}
+        {/* 3. Patient lookup container matching Figma Node 423:5049 */}
         <div
           className="w-full bg-white shrink-0"
-          data-node-id="353:10855"
+          data-node-id="423:5049"
           data-name="Patient lookup"
         >
           <div className="content-stretch flex flex-col gap-[28px] items-start pb-[48px] pt-[32px] px-4 sm:px-[32px] relative w-full max-w-[1280px] mx-auto">
-          {/* Search panel matching Figma Node 353:10856 */}
+          {/* Search panel matching Figma Node 423:5050 */}
           <div
             className="border border-[#dde7ff] border-solid content-stretch flex flex-col gap-[20px] items-start p-6 sm:p-[28px] relative rounded-[16px] shadow-[0px_2px_4px_0px_rgba(2,48,125,0.03)] shrink-0 w-full bg-white"
-            data-node-id="353:10856"
+            data-node-id="423:5050"
             data-name="Search panel"
           >
             {/* Search introduction matching Figma Node 353:10857 */}
@@ -535,10 +535,10 @@ function FindPatientContent() {
 
                     {/* Profile access footer */}
                     <div className="content-stretch flex flex-col sm:flex-row gap-3 sm:gap-0 items-start sm:items-center justify-between relative shrink-0 w-full pt-2 border-t border-slate-100">
-                      <div className="content-stretch flex gap-[8px] items-center relative shrink-0">
-                        <div className="relative shrink-0 size-[16px]">
+                      <div className="content-stretch flex gap-[8px] items-center relative shrink-0" data-node-id="423:5101" data-name="Verification">
+                        <div className="relative shrink-0 size-[16px]" data-node-id={isConsentReq ? "423:5130" : "609:3662"}>
                           <Image
-                            src={isConsentReq ? "/assets/doctor/find-patient/imgIcon4.svg" : "/assets/doctor/find-patient/imgBadgeCheck.svg"}
+                            src={isConsentReq ? "/assets/doctor/find-patient/imgIcon4.svg" : "/assets/check-verified-filled.svg"}
                             alt={isConsentReq ? "Private status" : "Verified status"}
                             width={16}
                             height={16}
@@ -551,9 +551,8 @@ function FindPatientContent() {
                       </div>
 
                       {patient.hasAccess ? (
-                        <button
-                          type="button"
-                          onClick={() => setSelectedPatientModal(patient)}
+                        <Link
+                          href={`/doctor/patient/${patient.pulseId || "PID-8924-EGY"}`}
                           className="bg-[#078bde] border border-[#078bde] border-solid content-stretch flex gap-[8px] items-center justify-center min-h-[44px] px-[16px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#0079c3] transition-colors cursor-pointer text-white shadow-xs"
                         >
                           <span className="font-['Inter'] font-semibold text-[14px] text-white whitespace-nowrap leading-normal">
@@ -568,7 +567,7 @@ function FindPatientContent() {
                               className="block size-full object-contain"
                             />
                           </div>
-                        </button>
+                        </Link>
                       ) : (
                         <button
                           type="button"
@@ -730,11 +729,17 @@ function FindPatientContent() {
             </div>
 
             {/* Modal Footer */}
-            <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+              <Link
+                href={`/doctor/patient/${selectedPatientModal.pulseId}`}
+                className="px-4 py-2 bg-[#078bde] text-white rounded-lg text-sm font-semibold hover:bg-[#0070c5] transition-colors cursor-pointer"
+              >
+                Open Full Chart
+              </Link>
               <button
                 type="button"
                 onClick={() => setSelectedPatientModal(null)}
-                className="px-4 py-2 bg-[#02307d] text-white rounded-lg text-sm font-semibold hover:bg-[#00225d] transition-colors cursor-pointer"
+                className="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg text-sm font-semibold hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 Close Record
               </button>

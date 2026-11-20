@@ -8,7 +8,6 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { DemoService } from "@/lib/demo/demo-service";
 
 const imgDoctorPhoto = "/assets/doctor/profile/imgDoctorPhoto.png";
-const imgShieldCheck = "/assets/doctor/profile/imgShieldCheck.svg";
 const imgUserRound = "/assets/doctor/profile/imgUserRound.svg";
 const imgPencil = "/assets/doctor/profile/imgPencil.svg";
 const imgPhone = "/assets/doctor/profile/imgPhone.svg";
@@ -77,10 +76,10 @@ export default function DoctorProfilePage() {
   return (
     <div
       className="bg-white min-h-screen flex flex-col text-slate-900 selection:bg-[#078BDE]/30 selection:text-[#078BDE]"
-      data-node-id="353:11005"
+      data-node-id="423:5199"
       data-name="doctor info"
     >
-      {/* 1. Unified Website Header matching Figma Node 353:11006 / 353:10098 */}
+      {/* 1. Unified Website Header matching Figma Node 423:5199 */}
       <DoctorNavbar />
 
       {/* Floating Notification Toast */}
@@ -90,37 +89,37 @@ export default function DoctorProfilePage() {
         </div>
       )}
 
-      {/* 2. Main Profile Content matching Figma Node 353:11046 */}
+      {/* 2. Main Profile Content matching Figma Node 423:5240 */}
       <main className="w-full flex-1 flex flex-col">
         <div
           className="content-stretch flex flex-col gap-[44px] items-start pb-[80px] pt-[41px] px-[32px] relative shrink-0 w-full max-w-[1280px] mx-auto"
-          data-node-id="353:11046"
+          data-node-id="423:5240"
           data-name="Profile content"
         >
-          {/* Page heading matching Figma Node 353:11047 */}
+          {/* Page heading matching Figma Node 423:5241 */}
           <div
             className="[word-break:break-word] border-[#e9effd] border-b border-solid content-stretch flex flex-col gap-[8px] items-start not-italic pb-[16px] relative shrink-0 w-full"
-            data-node-id="353:11047"
+            data-node-id="423:5241"
             data-name="Page heading"
           >
             <h1
               className="font-['Inter'] font-bold leading-[39px] relative shrink-0 text-[32px] text-[#01091e] w-full"
-              data-node-id="353:11048"
+              data-node-id="423:5242"
             >
               Doctor Information
             </h1>
             <p
               className="font-['Inter'] font-normal leading-[21px] relative shrink-0 text-[15px] text-[#41474f] w-full"
-              data-node-id="353:11049"
+              data-node-id="423:5243"
             >
               Manage your professional profile, verification credentials, and contact details securely.
             </p>
           </div>
 
-          {/* Doctor overview banner matching Figma Node 353:11050 */}
+          {/* Doctor overview banner matching Figma Node 423:5244 */}
           <div
             className="border border-[rgba(0,121,195,0.4)] border-solid content-stretch flex flex-col sm:flex-row h-auto sm:h-[146px] items-start sm:items-center justify-between p-[32px] relative rounded-[16px] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)] shrink-0 w-full gap-4"
-            data-node-id="353:11050"
+            data-node-id="423:5244"
             style={{
               backgroundImage:
                 "linear-gradient(134.11deg, rgb(2, 48, 125) 0.34%, rgb(10, 125, 197) 93.11%)",
@@ -129,7 +128,7 @@ export default function DoctorProfilePage() {
           >
             <div
               className="content-stretch flex gap-[20px] items-center relative shrink-0"
-              data-node-id="353:11051"
+              data-node-id="423:5245"
               data-name="Doctor identity"
             >
               <div
@@ -197,15 +196,15 @@ export default function DoctorProfilePage() {
             </div>
             <div
               className="bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.15)] border-solid content-stretch flex gap-[8px] items-center px-[16px] py-[10px] relative rounded-[8px] shrink-0"
-              data-node-id="353:11061"
+              data-node-id="423:5255"
               data-name="Verification status"
             >
-              <div className="relative shrink-0 size-[18px]" data-node-id="353:11062" data-name="shield-check">
-                <Image alt="" className="absolute block inset-0 max-w-none size-full" src={imgShieldCheck} width={18} height={18} />
+              <div className="relative shrink-0 size-[18px]" data-node-id="609:3662" data-name="griddy-icons:check-verified-filled">
+                <Image alt="Verified" className="absolute block inset-0 max-w-none size-full" src="/assets/check-verified-filled.svg" width={18} height={18} />
               </div>
               <p
                 className="[word-break:break-word] font-['Inter'] font-semibold leading-[normal] not-italic relative shrink-0 text-[13px] text-white whitespace-nowrap"
-                data-node-id="353:11064"
+                data-node-id="423:5258"
               >
                 Pending Review
               </p>
@@ -1049,48 +1048,48 @@ export default function DoctorProfilePage() {
       {deleteModalOpen && (
         <div
           className="fixed inset-0 z-50 bg-[#8d99ad]/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
-          data-node-id="353:11290"
+          data-node-id="423:5484"
           data-name="Delete account confirmation"
         >
           <div
             className="bg-white border border-[#e2e7ef] border-solid content-stretch flex flex-col items-start overflow-clip relative rounded-[8px] shadow-[0px_20px_56px_-12px_rgba(1,9,30,0.2)] shrink-0 w-full max-w-[536px] animate-in zoom-in-95 duration-200"
-            data-node-id="353:11291"
+            data-node-id="423:5485"
             data-name="Confirmation dialog"
           >
             <div
               className="content-stretch flex flex-col gap-[24px] items-start p-[32px] relative shrink-0 w-full"
-              data-node-id="353:11292"
+              data-node-id="423:5486"
               data-name="Confirmation content"
             >
               <div
                 className="bg-[#fee2e2] content-stretch flex items-center justify-center relative rounded-[12px] shrink-0 size-[48px]"
-                data-node-id="353:11293"
+                data-node-id="423:5487"
                 data-name="Danger symbol"
               >
-                <div className="relative shrink-0 size-[24px]" data-node-id="353:11294" data-name="trash-2">
+                <div className="relative shrink-0 size-[24px]" data-node-id="423:5488" data-name="trash-2">
                   <Image alt="" className="absolute block inset-0 max-w-none size-full" src={imgTrash2} width={24} height={24} />
                 </div>
               </div>
               <div
                 className="[word-break:break-word] content-stretch flex flex-col gap-[16px] items-start not-italic relative shrink-0 w-full"
-                data-node-id="353:11296"
+                data-node-id="423:5490"
                 data-name="Deletion warning"
               >
                 <h3
                   className="font-['Inter'] font-bold leading-[32px] relative shrink-0 text-[24px] text-[#01091e] tracking-[-0.4px] w-full"
-                  data-node-id="353:11297"
+                  data-node-id="423:5491"
                 >
                   Permanently delete your doctor account?
                 </h3>
                 <p
                   className="font-['Inter'] font-normal leading-[24px] relative shrink-0 text-[15px] text-[#41474f] w-full"
-                  data-node-id="353:11298"
+                  data-node-id="423:5492"
                 >
                   Deleting your account will remove your profile, verification history, and access to Pulse ID.
                 </p>
                 <p
                   className="font-['Inter'] font-semibold leading-[20px] relative shrink-0 text-[#b91c1c] text-[14px] w-full"
-                  data-node-id="353:11299"
+                  data-node-id="423:5493"
                 >
                   This action is permanent and cannot be undone.
                 </p>
@@ -1098,19 +1097,19 @@ export default function DoctorProfilePage() {
             </div>
             <div
               className="border-[#e9effd] border-solid border-t content-stretch flex gap-[12px] items-center justify-end px-[32px] py-[24px] relative shrink-0 w-full bg-slate-50/50"
-              data-node-id="353:11300"
+              data-node-id="423:5494"
               data-name="Confirmation actions"
             >
               <button
                 type="button"
                 onClick={() => setDeleteModalOpen(false)}
                 className="bg-white border border-[#d0deff] border-solid content-stretch flex h-[44px] items-center justify-center px-[24px] relative rounded-[8px] shrink-0 cursor-pointer hover:bg-slate-50 transition-colors"
-                data-node-id="353:11301"
+                data-node-id="423:5495"
                 data-name="Cancel button"
               >
                 <span
                   className="[word-break:break-word] font-['Inter'] font-semibold leading-[20px] not-italic relative shrink-0 text-[#02307d] text-[14px] whitespace-nowrap"
-                  data-node-id="353:11302"
+                  data-node-id="423:5496"
                 >
                   Cancel
                 </span>
@@ -1119,12 +1118,12 @@ export default function DoctorProfilePage() {
                 type="button"
                 onClick={handleConfirmDelete}
                 className="bg-[#dc2626] hover:bg-[#b91c1c] content-stretch flex h-[44px] items-center justify-center px-[24px] relative rounded-[8px] shrink-0 cursor-pointer transition-colors shadow-xs active:scale-[0.99]"
-                data-node-id="353:11303"
+                data-node-id="423:5497"
                 data-name="Confirm delete button"
               >
                 <span
                   className="[word-break:break-word] font-['Inter'] font-bold leading-[20px] not-italic relative shrink-0 text-white text-[14px] whitespace-nowrap"
-                  data-node-id="353:11304"
+                  data-node-id="423:5498"
                 >
                   Confirm Delete
                 </span>
