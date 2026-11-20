@@ -12,7 +12,7 @@ export function HowItWorksSection() {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       id="how-it-works"
-      className="w-full bg-white py-16 sm:py-24"
+      className="w-full bg-white py-16 sm:py-24 overflow-hidden"
       data-node-id="665:3708"
       data-name="HowItWorksSection"
     >
@@ -31,45 +31,47 @@ export function HowItWorksSection() {
         {/* 2-Column Layout matching Figma 665:3712 */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Overlapping Tilted Cards matching Figma 665:3732 */}
-          <div className="lg:col-span-6 flex items-center justify-center min-h-[460px] relative py-8">
-            {/* Card 1: Blue "Your Health Journey Starts Here" (rotated -4deg) */}
-            <div className="w-[300px] sm:w-[320px] h-[340px] rounded-[16px] bg-[#078bde] p-6 text-white shadow-xl transform -rotate-[4deg] flex flex-col justify-between absolute left-4 sm:left-12 top-6 z-10">
-              <h3 className="font-sans font-bold text-[24px] leading-[1.3] max-w-[160px]">
-                Your Health Journey Starts Here
-              </h3>
-              <div className="w-full h-[120px] relative flex items-center justify-center">
-                <Image
-                  src="/assets/landing-new/67b82b521e0e7bd6b82d232ad700dbc55c8b2f0e.svg"
-                  alt="Pulse telemetry"
-                  width={200}
-                  height={100}
-                  className="w-full object-contain"
-                />
+          <div className="lg:col-span-6 flex items-center justify-center min-h-[420px] sm:min-h-[460px] relative py-4 sm:py-8 w-full overflow-hidden">
+            <div className="w-[340px] sm:w-[420px] h-[380px] sm:h-[400px] relative flex items-center justify-center scale-[0.82] xs:scale-[0.90] sm:scale-100 origin-center shrink-0">
+              {/* Card 1: Blue "Your Health Journey Starts Here" (rotated -4deg) */}
+              <div className="w-[280px] sm:w-[320px] h-[320px] sm:h-[340px] rounded-[16px] bg-[#078bde] p-6 text-white shadow-xl transform -rotate-[4deg] flex flex-col justify-between absolute left-2 sm:left-4 top-2 sm:top-4 z-10">
+                <h3 className="font-sans font-bold text-[22px] sm:text-[24px] leading-[1.3] max-w-[160px]">
+                  Your Health Journey Starts Here
+                </h3>
+                <div className="w-full h-[110px] sm:h-[120px] relative flex items-center justify-center">
+                  <Image
+                    src="/assets/landing-new/67b82b521e0e7bd6b82d232ad700dbc55c8b2f0e.svg"
+                    alt="Pulse telemetry"
+                    width={200}
+                    height={100}
+                    className="w-full object-contain"
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Card 2: White "My Medical Records" (rotated +11deg) */}
-            <div className="w-[300px] sm:w-[320px] h-[345px] rounded-[16px] bg-[#f3f5f7] p-5 shadow-2xl transform rotate-[11deg] flex flex-col justify-between relative left-16 sm:left-24 top-8 z-20 border border-slate-200/60">
-              <div className="w-full h-[186px] rounded-[12px] bg-white relative overflow-hidden flex items-center justify-center shadow-inner">
-                <Image
-                  src="/assets/landing-new/331e21339f381e1cdc17d2a40bc22d6aa5dfb9e3.png"
-                  alt="3D Anatomical Heart"
-                  fill
-                  unoptimized
-                  className="object-contain p-2"
-                />
-                {/* Visual telemetry dots */}
-                <div className="absolute top-[43px] left-[125px] size-[10px] rounded-full bg-[#2b2b2b] border-2 border-white shadow" />
-                <div className="absolute top-[106px] left-[101px] size-[10px] rounded-full bg-[#2b2b2b] border-2 border-white shadow" />
-                <div className="absolute top-[137px] left-[130px] size-[10px] rounded-full bg-[#2b2b2b] border-2 border-white shadow" />
-              </div>
-              <div className="mt-2">
-                <h4 className="font-sans font-bold text-[22px] text-[#01091e] tracking-[-0.5px]">
-                  My Medical Records
-                </h4>
-                <p className="mt-1 text-[13px] text-[#41474f] leading-normal">
-                  All your health information in one secure place.
-                </p>
+              {/* Card 2: White "My Medical Records" (rotated +11deg) */}
+              <div className="w-[280px] sm:w-[320px] h-[325px] sm:h-[345px] rounded-[16px] bg-[#f3f5f7] p-5 shadow-2xl transform rotate-[11deg] flex flex-col justify-between absolute right-2 sm:right-4 top-6 sm:top-8 z-20 border border-slate-200/60">
+                <div className="w-full h-[170px] sm:h-[186px] rounded-[12px] bg-white relative overflow-hidden flex items-center justify-center shadow-inner">
+                  <Image
+                    src="/assets/landing-new/331e21339f381e1cdc17d2a40bc22d6aa5dfb9e3.png"
+                    alt="3D Anatomical Heart"
+                    fill
+                    unoptimized
+                    className="object-contain p-2"
+                  />
+                  {/* Visual telemetry dots */}
+                  <div className="absolute top-[43px] left-[125px] size-[10px] rounded-full bg-[#2b2b2b] border-2 border-white shadow" />
+                  <div className="absolute top-[106px] left-[101px] size-[10px] rounded-full bg-[#2b2b2b] border-2 border-white shadow" />
+                  <div className="absolute top-[137px] left-[130px] size-[10px] rounded-full bg-[#2b2b2b] border-2 border-white shadow" />
+                </div>
+                <div className="mt-2">
+                  <h4 className="font-sans font-bold text-[20px] sm:text-[22px] text-[#01091e] tracking-[-0.5px]">
+                    My Medical Records
+                  </h4>
+                  <p className="mt-1 text-[12.5px] sm:text-[13px] text-[#41474f] leading-normal">
+                    All your health information in one secure place.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

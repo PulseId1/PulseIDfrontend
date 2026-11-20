@@ -21,11 +21,11 @@ export const metadata = {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-white text-slate-900 selection:bg-[#078bde]/30 selection:text-[#078bde]">
+    <div className="min-h-screen flex flex-col bg-white text-slate-900 selection:bg-[#078bde]/30 selection:text-[#078bde] w-full max-w-[100vw] overflow-x-hidden">
       {/* 1. Header (Figma 665:3519) */}
       <Navbar />
 
-      <main className="flex-1">
+      <main className="flex-1 w-full max-w-[100vw] overflow-x-hidden">
         {/* 2. Hero Section: "Your Health Data. One Secure Identity." (Figma 665:3565) */}
         <HeroSection />
 

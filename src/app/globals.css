@@ -2,13 +2,13 @@
 
 :root {
   /* PulseID Centralized Dark Healthcare Color Tokens */
-  --bg-main: #07111F;
+  --bg-main: #01091e;
   --bg-secondary: #0B192B;
-  --bg-card: #102238;
-  --color-primary-blue: #2589FF;
-  --color-cyan-accent: #35D6E8;
+  --bg-card: #02307d;
+  --color-primary-blue: #078bde;
+  --color-cyan-accent: #34d8e1;
   --text-primary: #F4F8FC;
-  --text-secondary: #9BAFC3;
+  --text-secondary: #3c454e;
   --border-subtle: #1C344D;
 
   --font-sans: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -68,6 +68,8 @@
 html {
   scroll-behavior: smooth;
   color-scheme: light;
+  max-width: 100vw;
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -81,7 +83,9 @@ body {
   color: var(--text-primary);
   font-family: var(--Inter-font-family, var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
   min-height: 100vh;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
