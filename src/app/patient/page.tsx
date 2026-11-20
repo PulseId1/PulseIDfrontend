@@ -6,7 +6,6 @@ import {
   HealthRewardBanner,
   RecentMedicalActivity,
   PatientFooter,
-  MobileBottomNav,
 } from "@/features/patient";
 
 export const metadata = {
@@ -18,32 +17,29 @@ export const metadata = {
 export default function PatientHomePage() {
   return (
     <div
-      className="min-h-screen flex flex-col bg-[#FBFEFF] text-slate-900 selection:bg-[#078BDE]/30 selection:text-[#078BDE] pb-16 lg:pb-0"
+      className="min-h-screen flex flex-col bg-[#FBFEFF] text-slate-900 selection:bg-[#078BDE]/30 selection:text-[#078BDE]"
       data-node-id="299:4931"
       data-name="Home Patient ff"
     >
-      {/* 1. Unified Navigation Header matching Figma Node 353:10098 */}
+      {/* 1. Unified Navigation Header matching Figma Node 353:10098 (Desktop) & 364:4446 (Mobile) */}
       <PatientNavbar />
 
       <main className="flex-1 flex flex-col">
-        {/* 3. Hero Section matching Figma Node 299:4932 */}
+        {/* 2. Hero Section matching Figma Node 299:4932 (Desktop) & 364:4478 (Mobile) */}
         <PatientHero />
 
-        {/* 4. Quick Actions Section matching Figma Node 299:4957 */}
+        {/* 3. Quick Actions Section matching Figma Node 299:4957 (Desktop) & 364:4494 (Mobile) */}
         <QuickActions />
 
-        {/* 5. Walk 5,000 Steps Daily Health Reward Banner matching Figma Node 299:5181 */}
+        {/* 4. Walk 5,000 Steps Daily Health Reward Banner matching Figma Node 299:5181 (Desktop) & 364:4540 (Mobile) */}
         <HealthRewardBanner />
 
-        {/* 6. Recent Medical Activity matching Figma Node 299:5018 */}
+        {/* 5. Recent Medical Activity matching Figma Node 299:5018 (Desktop) & 364:4539 (Mobile) */}
         <RecentMedicalActivity />
       </main>
 
-      {/* 7. Footer: PulseID Dark Navy Footer with Newsletter matching Figma Node 299:5108 */}
+      {/* 6. Footer: PulseID Dark Navy Footer with Newsletter matching Figma Node 299:5108 */}
       <PatientFooter />
-
-      {/* 8. Mobile Bottom Navigation Tabs */}
-      <MobileBottomNav />
     </div>
   );
 }

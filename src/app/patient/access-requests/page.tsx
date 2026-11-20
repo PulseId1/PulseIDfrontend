@@ -1,655 +1,235 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import {
-  PatientNavbar,
-  PatientProfileBanner,
-  PatientFooter,
-  MobilePatientHeader,
-  MobileBottomNav,
-} from "@/features/patient";
-import { PatientService } from "@/lib/api/patient-service";
-import { AccessRequestItem } from "@/lib/api/patient-types";
+import React from "react";
+import { PatientNavbar } from "@/features/patient/components/patient-navbar";
+import { PatientFooter } from "@/features/patient/components/patient-footer";
+import { PatientInfoCard } from "@/features/patient/components/patient-info-card";
 import { useAuth } from "@/lib/auth/auth-context";
-import { DemoService } from "@/lib/demo/demo-service";
+import { useAccessRequests } from "@/features/patient/hooks/use-access-requests";
+import { AccessSummaryCards } from "@/features/patient/components/access-requests/access-summary-cards";
+import { AccessRequestCard } from "@/features/patient/components/access-requests/access-request-card";
+import { ReviewApproveModal } from "@/features/patient/components/access-requests/review-approve-modal";
+import { RejectRequestModal } from "@/features/patient/components/access-requests/reject-request-modal";
+import { RevokeAccessModal } from "@/features/patient/components/access-requests/revoke-access-modal";
+import { ShieldCheck, Clock3, History } from "lucide-react";
 
 export default function AccessRequestsPage() {
   const { isDemo } = useAuth();
-  const [requests, setRequests] = useState<AccessRequestItem[]>(() =>
-    PatientService.getAccessRequests()
-  );
-  const [selectedRequest, setSelectedRequest] = useState<AccessRequestItem | null>(null);
-  const [modalType, setModalType] = useState<"approve" | "reject" | "revoke" | null>(null);
-  const [actionNotice, setActionNotice] = useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (isDemo) {
-      const timer = setTimeout(() => {
-        setRequests(DemoService.getAccessRequests());
-      }, 0);
-      return () => clearTimeout(timer);
-    }
-  }, [isDemo]);
-
-  const pendingList = requests.filter((r) => r.status === "pending");
-  const activeList = requests.filter((r) => r.status === "approved");
-  const historyList = requests.filter((r) => r.status === "rejected" || r.status === "revoked");
-
-  const openModal = (req: AccessRequestItem, type: "approve" | "reject" | "revoke") => {
-    setSelectedRequest(req);
-    setModalType(type);
-  };
-
-  const closeModal = () => {
-    setSelectedRequest(null);
-    setModalType(null);
-  };
-
-  const handleConfirmAction = () => {
-    if (!selectedRequest || !modalType) return;
-
-    if (isDemo) {
-      const updated = DemoService.respondToAccessRequest(
-        selectedRequest.id,
-        modalType === "approve" ? "approve" : "reject"
-      );
-      setRequests(updated);
-      setActionNotice(
-        `Demo Mode: Request from ${selectedRequest.doctorName} marked as ${
-          modalType === "approve" ? "Approved" : "Rejected"
-        } in local demo fixtures.`
-      );
-      closeModal();
-      setTimeout(() => setActionNotice(null), 6000);
-      return;
-    }
-
-    const newStatus = modalType === "approve" ? "approved" : modalType === "reject" ? "rejected" : "revoked";
-    const updated = PatientService.updateAccessRequestStatus(selectedRequest.id, newStatus);
-    setRequests(updated);
-    setActionNotice(
-      `Prototype Simulation: Request from ${selectedRequest.doctorName} marked as ${newStatus} in local view. (Electronic consent endpoints are BACKEND_UNSUPPORTED in API v1; no live permissions changed).`
-    );
-    closeModal();
-    setTimeout(() => setActionNotice(null), 6000);
-  };
+  const {
+    pendingList,
+    activeList,
+    historyList,
+    selectedRequest,
+    modalType,
+    actionNotice,
+    openModal,
+    closeModal,
+    handleConfirmAction,
+  } = useAccessRequests();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FBFEFF] text-slate-900 selection:bg-[#0080DF]/30 selection:text-[#0080DF] pb-16 lg:pb-0">
-      <div className="hidden lg:block sticky top-0 z-50">
-        <PatientNavbar />
-      </div>
+    <div className="min-h-screen flex flex-col bg-[#F8FAFD] text-slate-900 selection:bg-[#0A7DC5]/30 selection:text-[#0A7DC5]">
+      <PatientNavbar />
 
-      <MobilePatientHeader />
-
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10 flex flex-col gap-6 lg:gap-8">
-        {/* Page Introduction matching Figma Node 299:1037 */}
+      <main className="flex-1 w-full max-w-[1360px] xl:max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10 flex flex-col gap-6 lg:gap-8">
+        {/* 1. PAGE INTRODUCTION — Figma Node 583:5013 & 583:5016 */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-left">
-          <div className="flex flex-col gap-1.5">
-            <h1 className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-[#01091E] tracking-tight font-heading">
+          <div className="flex flex-col gap-1.5 max-w-[820px]">
+            <h1 className="text-2xl sm:text-3xl lg:text-[32px] font-bold text-[#0F172A] tracking-tight font-heading">
               Access Requests
             </h1>
-            <p className="text-sm sm:text-base text-[#41474F] leading-normal font-sans max-w-2xl">
-              Review who can access your health records. Approve only what you&apos;re comfortable sharing, and revoke access at any time.
+            <p className="text-sm sm:text-base text-[#64748B] leading-relaxed font-sans max-w-[820px]">
+              Review who can access your health records. Approve only what you&apos;re comfortable
+              sharing, and revoke access at any time.
             </p>
           </div>
-          <span className="text-[12px] font-semibold text-slate-400 font-mono">
+          <span className="text-xs font-semibold text-[#94A3B8] font-mono shrink-0">
             3 Nov 2026
           </span>
         </div>
 
-        {/* Prototype Demonstration Banner */}
-        <div className="w-full p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-start gap-2.5">
-          <span className="font-bold text-amber-600 mt-0.5">ℹ</span>
-          <div>
-            <strong>Demonstration Prototype:</strong> Access requests and consent management are not supported in backend API v1 (classified as <code className="font-mono bg-amber-100 px-1 rounded text-[11px]">BACKEND_UNSUPPORTED</code>). This screen demonstrates the intended Figma UX workflow using prototype data.
-          </div>
-        </div>
-
         {actionNotice && (
-          <div className="w-full p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in">
-            <span className="font-bold text-[#078BDE] mt-0.5">✓</span>
+          <div className="w-full p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs sm:text-sm flex items-start gap-2.5 animate-in fade-in">
+            <span className="font-bold text-[#0A7DC5] mt-0.5">✓</span>
             <div>{actionNotice}</div>
           </div>
         )}
 
-        {/* Hero Identity Banner matching Node 299:1042 */}
-        <PatientProfileBanner />
+        {/* 2. REUSABLE PATIENT INFORMATION CARD — Figma Node 583:5018 & 299:1910 */}
+        <PatientInfoCard
+          variant="general"
+          isDemoPreview={isDemo}
+          nodeId="583:5018"
+        />
 
-        {/* 3 Summary metric cards matching Node 299:1075 */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full">
-          {/* Card 1: Pending */}
-          <div className="bg-white rounded-[20px] p-5 sm:p-6 border border-[#E9EFFD] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[15px] font-bold text-[#02307D] font-heading">Pending Requests</span>
-                <span className="text-[12px] text-slate-500 font-sans">Waiting for your decision</span>
-              </div>
-            </div>
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#02307D] font-mono">
-              0{pendingList.length}
-            </span>
+        {/* 3. ACCESS SUMMARY CARDS — Figma Node 583:5053 */}
+        <AccessSummaryCards
+          pendingCount={pendingList.length}
+          activeCount={activeList.length}
+          historyCount={historyList.length}
+        />
+
+        {/* 4. PATIENT CONTROL NOTICE — Figma Node 583:5078 */}
+        <div
+          className="bg-[#EFF8FE] content-stretch flex gap-[12px] items-start p-[16px] rounded-[8px] text-left w-full shadow-xs"
+          data-node-id="583:5078"
+          data-name="Patient control notice"
+        >
+          <div className="relative shrink-0 size-[20px] text-[#078BDE] mt-0.5" data-node-id="583:5079">
+            <ShieldCheck className="size-[20px]" />
           </div>
-
-          {/* Card 2: Active */}
-          <div className="bg-white rounded-[20px] p-5 sm:p-6 border border-[#E9EFFD] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[15px] font-bold text-[#02307D] font-heading">Active Access</span>
-                <span className="text-[12px] text-slate-500 font-sans">Approved by you</span>
-              </div>
-            </div>
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#02307D] font-mono">
-              0{activeList.length}
-            </span>
-          </div>
-
-          {/* Card 3: History */}
-          <div className="bg-white rounded-[20px] p-5 sm:p-6 border border-[#E9EFFD] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-sky-50 flex items-center justify-center text-[#0080DF]">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[15px] font-bold text-[#02307D] font-heading">Request History</span>
-                <span className="text-[12px] text-slate-500 font-sans">Rejected or revoked</span>
-              </div>
-            </div>
-            <span className="text-2xl sm:text-3xl font-extrabold text-[#02307D] font-mono">
-              0{historyList.length}
-            </span>
+          <div className="flex flex-1 flex-col gap-[4px] text-left">
+            <p className="font-semibold text-[13px] text-[#02307D] leading-[1.5]" data-node-id="583:5082">
+              Your records. Your permission.
+            </p>
+            <p className="font-normal text-[12px] text-[#41474F] leading-[1.5]" data-node-id="583:5083">
+              Nothing is shared while a request is pending. Review the exact records and permission level before you approve.
+            </p>
           </div>
         </div>
 
-        {/* Information Banner matching Node 299:1104 */}
-        <div className="p-4 rounded-2xl bg-[#EAF2FF] border border-[#D0E5F5] flex items-center gap-3.5 text-[#0080DF]">
-          <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-          </svg>
-          <div className="text-[13px] text-[#41474F]">
-            <strong className="text-[#02307D] font-semibold">Your records. Your permission.</strong> Nothing is shared while a request is pending. Review the exact records and permission level before you approve.
-          </div>
-        </div>
-
-        {/* SECTION 1: Pending Requests matching Node 299:1115 */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h2 className="text-[18px] font-bold text-[#01091E] font-heading">
-              Pending Requests
-            </h2>
-            <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
-              {pendingList.length}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {pendingList.map((req) => (
-              <div
-                key={req.id}
-                className="bg-white rounded-[20px] p-6 border border-[#E9EFFD] shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between gap-5"
-              >
-                <div className="flex flex-col gap-4">
-                  {/* Top: Doctor & Badge */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-full overflow-hidden relative bg-slate-100 border border-slate-200 shrink-0">
-                        <Image
-                          src={req.avatarUrl || "/assets/figma/avatars/doctor-sara.png"}
-                          alt={req.doctorName}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-[#0080DF] flex items-center justify-center text-white font-bold text-sm -z-10">
-                          {req.doctorName.split(" ").map(n => n[0]).join("")}
-                        </div>
-                      </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-[16px] font-bold text-[#02307D] font-heading leading-tight">
-                          {req.doctorName}
-                        </h3>
-                        <p className="text-[12px] text-slate-500 font-medium">
-                          {req.doctorSpecialty} • {req.hospitalClinic}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold border border-amber-200">
-                        Pending
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-mono">{req.requestId}</span>
-                    </div>
-                  </div>
-
-                  {/* Permissions Categories tags */}
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <span className="text-[11px] font-semibold text-[#0080DF] inline-flex items-center gap-1 mr-1">
-                      <span>👁️</span> View permission:
-                    </span>
-                    {req.permissions.map((p) => (
-                      <span
-                        key={p.category}
-                        className="px-2.5 py-1 rounded-md bg-[#F4F8FD] text-[#02307D] text-[11px] font-medium border border-[#E2ECF8]"
-                      >
-                        {p.category}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Reason for access box */}
-                  <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E9EFFD] flex flex-col gap-1">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                      REASON FOR ACCESS
-                    </span>
-                    <p className="text-[13px] text-[#41474F] leading-relaxed">
-                      {req.reasonForAccess}
-                    </p>
-                  </div>
-
-                  {/* Dates */}
-                  <div className="grid grid-cols-2 gap-4 text-[12px] text-slate-500 pt-1">
-                    <div>
-                      <span className="block text-[10px] text-slate-400 font-medium uppercase">Requested</span>
-                      <span className="font-semibold text-slate-700">{req.requestedDate}</span>
-                    </div>
-                    <div>
-                      <span className="block text-[10px] text-slate-400 font-medium uppercase">Access expires</span>
-                      <span className="font-semibold text-slate-700">{req.accessExpires || "14 days"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions: Review & Approve / Reject */}
-                <div className="flex items-center justify-between gap-3 pt-4 border-t border-[#F0F4FA]">
-                  <button
-                    type="button"
-                    onClick={() => openModal(req, "approve")}
-                    className="flex-1 py-2.5 rounded-xl bg-[#0080DF] hover:bg-[#0070C5] text-white text-[13px] font-semibold transition-colors shadow-sm cursor-pointer"
-                  >
-                    Review & Approve
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openModal(req, "reject")}
-                    className="px-5 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-red-600 text-[13px] font-semibold transition-colors cursor-pointer"
-                  >
-                    Reject
-                  </button>
-                </div>
+        {/* 5. PENDING REQUESTS SECTION — Figma Node 583:5084 & 583:5085 */}
+        <section className="flex flex-col gap-4" data-node-id="583:5084">
+          <div className="flex items-start justify-between gap-[12px] min-h-[56px]" data-node-id="583:5085" data-name="Section heading">
+            <div className="flex items-start gap-[12px]">
+              <div className="size-[23px] text-[#078BDE] shrink-0 mt-1" data-node-id="583:5086">
+                <Clock3 className="size-[23px]" />
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION 2: Active Access matching Node 299:1200 */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-              </svg>
-            </div>
-            <h2 className="text-[18px] font-bold text-[#01091E] font-heading">
-              Active Access
-            </h2>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
-              {activeList.length}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {activeList.map((req) => (
-              <div
-                key={req.id}
-                className="bg-white rounded-[20px] p-6 border border-[#E9EFFD] shadow-[0px_1px_3px_rgba(0,0,0,0.05)] flex flex-col justify-between gap-5"
-              >
-                <div className="flex flex-col gap-4">
-                  {/* Doctor Info & Approved Badge */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-full overflow-hidden relative bg-slate-100 border border-slate-200 shrink-0">
-                        <Image
-                          src={req.avatarUrl || "/assets/figma/avatars/doctor-sara.png"}
-                          alt={req.doctorName}
-                          fill
-                          className="object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
-                        <div className="absolute inset-0 bg-emerald-600 flex items-center justify-center text-white font-bold text-sm -z-10">
-                          {req.doctorName.split(" ").map(n => n[0]).join("")}
-                        </div>
-                      </div>
-                      <div className="flex flex-col">
-                        <h3 className="text-[16px] font-bold text-[#02307D] font-heading leading-tight">
-                          {req.doctorName}
-                        </h3>
-                        <p className="text-[12px] text-slate-500 font-medium">
-                          {req.doctorSpecialty} • {req.hospitalClinic}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-200">
-                        Approved
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-mono">{req.requestId}</span>
-                    </div>
-                  </div>
-
-                  {/* Categories */}
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    {req.permissions.map((p) => (
-                      <span
-                        key={p.category}
-                        className="px-2.5 py-1 rounded-md bg-[#F4F8FD] text-[#02307D] text-[11px] font-medium border border-[#E2ECF8]"
-                      >
-                        {p.category}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Reason */}
-                  <div className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E9EFFD] flex flex-col gap-1">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-                      REASON FOR ACCESS
-                    </span>
-                    <p className="text-[13px] text-[#41474F] leading-relaxed">
-                      {req.reasonForAccess}
-                    </p>
-                  </div>
-
-                  <p className="text-[12px] text-emerald-700 font-semibold">
-                    {req.expiresText}
-                  </p>
-                </div>
-
-                {/* Revoke button */}
-                <div className="flex items-center justify-between gap-3 pt-4 border-t border-[#F0F4FA]">
-                  <button
-                    type="button"
-                    onClick={() => openModal(req, "approve")}
-                    className="text-[13px] font-semibold text-[#0080DF] hover:underline cursor-pointer"
-                  >
-                    View shared information
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openModal(req, "revoke")}
-                    className="px-4 py-2 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 text-[13px] font-semibold transition-colors cursor-pointer"
-                  >
-                    Revoke Access
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION 3: Request History matching Node 299:1300 */}
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-sky-50 flex items-center justify-center text-[#0080DF]">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h2 className="text-[18px] font-bold text-[#01091E] font-heading">
-              Request History
-            </h2>
-            <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
-              {historyList.length}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {historyList.map((req) => (
-              <div
-                key={req.id}
-                className="bg-white/80 rounded-[20px] p-6 border border-[#E9EFFD] shadow-[0px_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-4 opacity-90"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-11 h-11 rounded-full overflow-hidden relative bg-slate-100 border border-slate-200 shrink-0">
-                      <Image
-                        src={req.avatarUrl || "/assets/figma/avatars/doctor-sara.png"}
-                        alt={req.doctorName}
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          e.currentTarget.style.display = "none";
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-slate-400 flex items-center justify-center text-white font-bold text-xs -z-10">
-                        {req.doctorName.split(" ").map(n => n[0]).join("")}
-                      </div>
-                    </div>
-                    <div className="flex flex-col">
-                      <h3 className="text-[15px] font-bold text-[#02307D] font-heading leading-tight">
-                        {req.doctorName}
-                      </h3>
-                      <p className="text-[12px] text-slate-500 font-medium">
-                        {req.doctorSpecialty} • {req.hospitalClinic}
-                      </p>
-                    </div>
-                  </div>
-
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
-                      req.status === "rejected"
-                        ? "bg-red-50 text-red-700 border-red-200"
-                        : "bg-slate-100 text-slate-700 border-slate-200"
-                    }`}
-                  >
-                    {req.status === "rejected" ? "Rejected" : "Revoked"}
-                  </span>
-                </div>
-
-                <p className="text-[12px] text-slate-500 leading-relaxed font-sans">
-                  {req.expiresText}
+              <div className="flex flex-col gap-[6px] text-left" data-node-id="583:5088">
+                <h2 className="text-[24px] font-bold text-[#01091E] font-heading leading-[1.25]" data-node-id="583:5089">
+                  Pending Requests
+                </h2>
+                <p className="text-[13px] font-normal text-[#41474F] font-sans leading-[1.5]" data-node-id="583:5090">
+                  Review the requested information before making a decision. No access has been granted.
                 </p>
               </div>
-            ))}
+            </div>
+            <div className="bg-[#EFF8FE] px-[12px] py-[5px] rounded-[100px] shrink-0" data-node-id="583:5091">
+              <span className="text-[13px] font-bold text-[#02307D] leading-normal" data-node-id="583:5092">
+                {pendingList.length}
+              </span>
+            </div>
           </div>
-        </section>
-      </main>
 
-      {/* MODAL 1: Review & Approve Access matching Figma Node 299:1463 */}
-      {modalType === "approve" && selectedRequest && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div
-            className="bg-white rounded-[24px] max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-200"
-            data-node-id="299:1463"
-          >
-            {/* Modal Header */}
-            <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center text-[#0080DF]">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                  </svg>
+          {pendingList.length === 0 ? (
+            <div className="bg-white rounded-[8px] p-8 border border-[#D8DFEB] text-center text-slate-400 text-sm">
+              No pending access requests. You have reviewed all active clinical requests.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-node-id="583:5093">
+              {pendingList.map((req, idx) => (
+                <AccessRequestCard
+                  key={req.id}
+                  request={req}
+                  cardType="pending"
+                  nodeId={idx === 0 ? "583:5094" : "583:5137"}
+                  onAction={(action) => openModal(req, action as "approve" | "reject")}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* 6. ACTIVE ACCESS SECTION — Doctor Grantees */}
+        {activeList.length > 0 && (
+          <section className="flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-[12px] min-h-[56px]">
+              <div className="flex items-start gap-[12px]">
+                <div className="size-[23px] text-[#16734E] shrink-0 mt-1">
+                  <ShieldCheck className="size-[23px]" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-[#01091E] font-heading">
-                    Review & Approve Access
-                  </h3>
-                  <p className="text-[12px] text-slate-500">
-                    Check exactly what you&apos;ll share with {selectedRequest.doctorName} before giving permission.
+                <div className="flex flex-col gap-[6px] text-left">
+                  <h2 className="text-[24px] font-bold text-[#01091E] font-heading leading-[1.25]">
+                    Active Access
+                  </h2>
+                  <p className="text-[13px] font-normal text-[#41474F] font-sans leading-[1.5]">
+                    Authorized healthcare professionals who can currently view your records.
                   </p>
                 </div>
               </div>
-
-              <button
-                type="button"
-                onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600 text-lg cursor-pointer"
-              >
-                ✕
-              </button>
+              <div className="bg-[#EAF7EF] px-[12px] py-[5px] rounded-[100px] shrink-0">
+                <span className="text-[13px] font-bold text-[#16734E] leading-normal">
+                  {activeList.length}
+                </span>
+              </div>
             </div>
 
-            {/* Doctor Info card */}
-            <div className="p-4 rounded-xl bg-[#F8FAFC] border border-[#E9EFFD] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden relative">
-                  <Image src={selectedRequest.avatarUrl || "/assets/figma/avatars/doctor-sara.png"} alt="" fill className="object-cover" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {activeList.map((req) => (
+                <AccessRequestCard
+                  key={req.id}
+                  request={req}
+                  cardType="active"
+                  onAction={() => openModal(req, "revoke")}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 7. REQUEST HISTORY SECTION — Figma Node 583:5178 */}
+        {historyList.length > 0 && (
+          <section className="flex flex-col gap-4" data-node-id="583:5178">
+            <div className="flex items-start justify-between gap-[12px] min-h-[56px]" data-node-id="583:5179">
+              <div className="flex items-start gap-[12px]">
+                <div className="size-[23px] text-[#078BDE] shrink-0 mt-1" data-node-id="583:5180">
+                  <History className="size-[23px]" />
                 </div>
-                <div>
-                  <h4 className="text-[14px] font-bold text-[#02307D]">{selectedRequest.doctorName}</h4>
-                  <p className="text-[12px] text-slate-500">{selectedRequest.doctorSpecialty} • {selectedRequest.hospitalClinic}</p>
+                <div className="flex flex-col gap-[6px] text-left" data-node-id="583:5182">
+                  <h2 className="text-[24px] font-bold text-[#01091E] font-heading leading-[1.25]" data-node-id="583:5183">
+                    Request History
+                  </h2>
+                  <p className="text-[13px] font-normal text-[#41474F] font-sans leading-[1.5]" data-node-id="583:5184">
+                    A transparent record of your past decisions. These doctors have no current access.
+                  </p>
                 </div>
               </div>
-              <span className="text-[11px] font-mono font-bold text-slate-400">{selectedRequest.requestId}</span>
-            </div>
-
-            {/* Information you will share checklist */}
-            <div className="flex flex-col gap-3">
-              <span className="text-[13px] font-bold text-[#01091E]">Information you will share</span>
-              <div className="flex flex-col gap-2.5">
-                {selectedRequest.permissions.map((p) => (
-                  <div
-                    key={p.category}
-                    className="p-3.5 rounded-xl border border-emerald-100 bg-emerald-50/50 flex items-start gap-3"
-                  >
-                    <svg className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[13px] font-bold text-[#02307D]">{p.category}</span>
-                        <span className="text-[11px] font-medium text-slate-400">{p.recordsCount} records</span>
-                      </div>
-                      <p className="text-[12px] text-slate-600 mt-0.5">{p.details}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="bg-[#EFF8FE] px-[12px] py-[5px] rounded-[100px] shrink-0" data-node-id="583:5185">
+                <span className="text-[13px] font-bold text-[#02307D] leading-normal" data-node-id="583:5186">
+                  {historyList.length}
+                </span>
               </div>
             </div>
 
-            {/* Expiration Note */}
-            <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-100 flex items-center gap-3 text-[12px] text-[#0080DF]">
-              <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>{selectedRequest.expiresText}</span>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {historyList.map((req) => (
+                <AccessRequestCard
+                  key={req.id}
+                  request={req}
+                  cardType="history"
+                />
+              ))}
             </div>
+          </section>
+        )}
+      </main>
 
-            {/* Modal Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmAction}
-                className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#0080DF] hover:bg-[#0070C5] shadow-sm cursor-pointer"
-              >
-                ✓ Approve Access
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 2: Reject Confirmation */}
-      {modalType === "reject" && selectedRequest && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-[24px] max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-[#01091E]">Reject Request</h3>
-            </div>
-            <p className="text-sm text-[#41474F] leading-relaxed">
-              Are you sure you want to reject the access request from <strong className="text-slate-900">{selectedRequest.doctorName}</strong>? No clinical records will be shared.
-            </p>
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmAction}
-                className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-sm cursor-pointer"
-              >
-                Confirm Rejection
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 3: Revoke Confirmation */}
-      {modalType === "revoke" && selectedRequest && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-[24px] max-w-md w-full p-6 shadow-2xl border border-slate-100 flex flex-col gap-5 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-[#01091E]">Revoke Access</h3>
-            </div>
-            <p className="text-sm text-[#41474F] leading-relaxed">
-              Are you sure you want to revoke access for <strong className="text-slate-900">{selectedRequest.doctorName}</strong>? Their permissions to view your medical information will terminate immediately.
-            </p>
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmAction}
-                className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 shadow-sm cursor-pointer"
-              >
-                Revoke Immediately
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Footer matching Figma Node 610:17227 */}
       <PatientFooter />
-      <MobileBottomNav />
+
+      {/* Modal 1: Review & Approve */}
+      <ReviewApproveModal
+        request={selectedRequest}
+        isOpen={modalType === "approve"}
+        onClose={closeModal}
+        onConfirm={handleConfirmAction}
+      />
+
+      {/* Modal 2: Reject */}
+      <RejectRequestModal
+        request={selectedRequest}
+        isOpen={modalType === "reject"}
+        onClose={closeModal}
+        onConfirm={handleConfirmAction}
+      />
+
+      {/* Modal 3: Revoke */}
+      <RevokeAccessModal
+        request={selectedRequest}
+        isOpen={modalType === "revoke"}
+        onClose={closeModal}
+        onConfirm={handleConfirmAction}
+      />
     </div>
   );
 }

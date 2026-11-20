@@ -56,7 +56,7 @@ const RECENT_ACTIVITIES: readonly ActivityItem[] = [
   },
   {
     id: "act-imaging",
-    title: "Medical Imaging",
+    title: "Radiology",
     subtitle: "Chest X-Ray & Digital Radiology Scan",
     time: "Oct 20, 2026",
     provider: "Al Borg Scan Center",

@@ -26,7 +26,7 @@ export function PatientHero() {
 
   return (
     <section
-      className="relative w-full h-[668px] overflow-hidden bg-[#01091E]"
+      className="relative w-full min-h-[500px] lg:h-[668px] py-10 lg:py-0 overflow-hidden bg-[#01091E] flex items-center"
       data-node-id="299:4932"
     >
       {/* Background Slideshow with Exact Figma Gradients matching Component 2 (Node 288:561) */}
@@ -36,13 +36,13 @@ export function PatientHero() {
         dataNodeId="288:561"
       />
 
-      {/* Hero Content Container matching Figma Node 299:4934 */}
-      <div className="relative z-10 max-w-[1280px] h-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-        <div className="w-full max-w-[1216px] flex flex-col items-start pt-6" data-node-id="299:4934">
+      {/* Hero Content Container matching Figma Node 299:4934 (Desktop) & 364:4478 (Mobile) */}
+      <div className="relative z-10 max-w-[1280px] w-full mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
+        <div className="w-full max-w-[1216px] flex flex-col items-start pt-2 lg:pt-6" data-node-id="299:4934">
           {/* Main Title & Copy Block */}
-          <div className="flex flex-col items-start pb-[24px]" data-node-id="299:4936">
+          <div className="flex flex-col items-start pb-4 lg:pb-[24px]" data-node-id="299:4936">
             <h1
-              className="font-heading font-bold text-[40px] sm:text-[52px] lg:text-[64px] leading-tight flex flex-col gap-[4px] not-italic"
+              className="font-heading font-bold text-[32px] sm:text-[48px] lg:text-[64px] leading-tight flex flex-col gap-1 not-italic text-left"
               data-node-id="299:4938"
             >
               <span className="text-white drop-shadow-sm" data-node-id="299:4939">
@@ -54,19 +54,22 @@ export function PatientHero() {
             </h1>
 
             <p
-              className="mt-[20px] pb-[8px] font-sans font-normal text-[16px] sm:text-[18px] text-[#EAEDF6] leading-[1.4] max-w-[662px]"
+              className="mt-3 lg:mt-[20px] pb-2 font-sans font-normal text-[14px] sm:text-[16px] lg:text-[18px] text-[#EAEDF6] leading-relaxed max-w-[662px] text-left"
               data-node-id="299:4942"
             >
               Access your medical records and health information securely, all in one place.
               Stay informed and in control of your healthcare journey.
             </p>
 
-            {/* Action Buttons matching Figma Node 299:4943 / 288:602 / 288:616 */}
-            <div className="mt-[24px] flex flex-wrap items-center gap-[16px]" data-node-id="299:4944">
+            {/* Action Buttons: Stacked on Mobile (364:4478), Row on Desktop (299:4943) */}
+            <div
+              className="mt-5 lg:mt-[24px] flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-[16px] w-full max-w-[390px] sm:max-w-none"
+              data-node-id="299:4944"
+            >
               {/* Primary Button: Medical Information */}
               <Link
                 href="/patient/medical-info"
-                className="bg-[#078BDE] hover:bg-[#0677BE] text-[#EAEDF6] font-semibold text-[16px] px-[28px] py-[14px] rounded-[10px] flex items-center justify-center gap-[8px] transition-all transform hover:-translate-y-0.5 shadow-md shadow-[#078BDE]/30"
+                className="w-full sm:w-auto bg-[#078BDE] hover:bg-[#0677BE] text-[#EAEDF6] font-semibold text-[15px] sm:text-[16px] h-[48px] sm:h-auto px-6 lg:px-[28px] py-3 lg:py-[14px] rounded-[10px] flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 shadow-md shadow-[#078BDE]/30"
                 data-node-id="288:602"
               >
                 <span>Medical Information</span>
@@ -86,7 +89,7 @@ export function PatientHero() {
               <button
                 type="button"
                 onClick={handleProfileClick}
-                className="bg-[rgba(2,48,125,0.55)] hover:bg-[rgba(2,48,125,0.8)] border border-[#02307D] text-[#EAEDF6] font-semibold text-[16px] px-[28px] py-[14px] rounded-[10px] flex items-center justify-center gap-[8px] transition-all transform hover:-translate-y-0.5 cursor-pointer"
+                className="w-full sm:w-auto bg-[rgba(2,48,125,0.55)] hover:bg-[rgba(2,48,125,0.8)] border border-[#02307D] text-[#EAEDF6] font-semibold text-[15px] sm:text-[16px] h-[48px] sm:h-auto px-6 lg:px-[28px] py-3 lg:py-[14px] rounded-[10px] flex items-center justify-center gap-2 transition-all transform hover:-translate-y-0.5 cursor-pointer"
                 data-node-id="288:616"
               >
                 <span>View my profile</span>
@@ -105,21 +108,21 @@ export function PatientHero() {
           </div>
 
           {/* Social / Summit Bar matching Figma Node 299:4947 / 299:4948 */}
-          <div className="w-full pt-[24px]" data-node-id="299:4947">
+          <div className="w-full pt-4 lg:pt-[24px]" data-node-id="299:4947">
             <div
-              className="border-t border-[rgba(255,255,255,0.15)] pt-[33px] flex flex-wrap items-center gap-[12px]"
+              className="border-t border-[rgba(255,255,255,0.15)] pt-4 lg:pt-[33px] flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-[12px]"
               data-node-id="299:4948"
             >
               <div className="pr-[8px]">
                 <span
-                  className="font-semibold text-[12px] text-[rgba(255,255,255,0.7)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]"
+                  className="font-semibold text-[11px] sm:text-[12px] text-[rgba(255,255,255,0.7)] tracking-[1.2px] uppercase whitespace-nowrap leading-[16px]"
                   data-node-id="299:4951"
                 >
                   FOLLOW THE SUMMIT:
                 </span>
               </div>
 
-              {/* 4 Social Media Buttons matching Figma Component (146:429, 146:441, 146:447, 146:453) */}
+              {/* 4 Social Media Buttons */}
               <div className="flex items-center gap-[8px]" data-node-id="299:4952">
                 {/* Facebook */}
                 <a
