@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="99.7222" height="14.7279" viewBox="0 0 99.7222 14.7279" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 4">
+<path id="Arrow 2" d="M8.74228e-08 7.36397L0 6.36397L83.8154 6.36396L83.8154 7.36396L83.8154 8.36396L1.74846e-07 8.36397L8.74228e-08 7.36397ZM84.5225 6.65685C84.9131 7.04738 84.9131 7.68054 84.5225 8.07107L78.1586 14.435C77.7681 14.8256 77.1349 14.8256 76.7444 14.435C76.3538 14.0445 76.3538 13.4113 76.7444 13.0208L82.4012 7.36396L76.7444 1.70711C76.3538 1.31658 76.3538 0.683418 76.7444 0.292893C77.1349 -0.097631 77.7681 -0.0976311 78.1586 0.292893L84.5225 6.65685Z" fill="url(#paint0_linear_4061_7027)"/>
+<circle id="Ellipse 5" cx="91.0322" cy="7.36397" r="3.39453" fill="#007BFF"/>
+<circle id="Ellipse 6" cx="98.0249" cy="7.6291" r="1.69727" fill="#007BFF"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_4061_7027" x1="83.8154" y1="6.86396" x2="4.37114e-08" y2="6.86397" gradientUnits="userSpaceOnUse">
+<stop stop-color="#007BFF"/>
+<stop offset="1" stop-color="#51C1FF"/>
+</linearGradient>
+</defs>
+</svg>
