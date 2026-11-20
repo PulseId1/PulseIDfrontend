@@ -76,17 +76,17 @@ const MOBILE_SOLUTIONS: SolutionCardData[] = [
     expandedDetail:
       "Connects disparate hospital EHR systems via zero-knowledge encrypted bridges, granting patients an immutable passport for global medical consultations.",
     accentStroke: "#00609B",
-    iconSrc: "/assets/figma/icons/solution-01-biometric-record.svg",
+    iconSrc: "/assets/figma/mobile/solution-1-fingerprint.svg",
   },
   {
     id: "m-sol-02",
     title: "2. Patient-Owned Consent Control",
     description:
-      "Patients can grant, inspect, or revoke doctor and clinic access in one tap from mobile with time- locked tokens.",
+      "Patients can grant, inspect, or revoke doctor and clinic access in one tap from mobile with time-locked tokens.",
     expandedDetail:
       "Every medical disclosure requires an explicit digital consent signature. Patients can revoke clinic or specialist access with one click at any time.",
     accentStroke: "#00AEC7",
-    iconSrc: "/assets/figma/icons/solution-02-consent-control.svg",
+    iconSrc: "/assets/figma/mobile/solution-2-consent.svg",
   },
   {
     id: "m-sol-03",
@@ -96,7 +96,7 @@ const MOBILE_SOLUTIONS: SolutionCardData[] = [
     expandedDetail:
       "Eliminates handwritten prescription misreads, duplicate dispensing, and fraudulent paper scripts.",
     accentStroke: "#3B5BA9",
-    iconSrc: "/assets/figma/icons/solution-04-smart-prescription.svg",
+    iconSrc: "/assets/figma/mobile/solution-3-pharmacy.svg",
   },
   {
     id: "m-sol-04",
@@ -106,17 +106,17 @@ const MOBILE_SOLUTIONS: SolutionCardData[] = [
     expandedDetail:
       "Prevents duplicate patient billing and repeated diagnostic testing across siloed diagnostic providers.",
     accentStroke: "#00609B",
-    iconSrc: "/assets/figma/icons/solution-03-ai-assistant.svg",
+    iconSrc: "/assets/figma/mobile/solution-4-hub.svg",
   },
   {
     id: "m-sol-05",
     title: "5. Accredited Clinical Directory",
     description:
-      "Direct booking and tele-consultation with MOH- verified specialists, hospitals, and certified laboratory centers.",
+      "Direct booking and tele-consultation with MOH-verified specialists, hospitals, and certified laboratory centers.",
     expandedDetail:
       "Simultaneously verifies provider clinical license credentials and insurance eligibility prior to appointments.",
     accentStroke: "#BA1A1A",
-    iconSrc: "/assets/figma/icons/solution-05-drug-alerts.svg",
+    iconSrc: "/assets/figma/mobile/solution-5-directory.svg",
   },
 ];
 
@@ -134,17 +134,24 @@ export function SolutionsSection() {
   const rightBottomCard = DESKTOP_SOLUTIONS[4];// 05. Drug Interaction Alerts
 
   return (
-    <section id="solutions" className="w-full bg-[#FBFEFF] pt-8 pb-0 overflow-hidden">
+    <section
+      id="solutions"
+      className="scroll-mt-20 w-full bg-white lg:bg-[#FBFEFF] border-t border-[#f1f5f9] lg:border-t-0 pt-10 pb-0 lg:pt-8 lg:pb-0 overflow-hidden"
+      data-node-id="218:515"
+      data-name="SolutionsSection"
+    >
       {/* 
-        Section Heading (Figma Node 233:503):
-        Left-aligned across all breakpoints as requested by user
+        Section Heading:
+        Mobile (Figma Node 218:516): 24px Bold, #02307D, 12px subtitle
+        Desktop (Figma Node 233:503): 36px Bold, #078BDE, 16px subtitle
       */}
-      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 lg:mb-[62px]">
+      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 lg:mb-[62px]">
         <div className="max-w-[770px] text-left">
-          <h2 className="text-3xl sm:text-4xl lg:text-[36px] font-bold text-[#078BDE] tracking-tight leading-tight text-left">
-            How PulseID Makes a Difference
+          <h2 className="text-[24px] lg:text-[36px] font-bold text-[#02307D] lg:text-[#078BDE] tracking-tight leading-tight text-left font-sans">
+            <span className="block lg:inline">How PulseID Makes a </span>
+            <span className="block lg:inline">Difference</span>
           </h2>
-          <p className="mt-2 text-base sm:text-[16px] text-[#41474F] leading-relaxed text-left">
+          <p className="mt-1 lg:mt-2 text-[12px] lg:text-[16px] text-[#41474F] leading-normal font-sans text-left">
             We designed practical solutions to address these challenges and create
             a smoother, more accessible healthcare experience for everyone.
           </p>
@@ -152,11 +159,11 @@ export function SolutionsSection() {
       </div>
 
       {/* 
-        Background wrapper matching Figma Node 233:506:
+        Desktop Background wrapper matching Figma Node 233:506:
         width: 100% full-width edge-to-edge (no space-x), height: 579px;
         Background: Wave mesh matrix from sec3-bg-clippath.svg, dual ambient radiance orbs, and connecting arcs
       */}
-      <div className="w-full">
+      <div className="hidden lg:block w-full">
         <div className="w-full relative min-h-[579px] h-[579px] overflow-hidden bg-gradient-to-b from-[#E7F2FF] via-[#FAF8FF] via-[51.5%] to-[#F0F3FB] rounded-none border-y border-[#E1EAF5]">
           {/* Layer 1: Figma Node 233:507 / 233:510 Wave Mesh Background Layer from sec3-bg-clippath.svg */}
           <div className="absolute inset-0 pointer-events-none select-none overflow-hidden flex items-center justify-center z-0" aria-hidden="true">
@@ -245,72 +252,78 @@ export function SolutionsSection() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* 
-          Mobile Version matching Figma lADING MOBAIL (Node 218:515 & 218:524):
-          5 cards stacked in a single column, 358px wide, with Details ⌄ toggle
-        */}
-        <div className="block lg:hidden w-full max-w-[358px] sm:max-w-md mx-auto px-4 py-6 flex flex-col gap-3 relative z-10" data-node-id="218:523">
-          {MOBILE_SOLUTIONS.map((card) => {
-            const isExpanded = expandedId === card.id;
-            return (
-              <div
-                key={card.id}
-                className="bg-[#F8FAFC] rounded-[16px] p-4 border border-[#E1EAF5] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex flex-col gap-2 transition-all"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-[12px] bg-[#ECFDF5] border border-[#A7F3D0] flex items-center justify-center shrink-0">
-                      <Image
-                        src={card.iconSrc}
-                        alt=""
-                        width={16}
-                        height={16}
-                        className="object-contain"
-                      />
-                    </div>
-                    <h3 className="font-bold text-[#01091E] text-[12px] sm:text-[13px] truncate font-sans">
-                      {card.title}
-                    </h3>
-                  </div>
+      {/* 
+        Mobile Version matching Figma lADING MOBAIL (Node 218:515 & 218:524):
+        5 cards stacked in a single column, 358px wide with 16px side margin, with Details ⌄ toggle
+      */}
+      <div className="block lg:hidden w-full max-w-[420px] mx-auto px-4 pb-10 flex flex-col gap-[12px] relative z-10" data-node-id="218:523">
+        {MOBILE_SOLUTIONS.map((card) => {
+          const isExpanded = expandedId === card.id;
+          return (
+            <div
+              key={card.id}
+              className="w-full bg-[#f8fafc] rounded-[16px] p-3.5 sm:p-4 border border-[#e1eaf5] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex gap-2.5 sm:gap-3 items-start transition-all"
+            >
+              {/* Left: 36x36 Icon Container matching Figma 218:526 */}
+              <div className="size-[36px] rounded-[12px] bg-[#ecfdf5] border border-[#a7f3d0] flex items-center justify-center shrink-0 p-px">
+                <Image
+                  src={card.iconSrc}
+                  alt=""
+                  width={16}
+                  height={16}
+                  priority
+                  unoptimized
+                  className="size-[16px] object-contain"
+                />
+              </div>
+
+              {/* Right: Content Column matching Figma 218:529 */}
+              <div className="flex-1 min-w-0 flex flex-col gap-[3px]">
+                {/* Header Row: Title + Details Button */}
+                <div className="flex items-center justify-between gap-1.5 w-full">
+                  <h3 className="font-bold text-[#01091e] text-[12px] leading-tight font-sans whitespace-nowrap">
+                    {card.title}
+                  </h3>
 
                   <button
                     type="button"
                     onClick={() => toggleExpand(card.id)}
-                    className="text-[#078BDE] hover:text-[#0060A8] text-[11px] font-semibold flex items-center gap-1 shrink-0 px-1 py-0.5 rounded cursor-pointer"
+                    className="text-[#078bde] hover:text-[#0060a8] text-[11px] font-semibold flex items-center gap-[2px] shrink-0 cursor-pointer"
                     aria-expanded={isExpanded}
                   >
                     <span>Details</span>
-                    <svg
-                      className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                        isExpanded ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2.5}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                    </svg>
+                    <div className={`size-[14px] flex items-center justify-center transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>
+                      <Image
+                        src="/assets/figma/mobile/chevron-down.svg"
+                        alt=""
+                        width={14}
+                        height={14}
+                        unoptimized
+                      />
+                    </div>
                   </button>
                 </div>
 
-                <p className="text-[11px] text-[#41474F] leading-normal pl-12">
+                {/* Description alongside the icon */}
+                <p className="font-normal text-[11px] text-[#41474f] leading-[15px] font-sans">
                   {card.description}
                 </p>
 
+                {/* Accordion detail if expanded */}
                 {isExpanded && (
-                  <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-[#41474F] italic bg-slate-50 p-2.5 rounded-lg animate-in fade-in duration-200 ml-12">
-                    <span className="font-semibold text-[#02307D] not-italic block mb-0.5">
+                  <div className="mt-2 pt-2 border-t border-[#e1eaf5] text-[11px] text-[#41474f] italic bg-white/70 p-2 rounded-lg animate-in fade-in duration-200">
+                    <span className="font-semibold text-[#02307d] not-italic block mb-0.5">
                       Architecture & Benefit:
                     </span>
                     {card.expandedDetail}
                   </div>
                 )}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

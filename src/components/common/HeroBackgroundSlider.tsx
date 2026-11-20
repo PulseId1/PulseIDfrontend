@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import {
+  APPROVED_HERO_IMAGES,
+  type HeroRoleType,
+} from "@/lib/constants/hero-images";
 
 export type SlideItem =
   | string
@@ -9,11 +13,14 @@ export type SlideItem =
       src: string;
       alt?: string;
       objectPosition?: string;
+      objectPositionMobile?: string;
     };
 
 export interface HeroBackgroundSliderProps {
   /** Array of image paths or slide objects to rotate through */
   slides?: SlideItem[];
+  /** Deterministic role selection. When provided, strictly displays that role's approved Figma image */
+  selectedRole?: HeroRoleType | null;
   /** Rotation interval in milliseconds (default: 6000ms matching Patient Hero) */
   intervalMs?: number;
   /** Transition duration class (default: "duration-1000") */
@@ -24,7 +31,7 @@ export interface HeroBackgroundSliderProps {
   className?: string;
   /** Optional image class name */
   imageClassName?: string;
-  /** Optional custom bottom fade (e.g. For landing page) */
+  /** Optional custom bottom fade (e.g. for landing page) */
   showBottomFade?: boolean;
   /** Figma tracking node ID */
   dataNodeId?: string;
@@ -46,32 +53,34 @@ export const DEFAULT_DOCTOR_HERO_SLIDES: SlideItem[] = [
   "/assets/doctor/imgFrame1171277915.png",
 ];
 
-/** Predefined canonical slides for public Landing Hero (Before Login) */
+/**
+ * EXACT THREE APPROVED FIGMA IMAGES FOR THE UNAUTHENTICATED HERO:
+ * 1. Doctor: Node 146:394 (041b34b4...)
+ * 2. Normal: Node 146:396 (9066fed7...)
+ * 3. Patient: Node 146:395 (fc35ed77...)
+ */
 export const DEFAULT_LANDING_HERO_SLIDES: SlideItem[] = [
   {
-    src: "/landing/hero-doctor-authentic.png",
-    alt: "Surgeon with biometric medical holographic interface",
-    objectPosition: "object-top lg:object-[center_top]",
+    src: APPROVED_HERO_IMAGES.doctor.src,
+    alt: APPROVED_HERO_IMAGES.doctor.alt,
+    objectPosition: APPROVED_HERO_IMAGES.doctor.objectPositionDesktop,
+    objectPositionMobile: APPROVED_HERO_IMAGES.doctor.objectPositionMobile,
   },
   {
-    src: "/landing/hero-composite-233-92.png",
-    alt: "Clinical PulseID Healthcare Ecosystem",
-    objectPosition: "object-center",
-  },
-  {
-    src: "/assets/doctor/imgFrame1171277916.png",
-    alt: "Physician Clinical Interface",
-    objectPosition: "object-center",
-  },
-  {
-    src: "/assets/patient-home/hero-slide-1.png",
-    alt: "Patient Medical Record Management",
-    objectPosition: "object-center",
+    src: APPROVED_HERO_IMAGES.patient.src,
+    alt: APPROVED_HERO_IMAGES.patient.alt,
+    objectPosition: APPROVED_HERO_IMAGES.patient.objectPositionDesktop,
+    objectPositionMobile: APPROVED_HERO_IMAGES.patient.objectPositionMobile,
   },
 ];
 
 /** Predefined canonical slides for Pharmacist Portal Hero */
 export const DEFAULT_PHARMACIST_HERO_SLIDES: SlideItem[] = [
+  {
+    src: "/assets/pharmacist/4e07e4059389a77e23743d034606b15b6d574ed6.png",
+    alt: "Pharmacist Verification & Safe Dispensing",
+    objectPosition: "object-center",
+  },
   {
     src: "/assets/doctor/imgFrame1171277916.png",
     alt: "Clinical Dispensary Verification",
@@ -87,11 +96,6 @@ export const DEFAULT_PHARMACIST_HERO_SLIDES: SlideItem[] = [
     alt: "Pharmacy Registry Integration",
     objectPosition: "object-center",
   },
-  {
-    src: "/assets/patient-home/hero-slide-3.png",
-    alt: "Digital Health Records",
-    objectPosition: "object-center",
-  },
 ];
 
 /**
@@ -100,7 +104,8 @@ export const DEFAULT_PHARMACIST_HERO_SLIDES: SlideItem[] = [
  * with smooth crossfade opacity animations and authentic Figma contrast overlays.
  */
 export function HeroBackgroundSlider({
-  slides = DEFAULT_PATIENT_HERO_SLIDES,
+  slides,
+  selectedRole,
   intervalMs = 6000,
   transitionDurationClassName = "duration-1000",
   overlayGradient = true,
@@ -112,15 +117,33 @@ export function HeroBackgroundSlider({
 }: HeroBackgroundSliderProps) {
   const [activeSlide, setActiveSlide] = useState(0);
 
-  const normalizedSlides = slides.length > 0 ? slides : DEFAULT_PATIENT_HERO_SLIDES;
+  // If a role is specifically selected, deterministically lock to its approved image
+  const resolvedSlides: SlideItem[] = React.useMemo(() => {
+    if (selectedRole && APPROVED_HERO_IMAGES[selectedRole]) {
+      const img = APPROVED_HERO_IMAGES[selectedRole];
+      return [
+        {
+          src: img.src,
+          alt: img.alt,
+          objectPosition: img.objectPositionDesktop,
+          objectPositionMobile: img.objectPositionMobile,
+        },
+      ];
+    }
+    if (slides && slides.length > 0) return slides;
+    return DEFAULT_LANDING_HERO_SLIDES;
+  }, [selectedRole, slides]);
 
   useEffect(() => {
-    if (normalizedSlides.length <= 1) return;
+    if (resolvedSlides.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % normalizedSlides.length);
+      setActiveSlide((prev) => (prev + 1) % resolvedSlides.length);
     }, intervalMs);
     return () => clearInterval(timer);
-  }, [normalizedSlides.length, intervalMs]);
+  }, [resolvedSlides.length, intervalMs]);
+
+  const activeIndex =
+    resolvedSlides.length <= 1 ? 0 : activeSlide % resolvedSlides.length;
 
   return (
     <div
@@ -129,14 +152,18 @@ export function HeroBackgroundSlider({
       data-name={dataName}
       aria-hidden="true"
     >
-      {normalizedSlides.map((slide, idx) => {
+      {resolvedSlides.map((slide, idx) => {
         const src = typeof slide === "string" ? slide : slide.src;
         const alt = typeof slide === "string" ? "" : (slide.alt ?? "");
-        const position =
+        const positionDesktop =
           typeof slide === "string"
             ? "object-center"
             : (slide.objectPosition ?? "object-center");
-        const isActive = idx === activeSlide;
+        const positionMobile =
+          typeof slide === "string"
+            ? "object-center"
+            : (slide.objectPositionMobile ?? positionDesktop);
+        const isActive = idx === activeIndex;
 
         return (
           <div
@@ -151,7 +178,7 @@ export function HeroBackgroundSlider({
               fill
               priority={idx === 0}
               unoptimized
-              className={`object-cover size-full ${position} ${imageClassName ?? ""}`}
+              className={`object-cover size-full ${positionMobile} sm:${positionDesktop} ${imageClassName ?? ""}`}
             />
           </div>
         );

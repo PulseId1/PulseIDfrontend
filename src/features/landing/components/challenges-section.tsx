@@ -76,7 +76,7 @@ const MOBILE_CHALLENGES: ChallengeCardData[] = [
     expandedDetail:
       "Patients frequently undergo duplicate laboratory tests and repeat diagnostics because previous hospital records cannot be accessed across disparate EHR providers.",
     accentStroke: "#BA1A1A",
-    iconSrc: "/assets/figma/icons/challenge-01-fragmented-history.svg",
+    iconSrc: "/assets/figma/mobile/challenge-1-database.svg",
   },
   {
     id: "m-time-access",
@@ -86,7 +86,7 @@ const MOBILE_CHALLENGES: ChallengeCardData[] = [
     expandedDetail:
       "Traditional healthcare networks lack fine-grained, verifiable cryptographic consent, leaving patients uninformed about third-party record access.",
     accentStroke: "#00AEC7",
-    iconSrc: "/assets/figma/icons/challenge-02-time-access.svg",
+    iconSrc: "/assets/figma/mobile/challenge-2-padlock.svg",
   },
   {
     id: "m-privacy",
@@ -96,7 +96,7 @@ const MOBILE_CHALLENGES: ChallengeCardData[] = [
     expandedDetail:
       "Handwritten paper scripts lack cryptographic authentication, causing pharmacist verification phone tags and medication delays.",
     accentStroke: "#0080DF",
-    iconSrc: "/assets/figma/icons/challenge-04-data-privacy.svg",
+    iconSrc: "/assets/figma/mobile/challenge-3-prescription.svg",
   },
   {
     id: "m-med-risks",
@@ -106,7 +106,7 @@ const MOBILE_CHALLENGES: ChallengeCardData[] = [
     expandedDetail:
       "Lack of real-time clinical sharing forces emergency clinicians to re-order standard MRI, CT, and laboratory panels.",
     accentStroke: "#BA1A1A",
-    iconSrc: "/assets/figma/icons/challenge-03-medication-risks.svg",
+    iconSrc: "/assets/figma/mobile/challenge-4-sync.svg",
   },
   {
     id: "m-insights",
@@ -116,7 +116,7 @@ const MOBILE_CHALLENGES: ChallengeCardData[] = [
     expandedDetail:
       "Clinical registries and referral networks are fragmented across hospital groups, leaving patients uncertain of physician qualifications.",
     accentStroke: "#0080DF",
-    iconSrc: "/assets/figma/icons/challenge-05-medical-insights.svg",
+    iconSrc: "/assets/figma/mobile/challenge-5-users.svg",
   },
 ];
 
@@ -134,17 +134,23 @@ export function ChallengesSection() {
   const rightBottomCard = DESKTOP_CHALLENGES[4];
 
   return (
-    <section id="challenges" className="w-full bg-[#FBFEFF] pt-14 lg:pt-[60px] pb-0 overflow-hidden">
+    <section
+      id="challenges"
+      className="scroll-mt-20 w-full bg-[#f8fafc] lg:bg-[#FBFEFF] py-10 lg:pt-[60px] lg:pb-0 overflow-hidden"
+      data-node-id="218:421"
+      data-name="ChallengesSection"
+    >
       {/* 
-        Section Heading (Figma Node 233:189 / 233:190):
-        Left-aligned matching Figma guides (left: 32px, top: 60px, width: ~769px)
+        Section Heading:
+        Mobile (Figma Node 218:422): 24px Bold, #02307D, 12px subtitle
+        Desktop (Figma Node 233:189): 36px Bold, #078BDE, 16px subtitle
       */}
-      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 lg:mb-10">
+      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 lg:mb-10">
         <div className="max-w-[770px] text-left">
-          <h2 className="text-3xl sm:text-4xl lg:text-[36px] font-bold text-[#078BDE] tracking-tight leading-normal">
+          <h2 className="text-[24px] lg:text-[36px] font-bold text-[#02307D] lg:text-[#078BDE] tracking-tight leading-normal font-sans">
             The Challenges Users Face
           </h2>
-          <p className="mt-2 text-base sm:text-[16px] text-[#41474F] leading-normal">
+          <p className="mt-1 lg:mt-2 text-[12px] lg:text-[16px] text-[#41474F] leading-normal font-sans">
             Every user faces challenges when searching for and accessing
             healthcare services and information. We identified five key problems
             through our research and documentation.
@@ -246,65 +252,71 @@ export function ChallengesSection() {
 
       {/* 
         Mobile Version matching Figma lADING MOBAIL (Node 218:421 & 218:430):
-        5 cards stacked in a single column, 358px wide, with Details ⌄ toggle
+        5 cards stacked in a single column, 358px wide with 16px side margin, with Details ⌄ toggle
       */}
-      <div className="block lg:hidden w-full max-w-[358px] sm:max-w-md mx-auto px-4 flex flex-col gap-3 pb-8" data-node-id="218:429">
+      <div className="block lg:hidden w-full max-w-[420px] mx-auto px-4 pb-10 flex flex-col gap-[12px] relative z-10" data-node-id="218:429">
         {MOBILE_CHALLENGES.map((card) => {
           const isExpanded = expandedId === card.id;
           return (
             <div
               key={card.id}
-              className="bg-white rounded-[16px] p-4 border border-[#E1EAF5] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex flex-col gap-2 transition-all"
+              className="w-full bg-white rounded-[16px] p-3.5 sm:p-4 border border-[#e1eaf5] shadow-[0px_1px_2px_rgba(0,0,0,0.05)] flex gap-2.5 sm:gap-3 items-start transition-all"
             >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-[12px] bg-[#FFF1F2] border border-[#FFE4E6] flex items-center justify-center shrink-0">
-                    <Image
-                      src={card.iconSrc}
-                      alt=""
-                      width={16}
-                      height={16}
-                      className="object-contain"
-                    />
-                  </div>
-                  <h3 className="font-bold text-[#01091E] text-[12px] sm:text-[13px] truncate font-sans">
-                    {card.title}
-                  </h3>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => toggleExpand(card.id)}
-                  className="text-[#078BDE] hover:text-[#0060A8] text-[11px] font-semibold flex items-center gap-1 shrink-0 px-1 py-0.5 rounded cursor-pointer"
-                  aria-expanded={isExpanded}
-                >
-                  <span>Details</span>
-                  <svg
-                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2.5}
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </button>
+              {/* Left: 36x36 Icon Container matching Figma 218:432 */}
+              <div className="size-[36px] rounded-[12px] bg-[#fff1f2] border border-[#ffe4e6] flex items-center justify-center shrink-0 p-px">
+                <Image
+                  src={card.iconSrc}
+                  alt=""
+                  width={16}
+                  height={16}
+                  priority
+                  unoptimized
+                  className="size-[16px] object-contain"
+                />
               </div>
 
-              <p className="text-[11px] text-[#41474F] leading-normal pl-12">
-                {card.description}
-              </p>
+              {/* Right: Content Column matching Figma 218:435 */}
+              <div className="flex-1 min-w-0 flex flex-col gap-[3px]">
+                {/* Header Row: Title + Details Button */}
+                <div className="flex items-center justify-between gap-1.5 w-full">
+                  <h3 className="font-bold text-[#01091e] text-[12px] leading-tight font-sans whitespace-nowrap">
+                    {card.title}
+                  </h3>
 
-              {isExpanded && (
-                <div className="mt-2 pt-2 border-t border-slate-100 text-xs text-[#41474F] italic bg-slate-50 p-2.5 rounded-lg animate-in fade-in duration-200 ml-12">
-                  <span className="font-semibold text-[#02307D] not-italic block mb-0.5">
-                    Key Impact:
-                  </span>
-                  {card.expandedDetail}
+                  <button
+                    type="button"
+                    onClick={() => toggleExpand(card.id)}
+                    className="text-[#078bde] hover:text-[#0060a8] text-[11px] font-semibold flex items-center gap-[2px] shrink-0 cursor-pointer"
+                    aria-expanded={isExpanded}
+                  >
+                    <span>Details</span>
+                    <div className={`size-[14px] flex items-center justify-center transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}>
+                      <Image
+                        src="/assets/figma/mobile/chevron-down.svg"
+                        alt=""
+                        width={14}
+                        height={14}
+                        unoptimized
+                      />
+                    </div>
+                  </button>
                 </div>
-              )}
+
+                {/* Description alongside the icon */}
+                <p className="font-normal text-[11px] text-[#41474f] leading-[15px] font-sans">
+                  {card.description}
+                </p>
+
+                {/* Accordion detail if expanded */}
+                {isExpanded && (
+                  <div className="mt-2 pt-2 border-t border-[#e1eaf5] text-[11px] text-[#41474f] italic bg-[#f8fafc] p-2 rounded-lg animate-in fade-in duration-200">
+                    <span className="font-semibold text-[#02307d] not-italic block mb-0.5">
+                      Key Impact:
+                    </span>
+                    {card.expandedDetail}
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,233 +10,138 @@ import {
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[668px] bg-[#01091E] overflow-hidden pt-14 sm:pt-16 lg:pt-[72px] pb-16 sm:pb-20 flex items-center">
-      {/* 
-        Background Visual Hierarchy from Figma (Frame 1171277861):
-        Layer 1: Doctor Visual slideshow rotating through authentic clinical visuals
-        Layer 2: Official Figma Hero Gradient SVG (hero-gradient.svg)
-        Layer 3: Exact linear gradient overlay ensuring text contrast across all resolutions
-        Layer 4: Bottom fade into Section 2
-      */}
+    <section
+      className="relative w-full min-h-[668px] bg-[#01091e] overflow-hidden"
+      data-node-id="665:3565"
+      data-name="HeroSection"
+    >
+      {/* Background Rotating Slider matching Figma Component 39 (Node 665:3566 / Node 146:392) */}
       <HeroBackgroundSlider
         slides={DEFAULT_LANDING_HERO_SLIDES}
-        intervalMs={6000}
+        intervalMs={5500}
         showBottomFade={true}
+        dataNodeId="665:3566"
         overlayGradient={
-          <>
-            {/* Layer 2: Official Figma Hero Gradient SVG */}
-            <Image
-              src="/landing/hero-gradient.svg"
-              alt=""
-              fill
-              priority
-              unoptimized
-              aria-hidden="true"
-              className="object-cover object-top w-full h-full"
-            />
-
-            {/* Layer 3: Contrast preservation linear gradient matching Figma stops (0.95 left -> 0.75 center -> 0 right) */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(1, 9, 30, 0.95) 0%, rgba(1, 9, 30, 0.85) 35%, rgba(1, 9, 30, 0.70) 55%, rgba(1, 9, 30, 0) 100%)",
-              }}
-              aria-hidden="true"
-            />
-          </>
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-[rgba(1,9,30,0.95)] via-[rgba(1,9,30,0.75)] to-[rgba(1,9,30,0.25)] pointer-events-none"
+            aria-hidden="true"
+          />
         }
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full">
-        {/* 
-          Text Block 1: Headline
-          Figma properties:
-          width: 637px;
-          height: 182px;
-          padding-bottom: 24px;
-        */}
-        <div
-          className="w-full max-w-[637px] flex flex-col justify-center"
-          style={{
-            maxWidth: "637px",
-            minHeight: "182px",
-            paddingBottom: "24px",
-          }}
-        >
-          <h1 className="text-4xl sm:text-5xl md:text-[54px] lg:text-[56px] font-extrabold tracking-tight leading-[1.12] text-white">
-            <span className="block drop-shadow-sm whitespace-normal sm:whitespace-nowrap">
-              Your Health Data.
-            </span>
-            <span className="block text-[#078BDE] mt-1 sm:mt-2 drop-shadow-[0_0_35px_rgba(7,139,222,0.35)] whitespace-normal sm:whitespace-nowrap">
-              One Secure Identity.
-            </span>
+      {/* Main Content Container matching Figma Node 665:3567 */}
+      <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-8 py-16 sm:py-20 flex flex-col justify-between min-h-[668px]">
+        <div className="flex flex-col items-start max-w-[720px] pt-4 sm:pt-8">
+          {/* Main Title matching Figma 665:3571 */}
+          <h1 className="font-sans font-bold text-[44px] sm:text-[56px] lg:text-[64px] leading-[1.1] tracking-tight">
+            <span className="block text-white">Your Health Data.</span>
+            <span className="block text-[#078bde] mt-1">One Secure Identity.</span>
           </h1>
-        </div>
 
-        {/* 
-          Text Block 2: Subtitle Paragraph
-          Figma properties:
-          width: 663.97px;
-          max-width: 672px;
-          height: 90px;
-          padding-right: 1.97px;
-          padding-bottom: 24px;
-        */}
-        <div
-          className="w-full"
-          style={{
-            maxWidth: "672px",
-            minHeight: "90px",
-            paddingRight: "1.97px",
-            paddingBottom: "24px",
-          }}
-        >
-          <p
-            className="text-base sm:text-[18px] text-slate-200/95 leading-[30px] font-normal"
-            style={{ maxWidth: "663.97px" }}
-          >
-            <span className="lg:block">
-              PulseID brings your medical records together in one secure place, helping you{" "}
-            </span>
-            <span className="lg:block">
-              manage your health information and control how it is shared with authorized{" "}
-            </span>
-            <span className="lg:block">
-              healthcare professionals.
-            </span>
+          {/* Subtitle Description matching Figma 665:3575 */}
+          <p className="mt-6 text-[16px] sm:text-[18px] leading-[1.6] text-[#eaedf6] max-w-[662px]">
+            PulseID brings your medical records together in one secure place, helping you
+            manage your health information and control how it is shared with authorized
+            healthcare professionals.
           </p>
+
+          {/* Action Buttons with equalized heights matching user request */}
+          <div className="mt-8 flex flex-wrap items-center gap-[16px]">
+            <Link
+              href="/auth/role"
+              className="h-[46px] bg-[#078bde] hover:bg-[#067bc5] text-[#eaedf6] font-semibold text-[15px] px-[24px] rounded-[10px] flex items-center justify-center gap-[8px] shadow-lg shadow-blue-900/30 transition-all transform hover:-translate-y-0.5 group"
+            >
+              <span>Get Started</span>
+              <Image
+                src="/assets/landing-new/ca32cc4dd1482bbbbb2df755468ea50f51badcf5.svg"
+                alt=""
+                width={12}
+                height={12}
+                className="size-[12px] transition-transform group-hover:translate-x-0.5"
+              />
+            </Link>
+
+            <button
+              type="button"
+              className="h-[46px] px-[20px] rounded-[10px] border border-[#02307d] bg-[rgba(2,48,125,0.45)] backdrop-blur-sm hover:bg-[rgba(2,48,125,0.75)] text-white font-semibold text-[15px] flex items-center justify-center gap-[12px] transition-colors"
+            >
+              <span>Intro</span>
+              <Image
+                src="/assets/landing-new/9f6920c702f582fa51c0af145eddcc2a8770a775.svg"
+                alt=""
+                width={20}
+                height={20}
+                className="size-[20px]"
+              />
+            </button>
+          </div>
         </div>
 
-        {/* CTA Buttons matching Figma 238:724 & Mobile 218:622 */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4 w-full max-w-[350px] sm:max-w-none">
-          <Link
-            href="/patient"
-            className="inline-flex items-center justify-center gap-2.5 bg-[#0080DF] hover:bg-[#0072C6] text-white font-semibold text-[15px] sm:text-base h-[45px] sm:h-[47px] px-7 rounded-[10px] sm:rounded-xl shadow-lg shadow-blue-600/30 transition-all transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-400 group"
-          >
-            <span>View my profile</span>
-            <Image
-              src="/assets/figma/icons/icon-arrow-button.svg"
-              alt=""
-              width={12}
-              height={12}
-              unoptimized
-              className="size-[12px] transition-transform group-hover:translate-x-0.5"
-            />
-          </Link>
-
-          <a
-            href="#challenges"
-            className="inline-flex items-center justify-center gap-2.5 border-2 border-[#1B458A] hover:border-blue-400 bg-[#071329]/70 hover:bg-[#0B1E40] text-white font-medium text-[14px] sm:text-base h-[47px] px-7 rounded-[10px] sm:rounded-xl transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 group"
-          >
-            <span>Discover PulseID</span>
-            <Image
-              src="/assets/figma/icons/icon-arrow-button.svg"
-              alt=""
-              width={12}
-              height={12}
-              unoptimized
-              className="size-[12px] transition-transform group-hover:translate-x-0.5"
-            />
-          </a>
-        </div>
-
-        {/* Follow The Summit Social Proof Strip */}
-        <div className="mt-10 sm:mt-12 pt-7 sm:pt-8 border-t border-white/15 flex items-center gap-4 flex-wrap max-w-5xl">
-          <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-slate-300">
-            FOLLOW THE HEALTHCARE SUMMIT:
+        {/* Bottom Social Bar matching Figma 665:3580 */}
+        <div className="w-full pt-8 mt-12 border-t border-white/15 flex flex-wrap items-center gap-4 sm:gap-6">
+          <span className="font-semibold text-[12px] text-white/70 tracking-[1.2px] uppercase">
+            FOLLOW THE PULSEID:
           </span>
-          <div className="flex items-center gap-3">
-            {/* Facebook */}
+          <div className="flex items-center gap-[8px]">
             <a
               href="https://facebook.com"
               target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-slate-200 hover:text-white hover:border-blue-400 hover:bg-blue-500/20 transition-all"
-              aria-label="Facebook"
+              rel="noreferrer"
+              className="size-[36px] rounded-[8px] backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border border-[#dde7ff]/30 hover:border-[#dde7ff] flex items-center justify-center transition-colors"
+              aria-label="PulseID on Facebook"
             >
               <Image
-                src="/assets/figma/icons/social-facebook.svg"
-                alt=""
+                src="/assets/landing-new/ac2d16bab3a1bad1ffd6aea9ad1a7da5c4e15e9c.svg"
+                alt="Facebook"
                 width={16}
                 height={16}
-                unoptimized
-                className="size-4"
+                className="size-[16px]"
               />
             </a>
-
-            {/* LinkedIn */}
             <a
               href="https://linkedin.com"
               target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-slate-200 hover:text-white hover:border-blue-400 hover:bg-blue-500/20 transition-all"
-              aria-label="LinkedIn"
+              rel="noreferrer"
+              className="size-[36px] rounded-[8px] backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border border-[#dde7ff]/30 hover:border-[#dde7ff] flex items-center justify-center transition-colors"
+              aria-label="PulseID on LinkedIn"
             >
               <Image
-                src="/assets/figma/icons/social-linkedin.svg"
-                alt=""
+                src="/assets/landing-new/a9e99ad78a6e691e9d5478f6db14fde3f4608ad2.svg"
+                alt="LinkedIn"
                 width={16}
                 height={16}
-                unoptimized
-                className="size-4"
+                className="size-[16px]"
               />
             </a>
-
-            {/* Instagram */}
             <a
               href="https://instagram.com"
               target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-slate-200 hover:text-white hover:border-blue-400 hover:bg-blue-500/20 transition-all"
-              aria-label="Instagram"
+              rel="noreferrer"
+              className="size-[36px] rounded-[8px] backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border border-[#dde7ff]/30 hover:border-[#dde7ff] flex items-center justify-center transition-colors"
+              aria-label="PulseID on Instagram"
             >
               <Image
-                src="/assets/figma/icons/social-instagram.svg"
-                alt=""
+                src="/assets/landing-new/5dd6fa4a2a3c70a30748ca2dd3736363691912f7.svg"
+                alt="Instagram"
                 width={16}
                 height={16}
-                unoptimized
-                className="size-4"
+                className="size-[16px]"
               />
             </a>
-
-            {/* TikTok / Other */}
             <a
               href="https://tiktok.com"
               target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-slate-200 hover:text-white hover:border-blue-400 hover:bg-blue-500/20 transition-all"
-              aria-label="TikTok"
+              rel="noreferrer"
+              className="size-[36px] rounded-[8px] backdrop-blur-[12px] bg-[rgba(192,202,227,0.1)] border border-[#dde7ff]/30 hover:border-[#dde7ff] flex items-center justify-center transition-colors"
+              aria-label="PulseID on TikTok"
             >
               <Image
-                src="/assets/figma/icons/social-tiktok.svg"
-                alt=""
+                src="/assets/landing-new/df0a7cb7c183b8a5dcfca45c0b5962cf1f24bf3e.svg"
+                alt="TikTok"
                 width={16}
                 height={16}
-                unoptimized
-                className="size-4"
+                className="size-[16px]"
               />
-            </a>
-
-            {/* Email / Mail */}
-            <a
-              href="mailto:contact@pulseid.health"
-              className="w-9 h-9 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-slate-200 hover:text-white hover:border-blue-400 hover:bg-blue-500/20 transition-all"
-              aria-label="Email Contact"
-            >
-              <svg
-                className="w-4 h-4 fill-none stroke-current"
-                strokeWidth={2}
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
             </a>
           </div>
         </div>

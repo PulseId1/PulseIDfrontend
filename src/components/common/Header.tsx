@@ -9,9 +9,10 @@ import { DemoService } from "@/lib/demo/demo-service";
 
 interface HeaderProps {
   role?: "patient" | "doctor" | "pharmacist";
+  onOpenAiAssistant?: () => void;
 }
 
-export function Header({ role }: HeaderProps) {
+export function Header({ role, onOpenAiAssistant }: HeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout, userId, isDemo } = useAuth();
@@ -29,44 +30,62 @@ export function Header({ role }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const isPharmacist = role === "pharmacist" || pathname.startsWith("/pharmacist");
+  const isDoctor = !isPharmacist && (role === "doctor" || pathname.startsWith("/doctor"));
+
   const handleLogout = () => {
     logout();
-    router.replace(`/auth/login${isDoctor ? "?role=doctor" : ""}`);
+    router.replace(`/auth/login${isPharmacist ? "?role=pharmacist" : isDoctor ? "?role=doctor" : ""}`);
   };
 
-  const isDoctor = role === "doctor" || pathname.startsWith("/doctor");
-
   const activeAccount = isDemo && typeof window !== "undefined" ? DemoService.getActiveAccount() : null;
+  const isPharmacistRole = isPharmacist || activeAccount?.role === "pharmacist";
+  const isDoctorRole = !isPharmacistRole && (isDoctor || activeAccount?.role === "doctor");
+
   const displayName =
     isDemo && activeAccount?.fullName
       ? activeAccount.fullName
       : isDemo
-      ? isDoctor
+      ? isPharmacistRole
+        ? "Mohamed"
+        : isDoctorRole
         ? "Dr. Mohamed"
-        : "Sara Mahmoud Ibrahim"
+        : "Ahmed Hassan"
       : userId
-      ? `${isDoctor ? "Dr." : "Patient"} (${userId})`
-      : isDoctor
+      ? `${isPharmacistRole ? "Pharmacist" : isDoctorRole ? "Dr." : "Patient"} (${userId})`
+      : isPharmacistRole
+      ? "Mohamed"
+      : isDoctorRole
       ? "Ahmed H."
-      : "Sara M.";
+      : "Ahmed H.";
 
-  // Pill short name (e.g. "Ahmed H." or "Sara M.")
+  // Pill short name (e.g. "Mohamed", "Ahmed H.")
   const pillShortName =
-    displayName.length > 12
+    displayName.length > 14
       ? displayName.split(" ").slice(0, 2).map((part, i) => (i === 1 ? `${part[0]}.` : part)).join(" ")
       : displayName;
 
-  const initials =
-    displayName
-      .replace(/^Dr\.\s*/i, "")
-      .split(" ")
-      .map((n) => n[0])
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("") || (isDoctor ? "AH" : "SM");
+  const initials = isPharmacistRole
+    ? "N"
+    : displayName
+        .replace(/^(Dr\.|Pharmacist)\s*/i, "")
+        .trim()
+        .split(" ")
+        .map((n) => n[0])
+        .filter(Boolean)
+        .slice(0, 2)
+        .join("")
+        .toUpperCase() || "AH";
 
   // Dynamic Navigation Items
-  const navItems = isDoctor
+  const navItems = isPharmacist
+    ? [
+        { label: "Home", href: "/pharmacist", exact: true },
+        { label: "Patients", href: "/pharmacist/patient" },
+        { label: "Prescriptions", href: "/pharmacist/prescriptions" },
+        { label: "Dispensing History", href: "/pharmacist/dispense" },
+      ]
+    : isDoctor
     ? [
         { label: "Home", href: "/doctor", exact: true },
         { label: "My Patients", href: "/doctor/find-patient" },
@@ -79,9 +98,17 @@ export function Header({ role }: HeaderProps) {
         { label: "Access Requests", href: "/patient/access-requests" },
       ];
 
-  const profileHref = isDoctor ? "/doctor/profile" : "/patient/profile";
-  const personalInfoHref = isDoctor ? "/doctor/profile" : "/patient/profile/edit";
-  const medicalInfoHref = isDoctor ? "/doctor/find-patient" : "/patient/medical-info";
+  const brandHref = isPharmacist ? "/pharmacist" : isDoctor ? "/doctor" : "/patient";
+  const profileHref = isPharmacist ? "/pharmacist/profile" : isDoctor ? "/doctor/profile" : "/patient/profile";
+  const personalInfoHref = isPharmacist ? "/pharmacist/profile" : isDoctor ? "/doctor/profile" : "/patient/profile/edit";
+  const medicalInfoHref = isPharmacist ? "/pharmacist/patient" : isDoctor ? "/doctor/find-patient" : "/patient/medical-info";
+  const medicalInfoLabel = isPharmacist ? "Patient Lookup" : isDoctor ? "Patient Lookup" : "Medical Info";
+  const searchHref = isPharmacist ? "/pharmacist/patient" : isDoctor ? "/doctor/find-patient" : "/patient/records";
+  const userPhotoUrl = isPharmacist
+    ? "/assets/pharmacist/1af2086220affecd5f498aeca93f64918a91bf86.png"
+    : isDoctor
+    ? "/assets/doctor/imgPatientPhoto.png"
+    : "/assets/doctor/imgFrame1171277910.png";
 
   return (
     <header
@@ -91,13 +118,13 @@ export function Header({ role }: HeaderProps) {
     >
       <div className="absolute bg-[rgba(255,255,255,0)] inset-0 pointer-events-none" data-node-id="353:10099" data-name="Header:shadow" />
       <div className="h-[80px] max-w-[1280px] w-full relative shrink-0" data-node-id="353:10100" data-name="Container">
-        <div className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex items-center justify-between max-w-[inherit] px-[32px] relative size-full">
+        <div className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex items-center justify-between max-w-[inherit] px-4 xl:px-[32px] relative size-full">
           {/* Brand Logo & Name matching Figma Node 353:10101 */}
           <div className="content-stretch flex gap-[12px] items-center justify-center relative shrink-0 w-[198px]" data-node-id="353:10101">
-            <Link href={isDoctor ? "/doctor" : "/patient"} className="flex items-center gap-[12px]">
+            <Link href={brandHref} className="flex items-center gap-[12px]">
               <div className="h-[30px] relative shrink-0 w-[32px]" data-node-id="353:10102">
                 <Image
-                  src="/assets/doctor/imgFrame1171276973.svg"
+                  src="/favicon.svg"
                   alt="PulseID Logo Mark"
                   width={32}
                   height={30}
@@ -123,6 +150,7 @@ export function Header({ role }: HeaderProps) {
           >
             {navItems.map((item) => {
               const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+              const isHome = item.label === "Home";
 
               return (
                 <div
@@ -130,17 +158,18 @@ export function Header({ role }: HeaderProps) {
                   className={`relative rounded-[12px] shrink-0 transition-all ${
                     isActive ? "bg-[#078bde] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]" : ""
                   }`}
-                  data-node-id="353:10125"
                   data-name="Link"
                 >
                   <Link
                     href={item.href}
-                    className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex gap-[6px] items-center px-[20px] py-[8px] relative size-full"
+                    className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex gap-[6px] items-center px-3 xl:px-[20px] py-[8px] relative size-full"
                   >
-                    {isActive && (
-                      <div className="bg-white relative rounded-[12px] shrink-0 size-[6px]" data-node-id="353:10126" data-name="Background" />
+                    {isHome && (
+                      <div className="bg-[#078bde] relative rounded-[12px] shrink-0 size-[6px]" data-name="Background" />
                     )}
-                    <div className="break-words flex flex-col font-['Inter'] font-normal justify-center leading-[0] relative shrink-0 text-[#eaedf6] text-[14px] whitespace-nowrap">
+                    <div className={`break-words flex flex-col font-['Inter'] font-normal justify-center leading-[0] relative shrink-0 ${
+                      isActive ? "text-white" : "text-[#eaedf6]"
+                    } text-[14px] whitespace-nowrap`}>
                       <p className="leading-normal">{item.label}</p>
                     </div>
                   </Link>
@@ -152,9 +181,9 @@ export function Header({ role }: HeaderProps) {
             <div className="relative rounded-[12px] shrink-0" data-node-id="353:10132" data-name="Link">
               <button
                 type="button"
-                className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex flex-col items-start px-[20px] py-[8px] relative size-full cursor-pointer"
+                className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex flex-col items-start px-2.5 xl:px-[20px] py-[8px] relative size-full cursor-pointer"
               >
-                <div className="break-words flex flex-col font-['Inter'] font-normal justify-center leading-[0] relative shrink-0 text-[#eaedf6] text-[14px] text-center w-[40px]">
+                <div className="break-words flex flex-col font-['Inter'] font-normal justify-center leading-[0] relative shrink-0 text-[#eaedf6] text-[14px] text-center w-[30px] xl:w-[40px]">
                   <p className="leading-normal" dir="auto">عربي</p>
                 </div>
               </button>
@@ -174,7 +203,7 @@ export function Header({ role }: HeaderProps) {
               >
                 <div className="bg-[#0079c3] relative rounded-[12px] shrink-0 size-[28px]" data-node-id="I353:10135;285:6405" data-name="Background">
                   <div className="bg-clip-padding border-0 border-transparent border-solid content-stretch flex items-center justify-center relative size-full">
-                    <div className="break-words flex flex-col font-['Space_Grotesk'] font-bold justify-center leading-[0] relative shrink-0 text-[12px] text-center text-white whitespace-nowrap" data-node-id="I353:10135;285:6406">
+                    <div className="break-words flex flex-col font-['Inter'] font-bold justify-center leading-[0] not-italic relative shrink-0 text-[12px] text-center text-white whitespace-nowrap" data-node-id="I353:10135;285:6406">
                       <p className="leading-[16px]">{initials}</p>
                     </div>
                   </div>
@@ -209,7 +238,7 @@ export function Header({ role }: HeaderProps) {
                     <div className="content-stretch flex flex-col gap-[6px] items-center relative shrink-0 w-full" data-node-id="I353:10135;285:6448">
                       <div className="relative rounded-[40px] shrink-0 size-[40px] overflow-hidden" data-node-id="I353:10135;285:6449">
                         <Image
-                          src={isDoctor ? "/assets/doctor/imgPatientPhoto.png" : "/assets/doctor/imgFrame1171277910.png"}
+                          src={userPhotoUrl}
                           alt={displayName}
                           width={40}
                           height={40}
@@ -308,7 +337,7 @@ export function Header({ role }: HeaderProps) {
                             />
                           </div>
                           <p className="font-['Inter'] font-normal text-[10px] text-[#040a17] leading-[20px] whitespace-nowrap">
-                            {isDoctor ? "Patient Lookup" : "Medical Info"}
+                            {medicalInfoLabel}
                           </p>
                         </div>
                         <div className="flex items-center justify-center relative shrink-0 rotate-180">
@@ -346,7 +375,7 @@ export function Header({ role }: HeaderProps) {
 
             {/* Search Button matching Figma Node 353:10136 */}
             <Link
-              href={isDoctor ? "/doctor/find-patient" : "/patient/records"}
+              href={searchHref}
               className="bg-[#eaedf6] border border-[#d0deff] border-solid content-stretch cursor-pointer flex flex-col items-center justify-center p-px relative rounded-[12px] shrink-0 size-[40px] hover:bg-white transition-colors"
               data-node-id="353:10136"
               data-name="Button - Toggle navigation drawer"
@@ -366,10 +395,11 @@ export function Header({ role }: HeaderProps) {
             {/* Notifications Button matching Figma Node 353:10137 */}
             <button
               type="button"
+              onClick={onOpenAiAssistant}
               className="bg-[rgba(192,202,227,0.1)] border-[0.5px] border-[#078bde] border-solid content-stretch flex flex-col items-center justify-center p-[0.5px] relative rounded-[12px] shrink-0 size-[40px] hover:bg-white/10 transition-colors cursor-pointer"
               data-node-id="353:10137"
               data-name="Button - Toggle navigation drawer"
-              title="Notifications"
+              title={onOpenAiAssistant ? "AI Assistant / Notifications" : "Notifications"}
             >
               <div className="relative shrink-0 size-[24px]" data-node-id="I353:10137;226:8047" data-name="ic:outline-notifications">
                 <Image

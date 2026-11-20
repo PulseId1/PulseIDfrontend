@@ -3,113 +3,101 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PulseLogo } from "@/components/ui/logo";
 
-interface NavbarProps {
-  readonly activeLanguage?: "en" | "ar";
-  readonly onLanguageToggle?: () => void;
-}
-
-export function Navbar({
-  activeLanguage = "en",
-  onLanguageToggle,
-}: NavbarProps) {
-  const [internalLang, setInternalLang] = useState<"en" | "ar">(activeLanguage);
+export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLanguageToggle = () => {
-    if (onLanguageToggle) {
-      onLanguageToggle();
-    } else {
-      setInternalLang((prev) => (prev === "en" ? "ar" : "en"));
-    }
-  };
-
-  const currentLang = onLanguageToggle ? activeLanguage : internalLang;
-
   return (
-    <header className="sticky top-0 left-0 right-0 z-50 w-full h-[69px] sm:h-[81px] bg-[#02307D] border-b border-[#1B458A]">
-      <div className="w-full max-w-[1280px] mx-auto h-full px-4 sm:px-8 flex items-center justify-between">
-        {/* Left: Brand Logo */}
+    <header className="sticky top-0 left-0 right-0 z-50 w-full h-[81px] bg-[#02307d] border-b border-[rgba(255,255,255,0.1)] pb-px" data-node-id="665:3519">
+      <div className="w-full max-w-[1280px] mx-auto h-[80px] px-4 sm:px-8 flex items-center justify-between">
+        {/* Left: Brand Logo matching Figma 665:3522 */}
         <Link
           href="/"
-          className="flex items-center group transition-transform focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-lg shrink-0"
+          className="flex items-center gap-[12px] group focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-lg shrink-0"
         >
-          <PulseLogo size="md" theme="light" />
+          <div className="w-[32px] h-[30px] relative shrink-0">
+            <Image
+              src="/favicon.svg"
+              alt="PulseID Logo"
+              width={32}
+              height={30}
+              className="size-full object-contain"
+              priority
+            />
+          </div>
+          <span className="font-sans font-bold text-[18px] text-white tracking-[0.9px]">
+            PULSEID
+          </span>
         </Link>
 
-        {/* Center: Navigation Pill Bar (Home, About, Contact, عربي) */}
+        {/* Center: Navigation Pill Bar matching Figma 665:3545 */}
         <nav
           aria-label="Main Navigation"
-          className="hidden md:inline-flex items-center h-[48px] bg-[#153F87] border border-[#244B8F] rounded-2xl p-1 gap-1 text-sm shadow-inner"
+          className="hidden md:flex items-center bg-[rgba(192,202,227,0.1)] border border-[rgba(192,202,227,0.1)] rounded-[12px] p-[7px] gap-[4px] text-[14px]"
         >
           <Link
             href="/"
-            className="h-[36px] min-w-[80px] inline-flex items-center justify-center gap-2 bg-[#0080DF] hover:bg-[#0072C6] text-white font-medium px-4 rounded-xl shadow-sm transition-colors"
+            className="flex items-center gap-[6px] bg-[#078bde] text-[#eaedf6] font-normal px-[20px] py-[8px] rounded-[12px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] transition-colors"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-300 shadow-[0_0_6px_rgba(53,214,232,0.8)]" />
+            <span className="size-[6px] rounded-full bg-cyan-300" />
             <span>Home</span>
           </Link>
           <a
+            href="#solutions"
+            className="text-[#eaedf6] hover:text-white px-[20px] py-[8px] rounded-[12px] transition-colors"
+          >
+            solutions
+          </a>
+          <a
+            href="#how-it-works"
+            className="text-[#eaedf6] hover:text-white px-[20px] py-[8px] rounded-[12px] transition-colors"
+          >
+            How it works
+          </a>
+          <a
+            href="#our-work"
+            className="text-[#eaedf6] hover:text-white px-[20px] py-[8px] rounded-[12px] transition-colors"
+          >
+            Our Work
+          </a>
+          <a
             href="#about"
-            className="h-[36px] inline-flex items-center justify-center text-white/90 hover:text-white font-medium px-4 rounded-xl transition-colors"
+            className="text-[#eaedf6] hover:text-white px-[20px] py-[8px] rounded-[12px] transition-colors"
           >
             About
           </a>
-          <a
-            href="#contact"
-            className="h-[36px] inline-flex items-center justify-center text-white/90 hover:text-white font-medium px-4 rounded-xl transition-colors"
-          >
-            Contact
-          </a>
-          <button
-            type="button"
-            onClick={handleLanguageToggle}
-            className="h-[36px] inline-flex items-center justify-center text-white/90 hover:text-white font-medium px-4 rounded-xl transition-colors cursor-pointer"
-            title="Switch language"
-          >
-            {currentLang === "en" ? "عربي" : "English"}
-          </button>
         </nav>
 
-        {/* Right: Authentication Actions (Log In, Create Account →) */}
-        <div className="hidden sm:flex items-center gap-2.5 shrink-0">
+        {/* Right: Actions matching Figma 665:3557 */}
+        <div className="hidden sm:flex items-center gap-[12px] shrink-0">
           <Link
             href="/auth/login"
-            className="h-[41px] min-w-[80px] inline-flex items-center justify-center bg-[#153F87] hover:bg-[#1B4B9D] border border-[#244B8F] text-white font-medium text-sm px-5 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="bg-[rgba(192,202,227,0.1)] border border-[rgba(192,202,227,0.1)] text-[#eaedf6] hover:text-white text-[14px] font-normal px-[21px] py-[10px] rounded-[8px] transition-colors"
           >
             Log In
           </Link>
           <Link
             href="/auth/role"
-            className="h-[41px] inline-flex items-center justify-center gap-2 bg-[#0080DF] hover:bg-[#0072C6] text-white font-semibold text-sm px-5 rounded-xl transition-all shadow-md shadow-blue-900/40 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+            className="bg-[#078bde] hover:bg-[#067bc5] text-[#eaedf6] hover:text-white text-[14px] font-normal px-[24px] py-[10px] rounded-[8px] flex items-center gap-[8px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] transition-all group"
           >
             <span>Create Account</span>
             <Image
-              src="/assets/figma/icons/icon-arrow-button.svg"
+              src="/assets/landing-new/c9cf6cd0a7c6dfa87288b32055694afae2dc1896.svg"
               alt=""
               width={12}
               height={12}
-              unoptimized
               className="size-[12px] transition-transform group-hover:translate-x-0.5"
             />
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
-        <div className="flex sm:hidden items-center gap-2">
-          <Link
-            href="/auth/role"
-            className="inline-flex items-center bg-[#0080DF] text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm"
-          >
-            Join
-          </Link>
+        {/* Mobile menu trigger */}
+        <div className="flex md:hidden items-center">
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="text-white hover:text-cyan-200 p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="p-2 text-white/90 hover:text-white"
             aria-label="Toggle navigation menu"
-            aria-expanded={mobileMenuOpen}
           >
             <svg
               className="w-6 h-6"
@@ -137,54 +125,65 @@ export function Navbar({
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="sm:hidden absolute top-[81px] left-0 right-0 border-b border-[#1B458A] bg-[#02307D] p-4 shadow-xl flex flex-col gap-3 animate-in fade-in slide-in-from-top-2">
+        <div className="md:hidden bg-[#02307d] border-b border-white/10 px-6 py-4 flex flex-col gap-3">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}
-            className="text-white font-medium py-2 px-3 rounded-xl bg-[#0080DF] text-sm text-center"
+            className="text-white py-2 font-medium"
           >
             Home
           </Link>
           <a
+            href="#solutions"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-slate-300 hover:text-white py-2"
+          >
+            solutions
+          </a>
+          <a
+            href="#how-it-works"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-slate-300 hover:text-white py-2"
+          >
+            How it works
+          </a>
+          <a
+            href="#our-work"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-slate-300 hover:text-white py-2"
+          >
+            Our Work
+          </a>
+          <a
             href="#about"
             onClick={() => setMobileMenuOpen(false)}
-            className="text-white hover:text-white/80 font-medium py-2 px-3 rounded-xl text-sm transition-colors text-center"
+            className="text-slate-300 hover:text-white py-2"
           >
             About
           </a>
-          <a
-            href="#contact"
-            onClick={() => setMobileMenuOpen(false)}
-            className="text-white hover:text-white/80 font-medium py-2 px-3 rounded-xl text-sm transition-colors text-center"
-          >
-            Contact
-          </a>
-          <button
-            type="button"
-            onClick={() => {
-              handleLanguageToggle();
-              setMobileMenuOpen(false);
-            }}
-            className="text-center text-white hover:text-white/80 font-medium py-2 px-3 rounded-xl text-sm transition-colors"
-          >
-            {currentLang === "en" ? "عربي" : "English"}
-          </button>
-          <div className="pt-2 border-t border-white/15 flex flex-col gap-2">
+          <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
             <Link
               href="/auth/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-center bg-[#153F87] text-white py-2 rounded-xl text-sm font-medium border border-[#244B8F]"
+              className="w-full text-center py-2.5 rounded-lg bg-white/10 text-white font-medium"
             >
               Log In
             </Link>
             <Link
-              href="/auth/register"
+              href="/auth/role"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-center bg-[#0080DF] hover:bg-[#0072C6] text-white py-2.5 rounded-xl text-sm font-semibold shadow-md"
+              className="w-full text-center py-2.5 rounded-lg bg-[#078bde] text-white font-medium flex items-center justify-center gap-2"
             >
-              Create Account
+              <span>Create Account</span>
+              <Image
+                src="/assets/landing-new/c9cf6cd0a7c6dfa87288b32055694afae2dc1896.svg"
+                alt=""
+                width={12}
+                height={12}
+                className="size-[12px]"
+              />
             </Link>
           </div>
         </div>

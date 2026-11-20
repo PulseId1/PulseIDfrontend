@@ -18,235 +18,279 @@ export function Footer() {
 
   return (
     <footer
-      className="bg-[#02307d] content-stretch flex flex-col gap-[28px] items-center overflow-clip p-[40px] relative shrink-0 w-full"
-      data-node-id="353:10951"
-      data-name="Website footer"
+      className="bg-[#02307D] border-t border-[#707883]/20 text-white relative w-full overflow-hidden"
+      data-node-id="610:16781"
+      data-name="Footer - AUTHENTIC PULSE ID FOOTER"
     >
-      {/* Brand logo & text matching Figma Node 353:10952 */}
       <div
-        className="content-stretch flex gap-[10px] items-center overflow-clip relative shrink-0"
-        data-node-id="353:10952"
-        data-name="Pulse ID"
+        className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-[48px] py-8 lg:py-[40px] flex flex-col gap-6 lg:gap-[32px] w-full"
+        data-node-id="610:16782"
+        data-name="Container"
       >
-        <Link href="/" className="flex items-center gap-[10px] group">
-          <div className="h-[30px] relative shrink-0 w-[32px]" data-node-id="353:10953" data-name="Brand mark">
-            <Image
-              src="/assets/footer/brandMark.svg"
-              alt="PULSEID Brand Mark"
-              width={32}
-              height={30}
-              className="absolute block inset-0 max-w-none size-full object-contain"
-              priority
-            />
-          </div>
-          <p
-            className="break-words font-['Inter'] font-bold leading-normal not-italic relative shrink-0 text-[19px] text-white whitespace-nowrap"
-            data-node-id="353:10972"
-          >
-            PULSEID
-          </p>
-        </Link>
-      </div>
-
-      {/* Footer links matching Figma Node 353:10973 */}
-      <nav
-        className="break-words content-start flex flex-wrap font-['Inter'] font-normal gap-[16px_40px] items-start justify-center leading-normal not-italic overflow-clip relative shrink-0 text-[14px] text-white w-full whitespace-nowrap"
-        data-node-id="353:10973"
-        data-name="Footer links"
-        aria-label="Footer Navigation"
-      >
-        <Link href="/" className="relative shrink-0 hover:text-sky-300 transition-colors" data-node-id="353:10974">
-          Home
-        </Link>
-        <Link href="/#about" className="relative shrink-0 hover:text-sky-300 transition-colors" data-node-id="353:10975">
-          About Us
-        </Link>
-        <Link href="/#contact" className="relative shrink-0 hover:text-sky-300 transition-colors" data-node-id="353:10976">
-          Contact Us
-        </Link>
-        <Link href="/privacy" className="relative shrink-0 hover:text-sky-300 transition-colors" data-node-id="353:10977">
-          Privacy Policy
-        </Link>
-        <Link href="/terms" className="relative shrink-0 hover:text-sky-300 transition-colors" data-node-id="353:10978">
-          Terms & Conditions
-        </Link>
-      </nav>
-
-      {/* Newsletter box matching Figma Node 353:10979 */}
-      <div
-        className="bg-[#011c49] border border-[rgba(7,139,222,0.3)] border-solid content-stretch flex flex-col gap-[10px] items-center overflow-clip p-[24px] relative rounded-[16px] shrink-0 max-w-[576px] w-full"
-        data-node-id="353:10979"
-        data-name="Newsletter"
-      >
-        <p
-          className="break-words font-['Inter'] font-bold leading-normal not-italic relative shrink-0 text-[19px] text-white text-center w-full"
-          data-node-id="353:10980"
+        {/* =========================================================================
+            1. Newsletter / Broadcast Box matching Figma Node 610:16783
+           ========================================================================= */}
+        <div
+          className="bg-[rgba(139,139,139,0.2)] border border-[rgba(112,120,131,0.2)] rounded-[8px] p-5 lg:p-[25px] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 lg:gap-6 w-full"
+          data-node-id="610:16783"
+          data-name="Newsletter / Broadcast Box"
         >
-          Stay Updated with Pulse ID
-        </p>
-        <p
-          className="break-words font-['Inter'] font-normal leading-[1.5] not-italic relative shrink-0 text-[13px] text-[#bacfd7] text-center w-full"
-          data-node-id="353:10981"
-        >
-          Get the latest announcements, clinical protocol releases, and security advisories sent directly to your inbox.
-        </p>
-
-        {subscribed ? (
-          <div className="w-full py-2.5 text-center">
-            <p className="text-[13px] font-semibold text-sky-400 bg-sky-500/10 border border-sky-400/30 rounded-[8px] py-2 px-4">
-              ✓ Thank you for subscribing to PulseID updates!
+          <div className="flex flex-col gap-1 max-w-[661px]" data-node-id="610:16784">
+            <div className="flex items-center gap-2" data-node-id="610:16785">
+              <div className="relative shrink-0 w-[21.6px] h-[24px]" data-node-id="610:16786">
+                <Image
+                  src="/assets/group5.svg"
+                  alt=""
+                  width={22}
+                  height={24}
+                  unoptimized
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <h4
+                className="font-bold text-[18px] text-white whitespace-nowrap font-sans"
+                data-node-id="610:16805"
+              >
+                Stay Updated with Pulse ID
+              </h4>
+            </div>
+            <p
+              className="text-[13px] text-[#BACFD7] font-normal leading-normal font-sans"
+              data-node-id="610:16807"
+            >
+              Get the latest announcements, clinical protocol releases, and security advisories sent directly to your inbox.
             </p>
           </div>
-        ) : (
+
           <form
             onSubmit={handleSubscribe}
-            className="content-stretch flex flex-col sm:flex-row gap-[10px] items-center overflow-clip relative shrink-0 w-full"
-            data-node-id="353:10982"
-            data-name="Subscribe form"
+            className="flex items-center gap-2 w-full lg:w-auto shrink-0"
+            data-node-id="610:16808"
+            data-name="Form"
           >
             <div
-              className="border border-[rgba(186,207,215,0.3)] border-solid content-stretch flex flex-[1_0_0] gap-[8px] items-center min-h-[44px] min-w-0 overflow-clip p-[12px] relative rounded-[8px] w-full bg-transparent focus-within:border-[#078bde] transition-colors"
-              data-node-id="353:10983"
-              data-name="Email field"
+              className="bg-white border border-[#BFC7D3] rounded-[4px] px-[17px] py-[10px] w-full sm:w-[320px] flex items-center"
+              data-node-id="610:16809"
             >
-              <div className="relative shrink-0 size-[16px]" data-node-id="353:10984" data-name="mail">
-                <Image
-                  src="/assets/footer/mail.svg"
-                  alt="Mail icon"
-                  width={16}
-                  height={16}
-                  className="absolute block inset-0 max-w-none size-full"
-                />
-              </div>
               <input
                 type="email"
-                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your work or clinical email"
-                className="bg-transparent border-none outline-none font-['Inter'] font-normal leading-[1.4] text-[12px] text-white placeholder-[#bacfd7] w-full"
+                placeholder="Enter your email"
+                className="w-full text-[13px] text-[#41474F] placeholder:text-[#41474F] bg-transparent outline-none font-sans"
+                required
+                aria-label="Email address for announcements"
+                data-node-id="610:16811"
               />
             </div>
-
             <button
               type="submit"
-              className="bg-[#078bde] border border-[#078bde] border-solid content-stretch flex gap-[8px] items-center justify-center min-h-[44px] overflow-clip px-[16px] py-[10px] relative rounded-[8px] shrink-0 hover:bg-[#0079c3] cursor-pointer transition-colors w-full sm:w-auto"
-              data-node-id="353:10987"
-              data-name="Action"
+              className="bg-[#02307D] hover:bg-[#002466] text-white font-bold text-[13px] rounded-[4px] px-[16px] py-[10px] shadow-sm transition-colors cursor-pointer shrink-0 font-sans border border-white/10"
+              data-node-id="610:16812"
             >
-              <div className="relative shrink-0 size-[16px]" data-node-id="353:10988" data-name="arrow-right">
-                <Image
-                  src="/assets/footer/arrowRight.svg"
-                  alt="Arrow icon"
-                  width={16}
-                  height={16}
-                  className="absolute block inset-0 max-w-none size-full"
-                />
-              </div>
-              <p
-                className="break-words font-['Inter'] font-semibold leading-normal not-italic relative shrink-0 text-[14px] text-white whitespace-nowrap"
-                data-node-id="353:10990"
-              >
-                Subscribe
-              </p>
+              <span data-node-id="610:16813">{subscribed ? "Subscribed!" : "Subscribe"}</span>
             </button>
           </form>
-        )}
+        </div>
 
-        <p
-          className="break-words font-['Inter'] font-normal leading-[1.5] not-italic relative shrink-0 text-[11px] text-[#bacfd7] text-center w-full"
-          data-node-id="353:10991"
+        {/* =========================================================================
+            2. Multi-column Organized Navigation & Contact matching Figma 610:16814
+           ========================================================================= */}
+        <div
+          className="border-b border-[rgba(192,202,227,0.1)] pb-7 pt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 w-full"
+          data-node-id="610:16814"
+          data-name="Multi-column Organized Navigation & Contact"
         >
-          We respect your privacy. Unsubscribe at any time.
-        </p>
-      </div>
-
-      {/* Social links matching Figma Node 353:10992 */}
-      <div
-        className="content-stretch flex gap-[16px] items-start overflow-clip relative shrink-0"
-        data-node-id="353:10992"
-        data-name="Social links"
-      >
-        {/* Facebook */}
-        <a
-          href="https://facebook.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Facebook"
-          className="bg-[rgba(142,191,222,0.2)] content-stretch flex items-center justify-center overflow-clip relative rounded-[10px] shrink-0 size-[40px] hover:bg-white/20 transition-colors"
-          data-node-id="353:10993"
-          data-name="Social link"
-        >
-          <div className="relative shrink-0 size-[17px]" data-node-id="353:10994" data-name="facebook">
-            <Image
-              src="/assets/footer/facebook.svg"
-              alt="Facebook"
-              width={17}
-              height={17}
-              className="absolute block inset-0 max-w-none size-full"
-            />
+          {/* Column 1: Product */}
+          <div className="flex flex-col gap-3" data-node-id="610:16815">
+            <h5 className="font-bold text-[18px] text-white font-sans" data-node-id="610:16817">
+              Product
+            </h5>
+            <ul className="flex flex-col gap-2 font-sans text-[13px] text-[#BACFD7]" data-node-id="610:16818">
+              <li>
+                <Link href="/#challenges" className="hover:text-white transition-colors" data-node-id="610:16820">
+                  Problems
+                </Link>
+              </li>
+              <li>
+                <Link href="/#solutions" className="hover:text-white transition-colors" data-node-id="610:16822">
+                  Solutions
+                </Link>
+              </li>
+              <li>
+                <Link href="/#how-it-works" className="hover:text-white transition-colors" data-node-id="610:16824">
+                  How It Works
+                </Link>
+              </li>
+            </ul>
           </div>
-        </a>
 
-        {/* X / Twitter */}
-        <a
-          href="https://twitter.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="X (Twitter)"
-          className="bg-[rgba(142,191,222,0.2)] content-stretch flex items-center justify-center overflow-clip relative rounded-[10px] shrink-0 size-[40px] hover:bg-white/20 transition-colors"
-          data-node-id="353:10996"
-          data-name="Social link"
+          {/* Column 2: Company */}
+          <div className="flex flex-col gap-3" data-node-id="610:16825">
+            <h5 className="font-bold text-[18px] text-white font-sans" data-node-id="610:16827">
+              Company
+            </h5>
+            <ul className="flex flex-col gap-2 font-sans text-[13px] text-[#BACFD7]" data-node-id="610:16828">
+              <li>
+                <Link href="/#about" className="hover:text-white transition-colors" data-node-id="610:16830">
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/#team" className="hover:text-white transition-colors" data-node-id="610:16832">
+                  Team
+                </Link>
+              </li>
+              <li>
+                <Link href="/#spark" className="hover:text-white transition-colors" data-node-id="610:16834">
+                  Founders Spark
+                </Link>
+              </li>
+              <li>
+                <Link href="/#awards" className="hover:text-white transition-colors" data-node-id="610:16836">
+                  Awards
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Legal */}
+          <div className="flex flex-col gap-3" data-node-id="610:16837">
+            <h5 className="font-bold text-[18px] text-white font-sans" data-node-id="610:16839">
+              Legal
+            </h5>
+            <ul className="flex flex-col gap-2 font-sans text-[13px] text-[#BACFD7]" data-node-id="610:16840">
+              <li>
+                <Link href="/privacy" className="hover:text-white transition-colors" data-node-id="610:16842">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-white transition-colors" data-node-id="610:16844">
+                  Terms &amp; Conditions
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy#law151" className="hover:text-white transition-colors" data-node-id="610:16846">
+                  Data Protection (Law 151/2020)
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Support */}
+          <div className="flex flex-col gap-3" data-node-id="610:16847">
+            <h5 className="font-bold text-[18px] text-white font-sans" data-node-id="610:16849">
+              Support
+            </h5>
+            <ul className="flex flex-col gap-2 font-sans text-[13px] text-[#BACFD7]" data-node-id="610:16850">
+              <li>
+                <Link href="/#contact" className="hover:text-white transition-colors" data-node-id="610:16852">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/#faq" className="hover:text-white transition-colors" data-node-id="610:16854">
+                  FAQ
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 5: Official Contact */}
+          <div className="flex flex-col gap-3 col-span-2 sm:col-span-1" data-node-id="610:16855">
+            <h5 className="font-bold text-[18px] text-white font-sans" data-node-id="610:16857">
+              Official Contact
+            </h5>
+            <a
+              href="mailto:admin@pulseidegypt.com"
+              className="text-[13px] font-bold text-[#34D8E1] hover:underline font-sans"
+              data-node-id="610:16859"
+            >
+              admin@pulseidegypt.com
+            </a>
+            {/* Social Icons row matching Figma 610:16860 */}
+            <div className="flex items-center gap-2 pt-2" data-node-id="610:16860">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="size-[36px] rounded-[8px] border border-[#DDE7FF] bg-[rgba(192,202,227,0.1)] backdrop-blur-[12px] flex items-center justify-center hover:bg-white/20 transition-all"
+                aria-label="Facebook"
+                data-node-id="610:16861"
+              >
+                <Image src="/assets/fb.svg" alt="" width={16} height={16} unoptimized className="size-4" />
+              </a>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="size-[36px] rounded-[8px] border border-[#DDE7FF] bg-[rgba(192,202,227,0.1)] backdrop-blur-[12px] flex items-center justify-center hover:bg-white/20 transition-all"
+                aria-label="LinkedIn"
+                data-node-id="610:16862"
+              >
+                <Image src="/assets/in.svg" alt="" width={16} height={16} unoptimized className="size-4" />
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="size-[36px] rounded-[8px] border border-[#DDE7FF] bg-[rgba(192,202,227,0.1)] backdrop-blur-[12px] flex items-center justify-center hover:bg-white/20 transition-all"
+                aria-label="Instagram"
+                data-node-id="610:16863"
+              >
+                <Image src="/assets/ig.svg" alt="" width={16} height={16} unoptimized className="size-4" />
+              </a>
+              <a
+                href="mailto:admin@pulseidegypt.com"
+                className="size-[36px] rounded-[8px] border border-[#DDE7FF] bg-[rgba(192,202,227,0.1)] backdrop-blur-[12px] flex items-center justify-center hover:bg-white/20 transition-all"
+                aria-label="Email admin"
+                data-node-id="610:16864"
+              >
+                <Image src="/assets/tiktok.svg" alt="" width={16} height={16} unoptimized className="size-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* =========================================================================
+            3. Bottom Bar matching Figma Node 610:16865
+           ========================================================================= */}
+        <div
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full pt-1"
+          data-node-id="610:16865"
+          data-name="Bottom Bar: Copyright, Official Email, and Language Selector"
         >
-          <p
-            className="break-words font-['Inter'] font-normal leading-normal not-italic relative shrink-0 text-[17px] text-white whitespace-nowrap"
-            data-node-id="353:10997"
+          <div className="flex flex-wrap items-center gap-2 text-[13px] font-sans" data-node-id="610:16866">
+            <span className="font-semibold text-white" data-node-id="610:16868">
+              © 2026 PulseID
+            </span>
+            <span className="text-[#BFC7D3] tracking-[0.13px]" data-node-id="610:16870">
+              •
+            </span>
+            <span className="text-[#BACFD7] font-normal" data-node-id="610:16872">
+              All rights reserved.
+            </span>
+            <span className="text-[#BFC7D3] tracking-[0.13px]" data-node-id="610:16874">
+              •
+            </span>
+            <a
+              href="mailto:admin@pulseidegypt.com"
+              className="text-[#34D8E1] hover:underline"
+              data-node-id="610:16876"
+            >
+              admin@pulseidegypt.com
+            </a>
+          </div>
+
+          <button
+            type="button"
+            className="border border-[rgba(112,120,131,0.3)] rounded-[8px] px-[16px] py-[8px] text-[13px] text-[#BFC7D3] hover:text-white hover:border-white/50 transition-colors font-sans cursor-pointer shrink-0"
+            data-node-id="610:16877"
           >
-            𝕏
-          </p>
-        </a>
-
-        {/* Instagram */}
-        <a
-          href="https://instagram.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram"
-          className="bg-[rgba(142,191,222,0.2)] content-stretch flex items-center justify-center overflow-clip relative rounded-[10px] shrink-0 size-[40px] hover:bg-white/20 transition-colors"
-          data-node-id="353:10998"
-          data-name="Social link"
-        >
-          <div className="relative shrink-0 size-[17px]" data-node-id="353:10999" data-name="instagram">
-            <Image
-              src="/assets/footer/instagram.svg"
-              alt="Instagram"
-              width={17}
-              height={17}
-              className="absolute block inset-0 max-w-none size-full"
-            />
-          </div>
-        </a>
-
-        {/* LinkedIn */}
-        <a
-          href="https://linkedin.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-          className="bg-[rgba(142,191,222,0.2)] content-stretch flex items-center justify-center overflow-clip relative rounded-[10px] shrink-0 size-[40px] hover:bg-white/20 transition-colors"
-          data-node-id="353:11001"
-          data-name="Social link"
-        >
-          <div className="relative shrink-0 size-[17px]" data-node-id="353:11002" data-name="linkedin">
-            <Image
-              src="/assets/footer/linkedin.svg"
-              alt="LinkedIn"
-              width={17}
-              height={17}
-              className="absolute block inset-0 max-w-none size-full"
-            />
-          </div>
-        </a>
+            <span data-node-id="610:16878">EN / العربية</span>
+          </button>
+        </div>
       </div>
     </footer>
   );
